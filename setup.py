@@ -3,7 +3,8 @@ from setuptools import setup, find_packages
 setup(
     name="zimba-rei-common-components",
     version="0.1.0",
-    packages=find_packages(),
+    packages=find_packages(where="rei_models"),
+    package_dir={"": "rei_models"},
     install_requires=[
         "spacy>=3.0.0,<4.0.0",
         # Add other dependencies here
