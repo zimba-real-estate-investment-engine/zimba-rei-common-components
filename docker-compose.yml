@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - deals-api
+    depends_on:
+      - listings-api
+#      - app2
+    networks:
+      - zimba-rei-common-components
+
+  deals-api:
+    build: deals_api
+    volumes:
+      - ./deals_api:/app
+    networks:
+      - zimba-rei-common-components
+
+
+  listings-api:
+    build: listings_api
+    volumes:
+      - ./listings_api:/app
+    networks:
+      - zimba-rei-common-components
+
+
+networks:
+  zimba-rei-common-components:
+      driver: bridge
