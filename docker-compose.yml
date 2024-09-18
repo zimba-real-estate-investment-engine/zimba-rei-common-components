@@ -7,9 +7,8 @@ services:
       - "80:80"
     depends_on:
       - deals-api
-    depends_on:
       - listings-api
-#      - app2
+      - investor-profiles-api
     networks:
       - zimba-rei-common-components
 
@@ -20,7 +19,6 @@ services:
     networks:
       - zimba-rei-common-components
 
-
   listings-api:
     build: listings_api
     volumes:
@@ -28,6 +26,12 @@ services:
     networks:
       - zimba-rei-common-components
 
+  investor-profiles-api:
+    build: investor_profiles_api
+    volumes:
+      - ./investor_profiles_api:/app
+    networks:
+      - zimba-rei-common-components
 
 networks:
   zimba-rei-common-components:
