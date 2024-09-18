@@ -10,6 +10,7 @@ services:
       - listings-api
       - investor-profiles-api
       - mortgages-api
+      - underwritings-api
     networks:
       - zimba-rei-common-components
 
@@ -38,6 +39,13 @@ services:
     build: mortgages_api
     volumes:
       - ./mortgages_api:/app
+    networks:
+      - zimba-rei-common-components
+
+  underwritings-api:
+    build: underwritings_api
+    volumes:
+      - ./underwritings_api:/app
     networks:
       - zimba-rei-common-components
 

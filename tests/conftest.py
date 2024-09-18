@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from rei_models import Listing
 from rei_models import Deal
 from rei_models import InvestorProfile
-# from rei_models import Underwriting
+from rei_models import Underwriting
 from rei_models import Mortgage
 
 import pytest
@@ -60,19 +60,19 @@ def get_test_deal_object() -> Deal:
     )
     return deal
 
-# @pytest.fixture
-# def get_test_underwriting_object() -> Underwriting:
-#     current_time_string = __get_time_string()
-#     underwriting_date = datetime.now() + relativedelta(months=2)
-#
-#     underwriting = Underwriting(
-#         underwriting_id=current_time_string, appraisal_value=320000, loan_amount=240000,
-#         loan_to_value=0.8, interest_rate=5, underwriting_date=underwriting_date,
-#         approval_status="approved", risk_assessment="low",
-#     )
-#
-#     return underwriting
-#
+@pytest.fixture
+def get_test_underwriting_object() -> Underwriting:
+    current_time_string = __get_time_string()
+    underwriting_date = datetime.now() + relativedelta(months=2)
+
+    underwriting = Underwriting(
+        underwriting_id=current_time_string, appraisal_value=320000, loan_amount=240000,
+        loan_to_value=0.8, interest_rate=5, underwriting_date=underwriting_date,
+        approval_status="approved", risk_assessment="low",
+    )
+
+    return underwriting
+
 @pytest.fixture
 def get_test_mortgage_object() -> Mortgage:
     current_time_string = __get_time_string()

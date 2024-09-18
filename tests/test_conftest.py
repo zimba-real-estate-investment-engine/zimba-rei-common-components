@@ -22,3 +22,8 @@ def test_deal_object(get_test_deal_object):
 def test_mortgage_object(get_test_mortgage_object):
     assert get_test_mortgage_object.principal
     assert get_test_mortgage_object.issued_date
+
+
+def test_underwriting_object(get_test_underwriting_object):
+    assert get_test_underwriting_object.underwriting_date;
+    assert get_test_underwriting_object.approval_status;
