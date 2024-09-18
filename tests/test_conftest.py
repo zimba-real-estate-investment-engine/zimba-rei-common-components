@@ -19,6 +19,6 @@ def test_deal_object(get_test_deal_object):
     assert get_test_deal_object.deal_date
 
 
-# def test_mortgage_object(get_test_mortgage_object):
-#     assert get_test_mortgage_object.principal
-#     assert get_test_mortgage_object.issued_date
+def test_mortgage_object(get_test_mortgage_object):
+    assert get_test_mortgage_object.principal
+    assert get_test_mortgage_object.issued_date

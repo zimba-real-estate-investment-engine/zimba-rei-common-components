@@ -5,8 +5,8 @@ from dateutil.relativedelta import relativedelta
 from rei_models import Listing
 from rei_models import Deal
 from rei_models import InvestorProfile
-# from rei_models.rei_models.Underwriting import Underwriting
-# from rei_models.rei_models.Mortgage import Mortgage
+# from rei_models import Underwriting
+from rei_models import Mortgage
 
 import pytest
 
@@ -73,18 +73,18 @@ def get_test_deal_object() -> Deal:
 #
 #     return underwriting
 #
-# @pytest.fixture
-# def get_test_mortgage_object() -> Mortgage:
-#     current_time_string = __get_time_string()
-#     issued_date = datetime.now()
-#
-#     mortgage = Mortgage(
-#         id=current_time_string, appraisal_value=300000.00, principal=240000.03, issued_date=issued_date,
-#         pre_qualifid=True, pre_approved=True, loan_to_value=80.0, interest_rate=3.75,
-#         term=timedelta(days=3 * 365), amortization_period=timedelta(days=30 * 365), monthly_payment=3565.25,
-#         owner_occupied=True, insurance=3500.75,
-#     )
-#     return mortgage
+@pytest.fixture
+def get_test_mortgage_object() -> Mortgage:
+    current_time_string = __get_time_string()
+    issued_date = datetime.now()
+
+    mortgage = Mortgage(
+        id=current_time_string, appraisal_value=300000.00, principal=240000.03, issued_date=issued_date,
+        pre_qualifid=True, pre_approved=True, loan_to_value=80.0, interest_rate=3.75,
+        term=timedelta(days=3 * 365), amortization_period=timedelta(days=30 * 365), monthly_payment=3565.25,
+        owner_occupied=True, insurance=3500.75,
+    )
+    return mortgage
 
 
 def __get_time_string() -> str:

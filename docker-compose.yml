@@ -9,6 +9,7 @@ services:
       - deals-api
       - listings-api
       - investor-profiles-api
+      - mortgages-api
     networks:
       - zimba-rei-common-components
 
@@ -30,6 +31,13 @@ services:
     build: investor_profiles_api
     volumes:
       - ./investor_profiles_api:/app
+    networks:
+      - zimba-rei-common-components
+
+  mortgages-api:
+    build: mortgages_api
+    volumes:
+      - ./mortgages_api:/app
     networks:
       - zimba-rei-common-components
 
