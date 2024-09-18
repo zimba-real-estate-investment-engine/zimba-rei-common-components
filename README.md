@@ -1,5 +1,20 @@
 # Zimba Real Estate Engine Common Components
-This repo will contain common components whose modules will be referenced by other repositories
+This repo will contain common components whose modules will be referenced by other repositories. In addition API endpoints are also going to be included in this repo.
+
+## FastAPI and Containerization
+Below are the current API endpoints that are currently available in this repo.
+* deals-api
+* investor-profiles-api
+* listings-api
+* mortgages-api
+* underwriters-api
+
+The development environment is containerized using docker-compose. The following commands can be run to start up the containers the development
+environment.
+```bash 
+docker-compose up --build --force-recreate
+```
+#### TBD: CI/CD is yet to be done.
 
 ## Repository Structure with Multiple Modules
 Typical structure

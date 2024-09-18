@@ -6,7 +6,7 @@ from datetime import datetime
 
 class InvestorProfile(BaseModel):
     id: str
-    price: float
+    price: int
     first_name: str
     last_name: str
     email: EmailStr
