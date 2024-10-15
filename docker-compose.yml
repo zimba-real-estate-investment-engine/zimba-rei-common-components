@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - deals-api
+      - listings-api
+      - investor-profiles-api
+      - mortgages-api
+      - underwritings-api
+    networks:
+      - zimba-rei-common-components
+
+  deals-api:
+    build: deals_api
+    volumes:
+      - ./deals_api:/app
+    networks:
+      - zimba-rei-common-components
+
+  listings-api:
+    build: listings_api
+    volumes:
+      - ./listings_api:/app
+    networks:
+      - zimba-rei-common-components
+
+  investor-profiles-api:
+    build: investor_profiles_api
+    volumes:
+      - ./investor_profiles_api:/app
+    networks:
+      - zimba-rei-common-components
+
+  mortgages-api:
+    build: mortgages_api
+    volumes:
+      - ./mortgages_api:/app
+    networks:
+      - zimba-rei-common-components
+
+  underwritings-api:
+    build: underwritings_api
+    volumes:
+      - ./underwritings_api:/app
+    networks:
+      - zimba-rei-common-components
+
+networks:
+  zimba-rei-common-components:
+      driver: bridge
