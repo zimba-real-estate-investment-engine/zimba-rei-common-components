@@ -25,5 +25,10 @@ def test_mortgage_object(get_test_mortgage_object):
 
 
 def test_underwriting_object(get_test_underwriting_object):
-    assert get_test_underwriting_object.underwriting_date;
-    assert get_test_underwriting_object.approval_status;
+    assert get_test_underwriting_object.underwriting_date
+    assert get_test_underwriting_object.approval_status
+
+
+def test_subscription_object(get_test_subscription_object):
+    assert get_test_subscription_object.email
+    assert get_test_subscription_object.form_id
