@@ -7,6 +7,7 @@ from rei_models import Deal
 from rei_models import InvestorProfile
 from rei_models import Underwriting
 from rei_models import Mortgage
+from rei_models import Subscription
 
 import pytest
 
@@ -86,6 +87,20 @@ def get_test_mortgage_object() -> Mortgage:
     )
     return mortgage
 
+@pytest.fixture
+def get_test_subscription_object() -> Subscription:
+    current_time_string = __get_time_string()
+    issued_date = datetime.now()
+    user_email = current_time_string + '@example.com'
+    user_name = current_time_string + '_firstname'
+    user_unsubscribe_token = current_time_string + '_token'
+
+    subscription = Subscription(
+        id=current_time_string, email=user_email, name=user_name,  service_subscribed_to='get_on_shortlist',
+        source_url='index.html' ,form_id='subscribe_to_shortlist', subscribed=True, unsubscribed_date=issued_date,
+        unsubscribe_token=user_unsubscribe_token
+    )
+    return subscription
 
 def __get_time_string() -> str:
     current_time = datetime.now(timezone.utc)
