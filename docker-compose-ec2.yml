@@ -2,7 +2,9 @@ version: '3.8'
 
 services:
   nginx:
-    build: ./nginx
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components_nginx
+    environment:
+      - LISTEN_PORT=0.0.0.0:8080 # Force IPV4 only
     ports:
       - "8080:80"
     depends_on:
@@ -17,7 +19,7 @@ services:
     restart: always
 
   deals-api:
-    build: deals_api
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components_deals-api
     volumes:
       - ./deals_api:/app
     networks:
@@ -25,7 +27,7 @@ services:
     restart: always
 
   listings-api:
-    build: listings_api
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components_listings-api
     volumes:
       - ./listings_api:/app
     networks:
@@ -33,7 +35,7 @@ services:
     restart: always
 
   investor-profiles-api:
-    build: investor_profiles_api
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components_investor-profiles-api
     volumes:
       - ./investor_profiles_api:/app
     networks:
@@ -41,7 +43,7 @@ services:
     restart: always
 
   mortgages-api:
-    build: mortgages_api
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components_mortgages-api
     volumes:
       - ./mortgages_api:/app
     networks:
@@ -49,7 +51,7 @@ services:
     restart: always
 
   subscriptions-api:
-    build: subscriptions_api
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components_subscriptions-api
     volumes:
       - ./subscriptions_api:/app
     networks:
@@ -57,7 +59,7 @@ services:
     restart: always
 
   underwritings-api:
-    build: underwritings_api
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components_underwritings-api
     volumes:
       - ./underwritings_api:/app
     networks:
