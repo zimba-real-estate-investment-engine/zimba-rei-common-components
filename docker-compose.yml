@@ -4,13 +4,14 @@ services:
   nginx:
     build: ./nginx
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
       - deals-api
       - listings-api
       - investor-profiles-api
       - mortgages-api
       - underwritings-api
+      - subscriptions-api
     networks:
       - zimba-rei-common-components
 
@@ -39,6 +40,13 @@ services:
     build: mortgages_api
     volumes:
       - ./mortgages_api:/app
+    networks:
+      - zimba-rei-common-components
+
+  subscriptions-api:
+    build: subscriptions_api
+    volumes:
+      - ./subscriptions_api:/app
     networks:
       - zimba-rei-common-components
 
