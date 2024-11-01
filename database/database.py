@@ -1,36 +1,54 @@
-# database.py
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.engine import Engine
-from typing import Generator
-from config import Utils
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+import os
+from urllib.parse import quote_plus
 
-# Create database engine
-DATABASE_URL: str = Utils.DATABASE_URL
-engine: Engine = create_engine(
+# Database configuration
+DB_USER = os.getenv('DB_USER', 'rei_app_rds_user')
+DB_PASSWORD = os.getenv('DB_PASSWORD', 'thepassword')  # Consider moving this to environment variable
+DB_HOST = os.getenv('DB_HOST', 'zimba-rei-micro.cz2qemaeifj0.us-east-2.rds.amazonaws.com')
+DB_PORT = os.getenv('DB_PORT', '3306')
+DB_NAME = os.getenv('DB_NAME', 'zimba_rei_micro')
+
+# Create the SQLAlchemy database URL
+# We use quote_plus to properly encode the password
+DATABASE_URL = f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+# Create the SQLAlchemy engine
+engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,  # Enables automatic reconnection
-    pool_recycle=3600,   # Recycle connections after 1 hour
-    echo=False           # Set to True for SQL query logging
+    pool_size=5,         # Maximum number of connections to keep persistently
+    max_overflow=10      # Maximum number of connections that can be created beyond pool_size
 )
 
-# Create sessionmaker
-SessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine
-)
+# SessionLocal class will be used to create database sessions
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Base class for declarative models
+Base = declarative_base()
 
 # Dependency to get DB session
-def get_db() -> Generator[Session, None, None]:
-    """
-    Create a new database session and ensure it is closed after use.
-    
-    Yields:
-        Session: SQLAlchemy database session
-    """
+def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+# Test the connection
+def test_connection():
+    try:
+        db = SessionLocal()
+        db.execute("SELECT 1")
+        print("Successfully connected to the database!")
+        return True
+    except Exception as e:
+        print(f"Error connecting to the database: {e}")
+        return False
+    finally:
+        db.close()
+
+if __name__ == "__main__":
+    test_connection()
