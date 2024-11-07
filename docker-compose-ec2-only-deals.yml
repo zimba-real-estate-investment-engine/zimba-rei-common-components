@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+
+  deals-api:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components_deals-api
+    ports:
+      - "8080:8000"
+    volumes:
+      - ./deals_api:/app
+    networks:
+      - zimba-rei-common-components
+    
+networks:
+  zimba-rei-common-components:
+      driver: bridge
