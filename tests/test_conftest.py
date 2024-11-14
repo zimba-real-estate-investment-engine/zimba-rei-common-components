@@ -1,5 +1,24 @@
-# # from tests.conftest import get_current_time_in_seconds_string
-#
+import os
+
+from dotenv import load_dotenv
+from sqlalchemy import select
+from sqlalchemy.engine.cursor import CursorResult
+
+
+def test_get_test_db(get_test_db):
+    db = get_test_db
+    load_dotenv()
+    test_db_name = os.getenv('DB_TEST_NAME')
+
+    # Make sure the db connection is targeting the test database.
+    assert test_db_name in db.bind.url
+
+    # Make sure we can execute some test sQL
+    result = db.execute(select(1))
+    assert result.rowcount > 0
+    assert isinstance(result, CursorResult)
+    assert not result.closed
+
 
 
 def test_get_test_listing_schema(get_test_listing_schema):

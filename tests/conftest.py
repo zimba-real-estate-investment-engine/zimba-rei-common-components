@@ -1,9 +1,40 @@
+import os
+
+from dotenv import load_dotenv
 from datetime import datetime, timezone
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from time import timezone
+from urllib.parse import quote_plus
 
 import pytest
-#
-# from tests.fixtures import domain_conftest
+
+
+@pytest.fixture
+def get_test_db():
+    load_dotenv()
+    DB_USER = os.getenv('DB_USER')
+    DB_PASSWORD = os.getenv('DB_PASSWORD')
+    DB_HOST = os.getenv('DB_HOST')
+    DB_PORT = os.getenv('DB_PORT')
+    DB_NAME = os.getenv('DB_TEST_NAME')
+    DATABASE_URL = f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+    db = None
+
+    try:
+        engine = create_engine(
+            DATABASE_URL,
+            pool_pre_ping=True,  # Enables automatic reconnection
+            pool_size=5,  # Maximum number of connections to keep persistently
+            max_overflow=10  # Maximum number of connections that can be created beyond pool_size
+        )
+
+        TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+        db = TestSessionLocal()
+        yield db
+    finally:
+        db.close()
 
 
 @pytest.fixture

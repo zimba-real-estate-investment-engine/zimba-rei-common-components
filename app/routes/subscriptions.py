@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from app.schemas.ListingSchema import ListingSchema
+from app.schemas.SubscriptionSchema import SubscriptionSchema
 
 # from app.domain.user import UserCreate, UserRead
 # from app.crud.user import create_user, get_user
@@ -9,9 +9,9 @@ from app.schemas.ListingSchema import ListingSchema
 router = APIRouter()
 
 
-@router.post("/listings", response_model=ListingSchema)
-def create_listing_route(listing: ListingSchema, db: Session = Depends(get_db)):
-    return create_user(db=db, user=user)
+@router.post("/subscriptions", response_model=SubscriptionSchema)
+def create_listing_route(subscription: SubscriptionSchema, db: Session = Depends(get_db)):
+    return create_subscription(db=db, user=user)
 
 
 @router.get("/listings/{listing_id}", response_model=ListingSchema)
