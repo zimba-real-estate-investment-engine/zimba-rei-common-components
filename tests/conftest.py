@@ -1,13 +1,28 @@
+from datetime import datetime, timezone
+from time import timezone
+
+import pytest
+#
+# from tests.fixtures import domain_conftest
+
+
+@pytest.fixture
+def get_current_time_in_seconds_str() -> str:
+    current_time = datetime.now(timezone.utc)
+    mills = int(current_time.timestamp())
+    return str(mills)
+
+
 from datetime import datetime, timezone, timedelta
 
 from dateutil.relativedelta import relativedelta
 
-from rei_models import Listing
-from rei_models import Deal
-from rei_models import InvestorProfile
-from rei_models import Underwriting
-from rei_models import Mortgage
-from rei_models import Subscription
+from app.schemas.ListingSchema import ListingSchema
+from app.schemas.DealSchema import DealSchema
+from app.schemas.InvestorProfileSchema import InvestorProfileSchema
+from app.schemas.UnderwritingSchema import UnderwritingSchema
+from app.schemas.MortgageSchema import MortgageSchema
+from app.schemas.SubscriptionSchema import SubscriptionSchema
 
 import pytest
 
@@ -18,22 +33,22 @@ def get_current_time_in_seconds_string() -> str:
 
 
 @pytest.fixture
-def get_test_listing_object() -> Listing:
+def get_test_listing_schema() -> ListingSchema:
     current_time_string = __get_time_string()
-    listing = Listing(id=current_time_string, price=300000, email="email@example.com",
-                      year_built=datetime(2000, 1, 1), baths=3,
-                      listing_date=datetime(2024, 4, 1),
-                      square_feet=2500)
-    return listing
+    listing_schema = ListingSchema(id=current_time_string, price=300000, email="email@example.com",
+                                   year_built=datetime(2000, 1, 1), baths=3,
+                                   listing_date=datetime(2024, 4, 1),
+                                   square_feet=2500)
+    return listing_schema
 
 
 @pytest.fixture
-def get_test_investor_profile_object() -> InvestorProfile:
+def get_test_investor_profile_schema() -> InvestorProfileSchema:
     current_time_string = __get_time_string()
     f_name = "fname" + current_time_string
     l_name = "lname" + current_time_string
 
-    investor_profile = InvestorProfile(
+    investor_profile_schema = InvestorProfileSchema(
         id=current_time_string, price=300000, first_name=f_name, last_name=l_name,
         email="email@example.com", title="Ms.", phone="1-888-454-1234",
         preferred_property_type="rental", preferred_locations=["SE", "NE"],
@@ -42,65 +57,69 @@ def get_test_investor_profile_object() -> InvestorProfile:
         assigned_parking_required=True, central_heat_required=True, dishwasher_required=True,
         balcony_required=True
     )
-    return investor_profile
+    return investor_profile_schema
 
 
 @pytest.fixture
-def get_test_deal_object() -> Deal:
+def get_test_deal_schema() -> DealSchema:
     current_time_string = __get_time_string()
     deal_date = datetime.now()
     closing_date = datetime.now() + relativedelta(months=3)
     underwriting_date = datetime.now() + relativedelta(months=2)
 
-    deal = Deal(
+    deal_schema = DealSchema(
         id=current_time_string, listing_id=current_time_string, investor_id=current_time_string,
-        deal_date=deal_date , deal_status="open", offer_price=300000, sale_price=350000,
+        deal_date=deal_date, deal_status="open", offer_price=300000, sale_price=350000,
         closing_date=closing_date, underwriting_id=current_time_string,
         appraisal_value=320000, loan_amount=240000, loan_to_value=0.8,
         underwriting_date=underwriting_date, approval_status="approved", risk_assessment="low", thumbnail="example.com",
     )
-    return deal
+    return deal_schema
+
 
 @pytest.fixture
-def get_test_underwriting_object() -> Underwriting:
+def get_test_underwriting_schema() -> UnderwritingSchema:
     current_time_string = __get_time_string()
     underwriting_date = datetime.now() + relativedelta(months=2)
 
-    underwriting = Underwriting(
+    underwriting_schema = UnderwritingSchema(
         underwriting_id=current_time_string, appraisal_value=320000, loan_amount=240000,
         loan_to_value=0.8, interest_rate=5, underwriting_date=underwriting_date,
         approval_status="approved", risk_assessment="low",
     )
 
-    return underwriting
+    return underwriting_schema
+
 
 @pytest.fixture
-def get_test_mortgage_object() -> Mortgage:
+def get_test_mortgage_schema() -> MortgageSchema:
     current_time_string = __get_time_string()
     issued_date = datetime.now()
 
-    mortgage = Mortgage(
+    mortgage_schema = MortgageSchema(
         id=current_time_string, appraisal_value=300000.00, principal=240000.03, issued_date=issued_date,
         pre_qualifid=True, pre_approved=True, loan_to_value=80.0, interest_rate=3.75,
         term=timedelta(days=3 * 365), amortization_period=timedelta(days=30 * 365), monthly_payment=3565.25,
         owner_occupied=True, insurance=3500.75,
     )
-    return mortgage
+    return mortgage_schema
+
 
 @pytest.fixture
-def get_test_subscription_object() -> Subscription:
+def get_test_subscription_schema() -> SubscriptionSchema:
     current_time_string = __get_time_string()
     issued_date = datetime.now()
     user_email = current_time_string + '@example.com'
     user_name = current_time_string + '_firstname'
     user_unsubscribe_token = current_time_string + '_token'
 
-    subscription = Subscription(
-        id=current_time_string, email=user_email, name=user_name,  service_subscribed_to='get_on_shortlist',
-        source_url='index.html' ,form_id='subscribe_to_shortlist', subscribed=True, unsubscribed_date=issued_date,
+    subscription_schema = SubscriptionSchema(
+        id=current_time_string, email=user_email, name=user_name, service_subscribed_to='get_on_shortlist',
+        source_url='index.html', form_id='subscribe_to_shortlist', subscribed=True, unsubscribed_date=issued_date,
         unsubscribe_token=user_unsubscribe_token
     )
-    return subscription
+    return subscription_schema
+
 
 def __get_time_string() -> str:
     current_time = datetime.now(timezone.utc)
