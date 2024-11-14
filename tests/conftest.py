@@ -1,40 +1,27 @@
 import os
 
 from dotenv import load_dotenv
-from datetime import datetime, timezone
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from time import timezone
 from urllib.parse import quote_plus
 
+from app.models.SubscriptionModel import SubscriptionModel
+
 import pytest
 
+engine = None
 
 @pytest.fixture
 def get_test_db():
-    load_dotenv()
-    DB_USER = os.getenv('DB_USER')
-    DB_PASSWORD = os.getenv('DB_PASSWORD')
-    DB_HOST = os.getenv('DB_HOST')
-    DB_PORT = os.getenv('DB_PORT')
-    DB_NAME = os.getenv('DB_TEST_NAME')
-    DATABASE_URL = f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    yield __test_db()
 
-    db = None
 
-    try:
-        engine = create_engine(
-            DATABASE_URL,
-            pool_pre_ping=True,  # Enables automatic reconnection
-            pool_size=5,  # Maximum number of connections to keep persistently
-            max_overflow=10  # Maximum number of connections that can be created beyond pool_size
-        )
-
-        TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-        db = TestSessionLocal()
-        yield db
-    finally:
-        db.close()
+# @pytest.fixture
+# def get_test_repository() -> Repository:
+#     db = __test_db()
+#     sqlalchemy_repository = SQLAlchemyRepository(db)
+#     yield sqlalchemy_repository
 
 
 @pytest.fixture
@@ -156,3 +143,46 @@ def __get_time_string() -> str:
     current_time = datetime.now(timezone.utc)
     mills = int(current_time.timestamp())
     return str(mills)
+
+
+def __test_db():
+    load_dotenv()
+    DB_USER = os.getenv('DB_USER')
+    DB_PASSWORD = os.getenv('DB_PASSWORD')
+    DB_HOST = os.getenv('DB_HOST')
+    DB_PORT = os.getenv('DB_PORT')
+    DB_NAME = os.getenv('DB_TEST_NAME')
+    DATABASE_URL = f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+    db = None
+
+    try:
+        engine = create_engine(
+            DATABASE_URL,
+            pool_pre_ping=True,  # Enables automatic reconnection
+            pool_size=5,  # Maximum number of connections to keep persistently
+            max_overflow=10,  # Maximum number of connections that can be created beyond pool_size
+            echo=True,
+        )
+
+        TestSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+        db = TestSessionLocal()
+        return db
+    finally:
+        db.close()
+
+
+@pytest.fixture
+def get_test_subscription_model() -> SubscriptionModel:
+    current_time_string = __get_time_string()
+    issued_date = datetime.now()
+    user_email = current_time_string + '@example.com'
+    user_name = current_time_string + '_firstname'
+    user_unsubscribe_token = current_time_string + '_token'
+
+    subscription_model = SubscriptionModel(
+        id=current_time_string, email=user_email, name=user_name, service_subscribed_to='get_on_shortlist',
+        source_url='index.html', form_id='subscribe_to_shortlist', subscribed=True, unsubscribed_date=issued_date,
+        unsubscribe_token=user_unsubscribe_token
+    )
+    return subscription_model

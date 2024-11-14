@@ -1,12 +1,12 @@
-
 from sqlalchemy import Boolean, Column, String, TIMESTAMP, text
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+
 class SubscriptionModel(Base):
     __tablename__ = 'subscription'
-    __table_args__ = {'schema': 'zimba-rei-micro'}
+    # __table_args__ = {'schema': 'zimba-rei-micro'}
 
     id = Column(String(255), primary_key=True, nullable=False)
     email = Column(String(255), nullable=False)
@@ -16,12 +16,12 @@ class SubscriptionModel(Base):
     subscribed = Column(Boolean)
     form_id = Column(String(255))
     unsubscribed_date = Column(
-        TIMESTAMP, 
+        TIMESTAMP,
         server_default=text('CURRENT_TIMESTAMP')
     )
     unsubscribe_token = Column(String(255))
     created_date = Column(
-        TIMESTAMP, 
+        TIMESTAMP,
         server_default=text('CURRENT_TIMESTAMP')
     )
 

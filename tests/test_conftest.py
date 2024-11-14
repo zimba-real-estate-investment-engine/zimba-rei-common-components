@@ -5,6 +5,17 @@ from sqlalchemy import select
 from sqlalchemy.engine.cursor import CursorResult
 
 
+# def test_get_test_repository(get_test_repository):
+#
+#     repo = get_test_repository
+#     # Make sure the repo has all CRUD methods
+#     expected_methods = ['add', 'get', 'update', 'delete', 'get_all']
+#
+#     class_methods = [m for m in dir(repo) if callable(getattr(repo, m)) and not m.startswith('_')]
+#     missing_methods = set(expected_methods) - set(class_methods)
+#     assert not missing_methods, f"The class is missing the following methods: {', '.join(missing_methods)}"
+
+
 def test_get_test_db(get_test_db):
     db = get_test_db
     load_dotenv()
@@ -18,7 +29,6 @@ def test_get_test_db(get_test_db):
     assert result.rowcount > 0
     assert isinstance(result, CursorResult)
     assert not result.closed
-
 
 
 def test_get_test_listing_schema(get_test_listing_schema):
