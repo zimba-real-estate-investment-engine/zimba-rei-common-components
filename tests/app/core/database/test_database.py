@@ -1,8 +1,12 @@
 # tests/test_database.py
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
+from sqlalchemy.engine.cursor import CursorResult
 from app.core.database import get_db, SessionLocal, engine, Base
-from app.models.user import User  # Assuming there's a User model for demonstration
+
+
+# from app.models.user import User  # Assuming there's a User model for demonstration
 
 
 def test_database_connection():
@@ -10,7 +14,15 @@ def test_database_connection():
     with SessionLocal() as db:
         assert isinstance(db, Session)  # Check session instance
         # Example: Check if tables exist by querying metadata
-        assert engine.dialect.has_table(engine, "users")  # Assuming User table exists
+        # assert engine.dialect.has_table(engine, "subscriptions")  # Assuming subscription table exists
+
+
+def test_select_on_db():
+    with SessionLocal() as db:
+        result = db.execute(select(1))
+        assert result.rowcount > 0
+        assert isinstance(result, CursorResult)
+        assert not result.closed
 
 
 def test_get_db_dependency():

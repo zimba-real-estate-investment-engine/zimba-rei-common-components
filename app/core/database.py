@@ -1,19 +1,23 @@
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 from urllib.parse import quote_plus
 
+load_dotenv()
+
 # Database configuration
-DB_USER = os.getenv('DB_USER', 'rei_app_rds_user')
-DB_PASSWORD = os.getenv('DB_PASSWORD', 'thepassword')  # Consider moving this to environment variable
-DB_HOST = os.getenv('DB_HOST', 'zimba-rei-micro.cz2qemaeifj0.us-east-2.rds.amazonaws.com')
-DB_PORT = os.getenv('DB_PORT', '3306')
-DB_NAME = os.getenv('DB_NAME', 'zimba_rei_micro')
+DB_USER = os.getenv('DB_USER')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_HOST = os.getenv('DB_HOST')
+DB_PORT = os.getenv('DB_PORT')
+DB_NAME = os.getenv('DB_NAME')
 
 # Create the SQLAlchemy database URL
 # We use quote_plus to properly encode the password
 DATABASE_URL = f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
 
 # Create the SQLAlchemy engine
 engine = create_engine(
@@ -39,19 +43,3 @@ def get_db():
         db.close()
 
 
-# Test the connection
-def test_connection():
-    try:
-        db = SessionLocal()
-        db.execute("SELECT 1")
-        print("Successfully connected to the database!")
-        return True
-    except Exception as e:
-        print(f"Error connecting to the database: {e}")
-        return False
-    finally:
-        db.close()
-
-
-if __name__ == "__main__":
-    test_connection()
