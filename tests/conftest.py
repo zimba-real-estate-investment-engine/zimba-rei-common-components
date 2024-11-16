@@ -5,12 +5,15 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from time import timezone
 from urllib.parse import quote_plus
+from fastapi.testclient import TestClient
+from app.main import app, get_db
 
 from app.models.SubscriptionModel import SubscriptionModel
 
 import pytest
 
 engine = None
+
 
 @pytest.fixture
 def get_test_db():
@@ -186,3 +189,10 @@ def get_test_subscription_model() -> SubscriptionModel:
         unsubscribe_token=user_unsubscribe_token
     )
     return subscription_model
+
+
+@pytest.fixture
+def test_fastapi_client():
+    app.dependency_overrides[get_db] = __test_db # Make sure we use test database
+    client = TestClient(app)
+    yield client

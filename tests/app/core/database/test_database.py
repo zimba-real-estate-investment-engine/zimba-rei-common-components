@@ -6,9 +6,6 @@ from sqlalchemy.engine.cursor import CursorResult
 from app.core.database import get_db, SessionLocal, engine, Base
 
 
-# from app.models.user import User  # Assuming there's a User model for demonstration
-
-
 def test_database_connection():
     # Test that we can create a session and query the database
     with SessionLocal() as db:
