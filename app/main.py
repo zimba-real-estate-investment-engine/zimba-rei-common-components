@@ -63,6 +63,11 @@ async def root():
     return {"message": "REI API Server"}
 
 
+@app.get("/health")
+async def root():
+    return {"message": "REI API Server", "status": "healthy"}
+
+
 @app.post("/subscriptions/", response_model=SubscriptionSchema)
 async def create_subscription(subscription: SubscriptionSchema, db: Session = Depends(get_db)):
     subscription_service = SubscriptionService(db)
