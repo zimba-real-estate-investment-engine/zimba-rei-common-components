@@ -1,3 +1,5 @@
+import time
+
 from app.models.SubscriptionModel import SubscriptionModel
 from app.repositories.BaseRepository import BaseRepository
 from app.schemas.SubscriptionSchema import SubscriptionSchema
@@ -21,7 +23,9 @@ def test_create_subscription(get_test_subscription_schema, test_fastapi_client, 
     test_db.commit()
 
 
-def test_get_subscriptions(test_fastapi_client):
+def test_get_subscriptions(test_fastapi_client, request):
+
     client = test_fastapi_client
     response = client.get("/subscriptions/")
     assert response.status_code == 200
+

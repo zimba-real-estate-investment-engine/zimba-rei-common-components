@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import List
 
 from fastapi import FastAPI, HTTPException, Depends
 from app.core import database
@@ -25,21 +26,13 @@ async def create_subscription(subscription: SubscriptionSchema, db: Session = De
     return newly_saved_subscription
 
 
-@app.get("/subscriptions/")
+@app.get("/subscriptions/", response_model=List[SubscriptionSchema])
 async def get_subscriptions(db: Session = Depends(get_db)):
-    current_time_string = str(datetime.now(timezone.utc).time())
-    issued_date = datetime.now()
-    user_email = current_time_string + '@example.com'
-    user_name = current_time_string + '_firstname'
-    user_unsubscribe_token = current_time_string + '_token'
 
-    subscription_schema = SubscriptionSchema(
-        id=current_time_string, email=user_email, name=user_name, service_subscribed_to='get_on_shortlist',
-        source_url='index.html', form_id='subscribe_to_shortlist', subscribed=True, unsubscribed_date=issued_date,
-        unsubscribe_token=user_unsubscribe_token
-    )
-
-    return subscription_schema.model_dump_json()
+    subscription_service = SubscriptionService(db)
+    subscription_schema_list = subscription_service.get_all()
+    subscription_json_list = list(map(lambda x: x.model_dump(), subscription_schema_list))
+    return subscription_json_list
 
 # Include the routes if external
 # app.include_router(users.router, prefix="/users", tags=["Users"])

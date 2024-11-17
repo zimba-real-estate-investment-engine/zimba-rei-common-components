@@ -1,3 +1,5 @@
+from typing import List
+
 from sqlalchemy.orm import Session
 # from app.models.user import User
 # from app.schemas.user import UserCreate, UserRead
@@ -13,6 +15,7 @@ from app.schemas.SubscriptionSchema import SubscriptionSchema
 class SubscriptionService:
     def __init__(self, db: Session):
         self.db = db
+        self.repo = BaseRepository[SubscriptionModel](self.db, SubscriptionModel)
 
     def save_subscription(self, subscription_data: SubscriptionSchema) -> SubscriptionSchema:
         #TODO  Check if a user with the same email already exists
@@ -24,12 +27,16 @@ class SubscriptionService:
         #     )
         subscription_model = SubscriptionModel(**subscription_data.model_dump())
 
-        repo = BaseRepository[SubscriptionModel](self.db, SubscriptionModel)
-        new_subscription_model = repo.add(subscription_model)
-        new_subscription_schema = repo.sqlalchemy_to_pydantic(new_subscription_model, SubscriptionSchema)
+        new_subscription_model = self.repo.add(subscription_model)
+        new_subscription_schema = self.repo.sqlalchemy_to_pydantic(new_subscription_model, SubscriptionSchema)
 
         self.db.commit()
 
         return new_subscription_schema  # Convert to response schema
 
+    def get_all(self) -> List[SubscriptionSchema]:
+        subscription_model_list = self.repo.get_all()
 
+        subscription_schema_list = \
+            [self.repo.sqlalchemy_to_pydantic(x, SubscriptionSchema) for x in subscription_model_list]
+        return subscription_schema_list
