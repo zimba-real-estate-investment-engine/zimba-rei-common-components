@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, String, TIMESTAMP, text
+from sqlalchemy import Boolean, Column, String, TIMESTAMP, text, Integer
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -8,7 +8,7 @@ class SubscriptionModel(Base):
     __tablename__ = 'subscription'
     # __table_args__ = {'schema': 'zimba-rei-micro'}
 
-    id = Column(String(255), primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False)
     email = Column(String(255), nullable=False)
     name = Column(String(255))
     service_subscribed_to = Column(String(255))

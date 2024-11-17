@@ -5,13 +5,13 @@ from datetime import datetime
 
 
 class SubscriptionSchema(BaseModel):
-    id: str
+    id: Optional[int] = None
     email: str
     name: str
     service_subscribed_to: str
     source_url: str
     form_id: str
     subscribed: bool
-    unsubscribed_date:Optional[datetime]
+    unsubscribed_date: Optional[datetime]
     unsubscribe_token: str
     #TODO more to be added from data dictionary as necessary

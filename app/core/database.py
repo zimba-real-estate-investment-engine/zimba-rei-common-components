@@ -1,7 +1,9 @@
+from typing import Generator
+
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 import os
 from urllib.parse import quote_plus
 
@@ -27,6 +29,7 @@ engine = create_engine(
     max_overflow=10  # Maximum number of connections that can be created beyond pool_size
 )
 
+
 # SessionLocal class will be used to create database sessions
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
@@ -35,7 +38,7 @@ Base = declarative_base()
 
 
 # Dependency to get DB session
-def get_db():
+def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()
     try:
         yield db
@@ -43,3 +46,9 @@ def get_db():
         db.close()
 
 
+# def get_db() -> Generator[Session, None, None]:
+#     async def db_wrapper():
+#         async with engine.begin() as conn:
+#             yield Session(bind=conn)
+#
+#     return db_wrapper

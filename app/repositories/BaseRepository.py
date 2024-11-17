@@ -83,16 +83,16 @@ class BaseRepository(Generic[T]):
         return pydantic_model(**data)
 
 
-@contextmanager
-def unit_of_work(session_factory):
-    """Context manager for handling database transactions."""
-    session = session_factory()
-    try:
-        yield session
-        session.commit()
-    except Exception:
-        session.rollback()
-        raise
-    finally:
-        session.close()
+# @contextmanager
+# def unit_of_work(session_factory):
+#     """Context manager for handling database transactions."""
+#     session = session_factory()
+#     try:
+#         yield session
+#         session.commit()
+#     except Exception:
+#         session.rollback()
+#         raise
+#     finally:
+#         session.close()
 
