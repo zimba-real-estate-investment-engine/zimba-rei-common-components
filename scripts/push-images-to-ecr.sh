@@ -7,13 +7,13 @@ REPO_NAME="rei-engine-ecr-repo"
 
 # List of images to build and push
 IMAGES=(
-  "zimba-rei-common-components_deals-api"
-  "zimba-rei-common-components_investor-profiles-api"
-  "zimba-rei-common-components_listings-api"
-  "zimba-rei-common-components_mortgages-api"
-  "zimba-rei-common-components_nginx"
-  "zimba-rei-common-components_subscriptions-api"
-  "zimba-rei-common-components_underwritings-api"
+#  "zimba-rei-common-components_deals-api"
+#  "zimba-rei-common-components_investor-profiles-api"
+#  "zimba-rei-common-components_listings-api"
+#  "zimba-rei-common-components_mortgages-api"
+#  "zimba-rei-common-components_nginx"
+#  "zimba-rei-common-components_subscriptions-api"
+  "zimba-rei-common-components_underwriting"
 )
 
 TAG="latest"  # Change the tag as needed, or set dynamically
