@@ -1,7 +1,9 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel, EmailStr, validator
 from datetime import datetime
+
+from app.schemas.MortgageSchema import MortgageSchema
 
 
 class InvestorProfileSchema(BaseModel):
@@ -27,3 +29,4 @@ class InvestorProfileSchema(BaseModel):
     central_heat_required: bool
     dishwasher_required: bool
     balcony_required: bool
+    mortgage: Optional[MortgageSchema] = None

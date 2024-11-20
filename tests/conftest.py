@@ -137,12 +137,11 @@ def get_test_subscription_schema() -> SubscriptionSchema:
     user_unsubscribe_token = current_time_string + '_token'
 
     subscription_schema = SubscriptionSchema(
-        id=current_time_string, email=user_email, name=user_name, service_subscribed_to='get_on_shortlist',
+        id=int(current_time_string), email=user_email, name=user_name, service_subscribed_to='get_on_shortlist',
         source_url='index.html', form_id='subscribe_to_shortlist', subscribed=True, unsubscribed_date=issued_date,
         unsubscribe_token=user_unsubscribe_token
     )
     return subscription_schema
-
 
 
 def __get_time_string() -> str:
@@ -196,6 +195,6 @@ def get_test_subscription_model() -> SubscriptionModel:
 
 @pytest.fixture
 def test_fastapi_client():
-    app.dependency_overrides[get_db] = __test_db # Make sure we use test database
+    app.dependency_overrides[get_db] = __test_db  # Make sure we use test database
     client = TestClient(app)
     yield client

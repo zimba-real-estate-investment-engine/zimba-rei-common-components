@@ -13,5 +13,5 @@ class SubscriptionSchema(BaseModel):
     form_id: str
     subscribed: bool
     unsubscribed_date: Optional[datetime]
-    unsubscribe_token: str
+    unsubscribe_token: Optional[str] = None
     #TODO more to be added from data dictionary as necessary
