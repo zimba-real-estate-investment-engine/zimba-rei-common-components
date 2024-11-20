@@ -14,6 +14,10 @@ from app.models.SubscriptionModel import SubscriptionModel
 
 import pytest
 
+from app.schemas.AddressSchema import AddressSchema
+from app.schemas.ExpenseSchema import ExpenseSchema
+from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
+
 engine = None
 
 
@@ -127,6 +131,47 @@ def get_test_mortgage_schema() -> MortgageSchema:
     )
     return mortgage_schema
 
+
+@pytest.fixture
+def get_test_address_schema() -> AddressSchema:
+    current_time_string = __get_time_string()
+    issued_date = datetime.now()
+    street_address = current_time_string + '_street_address'
+    street_address_two = current_time_string + '_street_address_two'
+    city = current_time_string + '_city'
+    postal_code = current_time_string + '_postal_code'
+    country = current_time_string + '_country'
+    long_lat_location = current_time_string + '_long_lat_location'
+
+    address_schema = AddressSchema(
+        id=int(current_time_string), street_address=street_address, street_address_two=street_address_two,
+        city=city, postal_code=postal_code, country=country, long_lat_location=long_lat_location,
+    )
+
+    return address_schema
+
+
+@pytest.fixture
+def get_test_expense_schema() -> ExpenseSchema:
+    current_time_string = __get_time_string()
+    expense_type = current_time_string + '_expense_type'
+
+    expense_schema = ExpenseSchema(
+        id=int(current_time_string), expense_type=expense_type, monthly_cost=3343.23,
+    )
+
+    return expense_schema
+
+@pytest.fixture
+def get_test_real_estate_property_schema() -> RealEstatePropertySchema:
+    current_time_string = __get_time_string()
+    expense_type = current_time_string + '_expense_type'
+
+    expense_schema = ExpenseSchema(
+        id=int(current_time_string), expense_type=expense_type, monthly_cost=3343.23,
+    )
+
+    return expense_schema
 
 @pytest.fixture
 def get_test_subscription_schema() -> SubscriptionSchema:

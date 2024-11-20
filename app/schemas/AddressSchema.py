@@ -11,5 +11,5 @@ class AddressSchema(BaseModel):
     city: str
     postal_code: str
     country: str
-    long_lat_location: datetime
+    long_lat_location: str
     #TODO more to be added from data dictionary as necessary
