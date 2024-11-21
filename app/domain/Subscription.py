@@ -1,24 +1,22 @@
 import secrets
 import string
 
-from app.schemas import SubscriptionSchema
+from app.schemas.SubscriptionSchema import SubscriptionSchema
 
 
-class Subscription:
-    """
-        Domain entity contains business logic and inherits from pydantic schema
-    """
+class Subscription(SubscriptionSchema):
+    pass
 
-    @staticmethod
     def generate_unsubscribe_token(self, length=32):
         alphabet = string.ascii_letters + string.digits
-        return ''.join(secrets.choice(alphabet) for _ in range(length))
+        token = ''.join(secrets.choice(alphabet) for _ in range(length))
+        self.unsubscribe_token = token
 
-    def __init__(self, data: SubscriptionSchema):
-        self._data = data
+        return token
 
-    # Delegate Pydantic model attributes, these are returned automatically
-    def __getattr__(self, name: str):
-        return getattr(self._data, name)
+    def unsubscribe(self):
+        if self.unsubscribe_token.strip():
+            raise ValueError("Missing unsubscribe token. Cannot unsubscribe without it")
+
 
 
