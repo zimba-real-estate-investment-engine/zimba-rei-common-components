@@ -6,8 +6,14 @@ from dotenv import load_dotenv
 
 from app.schemas.EmailSchema import EmailSchema
 
-load_dotenv()
-
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler()  # Ensures logs are displayed in the console
+    ]
+)
 
 class EmailService:
     @staticmethod
@@ -23,7 +29,7 @@ class EmailService:
         return ses_client
 
     @staticmethod
-    def send_email(email: EmailSchema):
+    def send_email(email: EmailSchema) -> dict:
 
         try:
             ses_client = EmailService.get_ses_client()
@@ -55,6 +61,10 @@ class EmailService:
                     'Body': message_body
                 }
             )
+            message_id = response['MessageId']
+            if message_id:
+                logging.info(f'Email successfully sent with message id {message_id}')
+
             return response
 
         except Exception as e:
