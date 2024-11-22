@@ -14,6 +14,7 @@ from app.models.SubscriptionModel import SubscriptionModel
 
 import pytest
 
+from app.schemas.EmailSchema import EmailSchema
 from app.schemas.AddressSchema import AddressSchema
 from app.schemas.ExpenseSchema import ExpenseSchema
 from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
@@ -162,6 +163,20 @@ def get_test_expense_schema() -> ExpenseSchema:
 
     return expense_schema
 
+
+@pytest.fixture
+def get_test_email_schema() -> EmailSchema:
+    current_time_string = __get_time_string()
+    expense_type = current_time_string + '_expense_type'
+
+    email_schema = EmailSchema(
+        to_addresses=['rei@zimbasolutions.io'], subject='SES Email Unit Test', sender='rei@zimbasolutions.io',
+        body_text='SES Unit Test Email body',
+    )
+
+    return email_schema
+
+
 @pytest.fixture
 def get_test_real_estate_property_schema() -> RealEstatePropertySchema:
     current_time_string = __get_time_string()
@@ -172,6 +187,7 @@ def get_test_real_estate_property_schema() -> RealEstatePropertySchema:
     )
 
     return expense_schema
+
 
 @pytest.fixture
 def get_test_subscription_schema() -> SubscriptionSchema:
