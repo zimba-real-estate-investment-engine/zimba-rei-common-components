@@ -1,6 +1,7 @@
 import os
 import time
 from typing import List
+from pathlib import Path
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
@@ -259,3 +260,12 @@ def test_fastapi_client():
     app.dependency_overrides[get_db] = __test_db  # Make sure we use test database
     client = TestClient(app)
     yield client
+
+
+@pytest.fixture
+def test_sample_html() -> str:
+    DATA_FILE_PATH = Path(__file__).parent/ "test_data" / "sample_html_text.html"
+
+    with DATA_FILE_PATH.open() as file:
+        html_content = file.read()
+        yield html_content
