@@ -46,10 +46,11 @@ Follow these steps to create new migrations:
 2. **Autogenerate a Migration Script**:
 
     ```bash
-    alembic revision --autogenerate -m "create_subscription_table"
+    alembic revision -m "create_all_10_tables"
     ```
 
-    This command generates a new migration file under the `versions` directory within the `alembic` folder.
+    This command generates a new migration file under the `versions` directory within the `alembic` folder. update the files with the desired alembic models.
+    ## Remeber to save the file after updates to avoid deleting all tables
 
 3. **Review the Migration Script**: Open the generated migration file and verify that the schema changes are accurate.
 
