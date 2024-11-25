@@ -1,6 +1,7 @@
 import os
 import time
 from typing import List
+from pathlib import Path
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
@@ -14,6 +15,7 @@ from app.models.SubscriptionModel import SubscriptionModel
 
 import pytest
 
+from app.schemas.EmailSchema import EmailSchema
 from app.schemas.AddressSchema import AddressSchema
 from app.schemas.ExpenseSchema import ExpenseSchema
 from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
@@ -162,6 +164,20 @@ def get_test_expense_schema() -> ExpenseSchema:
 
     return expense_schema
 
+
+@pytest.fixture
+def get_test_email_schema() -> EmailSchema:
+    current_time_string = __get_time_string()
+    expense_type = current_time_string + '_expense_type'
+
+    email_schema = EmailSchema(
+        to_addresses=['rei@zimbasolutions.io'], subject='SES Email Unit Test', sender='rei@zimbasolutions.io',
+        body_text='SES Unit Test Email body',
+    )
+
+    return email_schema
+
+
 @pytest.fixture
 def get_test_real_estate_property_schema() -> RealEstatePropertySchema:
     current_time_string = __get_time_string()
@@ -172,6 +188,7 @@ def get_test_real_estate_property_schema() -> RealEstatePropertySchema:
     )
 
     return expense_schema
+
 
 @pytest.fixture
 def get_test_subscription_schema() -> SubscriptionSchema:
@@ -243,3 +260,12 @@ def test_fastapi_client():
     app.dependency_overrides[get_db] = __test_db  # Make sure we use test database
     client = TestClient(app)
     yield client
+
+
+@pytest.fixture
+def test_sample_html() -> str:
+    DATA_FILE_PATH = Path(__file__).parent/ "test_data" / "sample_html_text.html"
+
+    with DATA_FILE_PATH.open() as file:
+        html_content = file.read()
+        yield html_content
