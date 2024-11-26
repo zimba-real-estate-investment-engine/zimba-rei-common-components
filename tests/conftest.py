@@ -264,8 +264,17 @@ def test_fastapi_client():
 
 @pytest.fixture
 def test_sample_html() -> str:
-    DATA_FILE_PATH = Path(__file__).parent/ "test_data" / "sample_html_text.html"
+    data_file_path = Path(__file__).parent/ "test_data" / "sample_html_text.html"
 
-    with DATA_FILE_PATH.open() as file:
+    with data_file_path.open() as file:
         html_content = file.read()
         yield html_content
+
+
+@pytest.fixture
+def test_sample_raw_text() -> str:
+    data_file_path = Path(__file__).parent/ "test_data" / "sample_raw_text.txt"
+
+    with data_file_path.open() as file:
+        raw_text = file.read()
+        yield raw_text
