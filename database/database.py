@@ -26,7 +26,7 @@ engine = create_engine(
 # SessionLocal class will be used to create database sessions
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Base class for declarative models
+# Base class for declarative database
 Base = declarative_base()
 
 # Dependency to get DB session

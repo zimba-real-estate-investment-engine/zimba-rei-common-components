@@ -6,7 +6,7 @@ import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends
 from app.core import database
-from app.models.SubscriptionModel import SubscriptionModel
+from app.database.SubscriptionModel import SubscriptionModel
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker

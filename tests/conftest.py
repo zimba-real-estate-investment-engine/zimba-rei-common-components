@@ -10,8 +10,10 @@ from time import timezone
 from urllib.parse import quote_plus
 from fastapi.testclient import TestClient
 from app.main import app, get_db
+from app.database.AddressModel import AddressModel
+from app.database.RealEstatePropertyModel import RealEstatePropertyModel
 
-from app.models.SubscriptionModel import SubscriptionModel
+from app.database.SubscriptionModel import SubscriptionModel
 
 import pytest
 
@@ -179,18 +181,6 @@ def get_test_email_schema() -> EmailSchema:
 
 
 @pytest.fixture
-def get_test_real_estate_property_schema() -> RealEstatePropertySchema:
-    current_time_string = __get_time_string()
-    expense_type = current_time_string + '_expense_type'
-
-    expense_schema = ExpenseSchema(
-        id=int(current_time_string), expense_type=expense_type, monthly_cost=3343.23,
-    )
-
-    return expense_schema
-
-
-@pytest.fixture
 def get_test_subscription_schema() -> SubscriptionSchema:
     current_time_string = __get_time_string()
     issued_date = datetime.now()
@@ -205,6 +195,18 @@ def get_test_subscription_schema() -> SubscriptionSchema:
     )
     return subscription_schema
 
+
+@pytest.fixture
+def get_test_real_state_property_schema_unpopulated() -> RealEstatePropertySchema:
+    real_estate_property_schema = RealEstatePropertySchema()
+    return real_estate_property_schema
+
+
+@pytest.fixture
+def get_test_real_estate_property_model() -> RealEstatePropertyModel:
+    current_time_string = __get_time_string()
+    real_estate_property_model = RealEstatePropertyModel()
+    return real_estate_property_model
 
 def __get_time_string() -> str:
     current_time = datetime.now(timezone.utc)
@@ -254,6 +256,23 @@ def get_test_subscription_model() -> SubscriptionModel:
     )
     return subscription_model
 
+
+@pytest.fixture
+def get_test_address_model() -> AddressModel:
+    current_time_string = __get_time_string()
+    street_address = current_time_string + '_street_address'
+    street_address_two = current_time_string + '_street_address_two'
+    city = current_time_string + '_city'
+    postal_code = current_time_string + '_postal_code'
+    state='ON'
+    country = current_time_string + '_country'
+    long_lat_location = current_time_string + '_long_lat_location'
+
+    address_model = AddressModel(
+        id=int(current_time_string), street_address=street_address, street_address_two=street_address_two,
+        city=city, postal_code=postal_code, state=state, country=country, long_lat_location=long_lat_location,
+    )
+    return address_model
 
 @pytest.fixture
 def test_fastapi_client():
