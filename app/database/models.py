@@ -71,7 +71,6 @@ class ListingModel(Base):
     __tablename__ = 'listing'
 
     id = Column(Integer, primary_key=True, nullable=False)
-    # property_id = Column(String(255), ForeignKey('property.id'))
     email = Column(String(255))
     price = Column(Float)
     beds = Column(Integer)
@@ -85,9 +84,6 @@ class ListingModel(Base):
     basement = Column(String(255))
     square_feet = Column(Float)
     listing_date = Column(TIMESTAMP)
-
-
-    # property = relationship("Property", back_populates="listings")
 
     def __init__(
         self,
@@ -132,9 +128,10 @@ class RealEstatePropertyModel(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     address_id = Column(Integer, ForeignKey('address.id'))
+    listing_id = Column(Integer, ForeignKey('listing.id'))
 
     address = relationship("AddressModel", uselist=False)
-    # listings = relationship("Listing", back_populates="realEstateProperty")
+    listing = relationship("ListingModel", uselist=False)
     expenses = relationship("ExpenseModel", back_populates="real_estate_property")
 
     def __init__(self):
