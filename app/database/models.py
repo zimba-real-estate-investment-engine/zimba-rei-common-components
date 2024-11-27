@@ -135,10 +135,29 @@ class RealEstatePropertyModel(Base):
 
     address = relationship("AddressModel", uselist=False)
     # listings = relationship("Listing", back_populates="realEstateProperty")
-    # expenses = relationship("Expense", back_populates="realEstateProperty")
+    expenses = relationship("ExpenseModel", back_populates="real_estate_property")
 
     def __init__(self):
         pass
 
     def __repr__(self):
         return f"<RealEstateProperty(id={self.id})>"
+
+class ExpenseModel(Base):
+    __tablename__ = 'expense'
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    real_estate_property_id = Column(Integer, ForeignKey('real_estate_property.id'))
+    expense_type = Column(String(255))
+    monthly_cost = Column(Float)
+
+    real_estate_property = relationship("RealEstatePropertyModel", back_populates="expenses")
+
+    def __init__(self, id: int, expense_type: str, monthly_cost: float):
+        self.id = id
+        self.expense_type = expense_type
+        self.monthly_cost = monthly_cost
+
+    def __repr__(self):
+        return f"<Expense(id={self.id}, type={self.expense_type}, monthly_cost=${self.monthly_cost:,.2f})>"
+

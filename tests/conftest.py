@@ -10,7 +10,7 @@ from time import timezone
 from urllib.parse import quote_plus
 from fastapi.testclient import TestClient
 from app.main import app, get_db
-from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel
+from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel
 # from app.database.models import RealEstatePropertyModel
 
 from app.database.models import SubscriptionModel
@@ -182,6 +182,18 @@ def get_test_expense_schema() -> ExpenseSchema:
 
 
 @pytest.fixture
+def get_test_expense_model() -> ExpenseModel:
+    current_time_string = __get_time_string()
+    expense_type = current_time_string + '_expense_type'
+
+    expense_model = ExpenseModel(
+        id=int(current_time_string), expense_type=expense_type, monthly_cost=3343.23,
+    )
+
+    return expense_model
+
+
+@pytest.fixture
 def get_test_email_schema() -> EmailSchema:
     current_time_string = __get_time_string()
     expense_type = current_time_string + '_expense_type'
@@ -244,7 +256,7 @@ def __test_db():
         engine = create_engine(
             DATABASE_URL,
             pool_pre_ping=True,  # Enables automatic reconnection
-            pool_size=5,  # Maximum number of connections to keep persistently
+            pool_size=20,  # Maximum number of connections to keep persistently
             max_overflow=10,  # Maximum number of connections that can be created beyond pool_size
             echo=True,
         )
