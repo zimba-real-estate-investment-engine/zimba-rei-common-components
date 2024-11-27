@@ -10,10 +10,10 @@ from time import timezone
 from urllib.parse import quote_plus
 from fastapi.testclient import TestClient
 from app.main import app, get_db
-from app.database.AddressModel import AddressModel
-from app.database.RealEstatePropertyModel import RealEstatePropertyModel
+from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel
+# from app.database.models import RealEstatePropertyModel
 
-from app.database.SubscriptionModel import SubscriptionModel
+from app.database.models import SubscriptionModel
 
 import pytest
 
@@ -66,11 +66,25 @@ def get_current_time_in_seconds_string() -> str:
 @pytest.fixture
 def get_test_listing_schema() -> ListingSchema:
     current_time_string = __get_time_string()
-    listing_schema = ListingSchema(id=current_time_string, price=300000, email="email@example.com",
-                                   year_built=datetime(2000, 1, 1), baths=3,
+    listing_schema = ListingSchema(id=int(current_time_string), price=300000, email="email@example.com",
+                                   year_built=datetime(2000, 1, 1), baths=3, beds=5,
                                    listing_date=datetime(2024, 4, 1),
-                                   square_feet=2500)
+                                   square_feet=2500, parking_spaces="4", air_conditioning=False, balcony=False,
+                                   basement='crawl space only', dishwasher=True, hardwood_floor='ground floor')
     return listing_schema
+
+
+@pytest.fixture
+def get_test_listing_model() -> ListingModel:
+    current_time_string = __get_time_string()
+    listing_model = ListingModel(id=int(current_time_string), price=300000, email="email@example.com",
+                                 year_built=datetime(2000, 1, 1), baths=3, beds=5,
+                                 listing_date=datetime(2024, 4, 1),
+                                 square_feet=2500, parking_spaces="4", air_conditioning=False, balcony=False,
+                                 basement='crawl space only', dishwasher=True, hardwood_floor='ground floor')
+    return listing_model
+
+
 
 
 @pytest.fixture
@@ -206,7 +220,8 @@ def get_test_real_state_property_schema_unpopulated() -> RealEstatePropertySchem
 def get_test_real_estate_property_model() -> RealEstatePropertyModel:
     current_time_string = __get_time_string()
     real_estate_property_model = RealEstatePropertyModel()
-    return real_estate_property_model
+    return real_estate_property_model   # ensures mappings are correct
+
 
 def __get_time_string() -> str:
     current_time = datetime.now(timezone.utc)
@@ -273,6 +288,7 @@ def get_test_address_model() -> AddressModel:
         city=city, postal_code=postal_code, state=state, country=country, long_lat_location=long_lat_location,
     )
     return address_model
+
 
 @pytest.fixture
 def test_fastapi_client():

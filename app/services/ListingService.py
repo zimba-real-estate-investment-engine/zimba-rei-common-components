@@ -9,7 +9,7 @@ from app.domain.Subscription import Subscription
 # from typing import Optional
 # from fastapi import HTTPException, status
 
-from app.database.SubscriptionModel import SubscriptionModel
+from app.database.models import SubscriptionModel
 from app.repositories.BaseRepository import BaseRepository
 from app.schemas.EmailSchema import EmailSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema

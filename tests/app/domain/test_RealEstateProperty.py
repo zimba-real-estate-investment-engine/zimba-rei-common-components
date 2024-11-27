@@ -11,8 +11,7 @@ from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
 #     assert test_investor_profile_schema.email == investor_profile.email
 
 
-def test_real_estate_property_init(get_test_real_estate_property_schema, get_test_address_schema,
-                                   get_test_expense_schema, get_test_listing_schema):
+def test_real_estate_property_init(get_test_address_schema, get_test_expense_schema, get_test_listing_schema):
 
     test_listings = [get_test_listing_schema]
     test_target_listing = get_test_listing_schema

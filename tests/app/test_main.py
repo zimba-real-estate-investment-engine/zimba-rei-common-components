@@ -1,6 +1,6 @@
 import time
 
-from app.database.SubscriptionModel import SubscriptionModel
+from app.database.models import SubscriptionModel
 from app.repositories.BaseRepository import BaseRepository
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 

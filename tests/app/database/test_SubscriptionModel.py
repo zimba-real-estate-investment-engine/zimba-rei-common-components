@@ -1,5 +1,5 @@
 from app.repositories.BaseRepository import BaseRepository
-from app.database.SubscriptionModel import SubscriptionModel
+from app.database.models import SubscriptionModel
 
 
 def test_crud_subscription_model(get_test_subscription_model, get_test_db):

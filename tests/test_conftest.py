@@ -69,5 +69,5 @@ def test_expense_schema(get_test_expense_schema):
     assert get_test_expense_schema.expense_type
 
 
-def test_real_estate_property_schema(get_test_real_estate_property_schema):
-    assert get_test_real_estate_property_schema
+def test_real_estate_property_schema(get_test_real_state_property_schema_unpopulated):
+    assert get_test_real_state_property_schema_unpopulated
