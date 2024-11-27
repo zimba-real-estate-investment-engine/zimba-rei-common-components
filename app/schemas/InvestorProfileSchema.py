@@ -7,15 +7,15 @@ from app.schemas.MortgageSchema import MortgageSchema
 
 
 class InvestorProfileSchema(BaseModel):
-    id: str
+    id: int
     price: float
     first_name: str
     last_name: str
     email: EmailStr
     title: str
     phone: str
-    preferred_property_type: str
-    preferred_locations: List[str]
+    preferred_property_types: str
+    preferred_locations: str
     bedrooms_max: int
     bedrooms_min: int
     bathrooms_max: int
@@ -30,3 +30,4 @@ class InvestorProfileSchema(BaseModel):
     dishwasher_required: bool
     balcony_required: bool
     mortgage: Optional[MortgageSchema] = None
+

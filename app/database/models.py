@@ -158,3 +158,68 @@ class ExpenseModel(Base):
     def __repr__(self):
         return f"<Expense(id={self.id}, type={self.expense_type}, monthly_cost=${self.monthly_cost:,.2f})>"
 
+
+class InvestorProfileModel(Base):
+    __tablename__ = 'investor_profile'
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    price = Column(Float)
+    first_name = Column(String(255))
+    last_name = Column(String(255))
+    email = Column(String(255))
+    title = Column(String(255))
+    phone = Column(String(255))
+    budget_min = Column(Float)
+    budget_max = Column(Float)
+    bedrooms_min = Column(Integer)
+    bedrooms_max = Column(Integer)
+    bathrooms_max = Column(Integer)
+    bathrooms_min = Column(Integer)
+    years_built_min = Column(Integer)
+    years_built_max = Column(Integer)
+    investment_purpose = Column(String(255))
+    assigned_parking_required = Column(Boolean)
+    air_conditioning_required = Column(Boolean)
+    central_heat_required = Column(Boolean)
+    min_roi = Column(Float)
+    preferred_property_types = Column(String(255))
+    preferred_locations = Column(String(255))
+    dishwasher_required = Column(Boolean)
+    balcony_required = Column(Boolean)
+
+
+    def __init__(
+        self,
+        price: int = 0,
+        first_name: str = '',
+        last_name: str = '',
+        email: str = '',
+        title: str = '',
+        phone: str = '',
+        budget_min: float = 0,
+        budget_max: float = 0,
+        preferred_property_types: str = '',
+        bedrooms_min: int = 1,
+        bedrooms_max: int = 1,
+        bathrooms_min: int = 1,
+        bathrooms_max: int = 0,
+        investment_purpose: str = ''
+
+    ):
+        self.price = price
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
+        self.title = title
+        self.phone = phone
+        self.budget_min = budget_min
+        self.budget_max = budget_max
+        self.preferred_property_types = preferred_property_types
+        self.bedrooms_min = bedrooms_min
+        self.bedrooms_max = bedrooms_max
+        self.bathrooms_min = bathrooms_min
+        self.bathrooms_max = bathrooms_max
+        self.investment_purpose = investment_purpose
+
+    def __repr__(self):
+        return f"<InvestorProfile(id={self.id}, budget_range=${self.budget_min:,.2f}-${self.budget_max:,.2f})>"
