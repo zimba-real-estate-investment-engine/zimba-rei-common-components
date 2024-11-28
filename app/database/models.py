@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 from sqlalchemy import Boolean, Column, String, TIMESTAMP, text, Integer, ForeignKey, Float
 from sqlalchemy.ext.declarative import declarative_base
@@ -86,22 +87,22 @@ class ListingModel(Base):
     listing_date = Column(TIMESTAMP)
 
     def __init__(
-        self,
-        id: int,
-        email: str,
-        price: float,
-        # property_id: str,
-        beds: int,
-        baths: float,
-        air_conditioning: bool,
-        parking_spaces: str,
-        balcony: bool,
-        hardwood_floor: str,
-        dishwasher: bool,
-        year_built: datetime,
-        basement: str,
-        square_feet: float,
-        listing_date: datetime
+            self,
+            id: int,
+            email: str,
+            price: float,
+            # property_id: str,
+            beds: int,
+            baths: float,
+            air_conditioning: bool,
+            parking_spaces: str,
+            balcony: bool,
+            hardwood_floor: str,
+            dishwasher: bool,
+            year_built: datetime,
+            basement: str,
+            square_feet: float,
+            listing_date: datetime
     ):
         self.id = id
         self.email = email
@@ -139,6 +140,7 @@ class RealEstatePropertyModel(Base):
 
     def __repr__(self):
         return f"<RealEstateProperty(id={self.id})>"
+
 
 class ExpenseModel(Base):
     __tablename__ = 'expense'
@@ -187,24 +189,24 @@ class InvestorProfileModel(Base):
     dishwasher_required = Column(Boolean)
     balcony_required = Column(Boolean)
 
+    financing_sources = relationship("FinancingModel", back_populates="investor_profile")
 
     def __init__(
-        self,
-        price: int = 0,
-        first_name: str = '',
-        last_name: str = '',
-        email: str = '',
-        title: str = '',
-        phone: str = '',
-        budget_min: float = 0,
-        budget_max: float = 0,
-        preferred_property_types: str = '',
-        bedrooms_min: int = 1,
-        bedrooms_max: int = 1,
-        bathrooms_min: int = 1,
-        bathrooms_max: int = 0,
-        investment_purpose: str = ''
-
+            self,
+            price: int = 0,
+            first_name: str = '',
+            last_name: str = '',
+            email: str = '',
+            title: str = '',
+            phone: str = '',
+            budget_min: float = 0,
+            budget_max: float = 0,
+            preferred_property_types: str = '',
+            bedrooms_min: int = 1,
+            bedrooms_max: int = 1,
+            bathrooms_min: int = 1,
+            bathrooms_max: int = 0,
+            investment_purpose: str = '',
     ):
         self.price = price
         self.first_name = first_name
@@ -223,3 +225,71 @@ class InvestorProfileModel(Base):
 
     def __repr__(self):
         return f"<InvestorProfile(id={self.id}, budget_range=${self.budget_min:,.2f}-${self.budget_max:,.2f})>"
+
+
+class FinancingModel(Base):
+    __tablename__ = 'financing'
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    investor_profile_id = Column(Integer, ForeignKey('investor_profile.id'))
+    mortgages = relationship("MortgageModel", back_populates="financing")
+
+    investor_profile = relationship("InvestorProfileModel", back_populates='financing_sources')
+
+    def __init__(self, id: int):
+        self.id = id
+
+    # def get_total_available(self) -> float:
+    #     return sum(mortgage.appraisal_value for mortgage in self.mortgages)
+
+    def __repr__(self):
+        return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
+
+
+
+class MortgageModel(Base):
+    __tablename__ = 'mortgage'
+
+    id = Column(String(255), primary_key=True)
+    financing_id = Column(String(255), ForeignKey('financing.id'))
+    appraisal_value = Column(Float)
+    principal = Column(Float)
+    pre_qualified = Column(Boolean)
+    pre_approved = Column(Boolean)
+    loan_to_value = Column(Float)
+    term = Column(Integer)
+    amortization_period = Column(Integer)
+    monthly_payment = Column(Float)
+    owner_occupied = Column(Boolean)
+    insurance = Column(Float)
+
+    financing = relationship("FinancingModel", back_populates="mortgages")
+
+    def __init__(
+        self,
+        id: int,
+        appraisal_value: float,
+        principal: float,
+        pre_qualified: bool,
+        pre_approved: bool,
+        loan_to_value: float,
+        term: int,
+        amortization_period: int,
+        monthly_payment: float,
+        owner_occupied: bool,
+        insurance: float
+    ):
+        self.id = id
+        self.appraisal_value = appraisal_value
+        self.principal = principal
+        self.pre_qualified = pre_qualified
+        self.pre_approved = pre_approved
+        self.loan_to_value = loan_to_value
+        self.term = term
+        self.amortization = amortization_period
+        self.monthly_payment = monthly_payment
+        self.owner_occupied = owner_occupied
+        self.insurance = insurance
+
+    def __repr__(self):
+        return f"<Mortgage(id={self.id}, principal=${self.principal:,.2f}, term={self.term}mo)>"

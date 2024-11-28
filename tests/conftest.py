@@ -10,7 +10,8 @@ from time import timezone
 from urllib.parse import quote_plus
 from fastapi.testclient import TestClient
 from app.main import app, get_db
-from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel
+from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
+    FinancingModel, MortgageModel
 # from app.database.models import RealEstatePropertyModel
 
 from app.database.models import SubscriptionModel
@@ -130,6 +131,14 @@ def get_test_investor_profile_model() -> InvestorProfileModel:
 
     return investor_profile_model
 
+@pytest.fixture
+def get_test_financing_model_minimum() -> FinancingModel:
+    current_time_string = __get_time_string()
+
+    financing_model = FinancingModel(id=0)
+
+    return financing_model
+
 
 @pytest.fixture
 def get_test_deal_schema() -> DealSchema:
@@ -217,6 +226,19 @@ def get_test_expense_model() -> ExpenseModel:
     )
 
     return expense_model
+
+
+@pytest.fixture
+def get_test_mortgage_model() -> MortgageModel:
+    current_time_string = __get_time_string()
+    expense_type = current_time_string + '_expense_type'
+
+    mortgage_model = MortgageModel(
+        id=int(current_time_string), appraisal_value=345555, principal=234343.00, pre_qualified=True,
+        pre_approved=False, loan_to_value=80.00, term=5, amortization_period=30, monthly_payment=2343.55,
+        owner_occupied=True, insurance=200.00)
+
+    return mortgage_model
 
 
 @pytest.fixture
