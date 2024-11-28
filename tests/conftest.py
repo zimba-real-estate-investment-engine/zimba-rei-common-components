@@ -131,11 +131,12 @@ def get_test_investor_profile_model() -> InvestorProfileModel:
 
     return investor_profile_model
 
+
 @pytest.fixture
 def get_test_financing_model_minimum() -> FinancingModel:
     current_time_string = __get_time_string()
 
-    financing_model = FinancingModel(id=0)
+    financing_model = FinancingModel()
 
     return financing_model
 

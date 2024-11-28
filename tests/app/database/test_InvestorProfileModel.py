@@ -72,3 +72,41 @@ def test_crud_investor_profile_cascade_to_financing(get_test_investor_profile_mo
     # returned_instance = repository.get(id)
     # assert returned_instance
 
+
+def test_crud_investor_profile_cascade_to_mortgage(get_test_investor_profile_model, get_test_db,
+                                                   get_test_mortgage_model):
+    session = get_test_db
+    test_investor_profile_model = get_test_investor_profile_model
+    test_mortgage_model = get_test_mortgage_model
+
+    test_financing_source = FinancingModel()
+    test_financing_source.mortgages = [test_mortgage_model]
+
+    test_investor_profile_model.financing_sources = [test_financing_source]
+
+    repository = BaseRepository[InvestorProfileModel](session, InvestorProfileModel)
+
+    # CREATE
+    results = repository.add(test_investor_profile_model)
+    assert results
+    session.flush()
+
+    # READ
+    newly_created = repository.get_by_id(results.id)
+    # assert newly_created.id == results.id
+    # assert len(newly_created.financing_sources) == 3
+
+    # DELETE and commit, we'll need to clean up test data
+    # repository.delete(results.id)
+    session.commit()
+
+    #
+    #
+    # repository.
+    #
+    # repository.add(test_subscription)
+    #
+    # id = test_subscription.id
+    #
+    # returned_instance = repository.get(id)
+    # assert returned_instance

@@ -1,11 +1,12 @@
-from app.database.models import RealEstatePropertyModel, ExpenseModel, InvestorProfileModel, FinancingModel
+from app.database.models import RealEstatePropertyModel, ExpenseModel, InvestorProfileModel, FinancingModel, \
+    MortgageModel
 from app.repositories.BaseRepository import BaseRepository
 
 
-def test_crud_financing_with_pre_existing_investor_profile(get_test_investor_profile_model,
-                                                           get_test_financing_model_minimum,
-                                                           get_test_mortgage_model,
-                                                           get_test_db):
+def test_crud_mortgage_with_pre_existing_investor_profile_and_financing(get_test_investor_profile_model,
+                                                                        get_test_financing_model_minimum,
+                                                                        get_test_mortgage_model,
+                                                                        get_test_db):
     session = get_test_db
     test_investor_profile_model = get_test_investor_profile_model
     test_financing_model = get_test_financing_model_minimum
@@ -28,26 +29,19 @@ def test_crud_financing_with_pre_existing_investor_profile(get_test_investor_pro
     newly_created_investor_profile = repository.get_by_id(results.id)
     assert newly_created_investor_profile
 
-    # Now create financing record
-    repository = BaseRepository[FinancingModel](session, FinancingModel)
-    test_financing_model.investor_profile = newly_created_investor_profile
-    test_financing_model.investor_profile_id = newly_created_investor_profile.id
-    results_financing_model = repository.add(test_financing_model)
-    assert results_financing_model
-    session.commit()
+    # Now create mortgage record
+    repository = BaseRepository[MortgageModel](session, MortgageModel)
+    test_mortgage_model.financing_id = newly_created_investor_profile.financing_sources[0].id
+    test_mortgage_model.financing = newly_created_investor_profile.financing_sources[0]
+    results_mortgage_model = repository.add(test_mortgage_model)
+    assert results_mortgage_model
     session.flush()
-    #
-    # # Check that new financing record was created
-    # session.begin()
-    # newly_created_financing = repository.get_by_id(results_financing_model.id)
-    # assert newly_created_financing
 
+    # # Check that new mortgage record was created
+    newly_created_mortgage = repository.get_by_id(results_mortgage_model.id)
+    assert newly_created_mortgage
 
-
-
-
-    # assert newly_created.id == results.id
-    # assert newly_created.state == results.state
+    session.commit()
 
     # DELETE and commit, we'll need to clean up test data
     # repo.delete(results.id)
@@ -65,3 +59,11 @@ def test_crud_financing_with_pre_existing_investor_profile(get_test_investor_pro
     # assert returned_instance
 
 
+def test_crud_financing_with_pre_existing_investor_profile_and_mortgages(
+        get_test_investor_profile_model, get_test_financing_model_minimum, get_test_mortgage_model, get_test_db):
+    test_investor_profile = get_test_investor_profile_model
+    test_financing = get_test_financing_model_minimum
+    test_mortgage = get_test_mortgage_model
+
+    test_financing.mortgages = [test_mortgage]
+    test_investor_profile.financing_sources = [test_financing]

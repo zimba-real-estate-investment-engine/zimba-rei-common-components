@@ -30,17 +30,15 @@ def test_crud_financing_with_pre_existing_investor_profile(get_test_investor_pro
     test_financing_model.investor_profile_id = newly_created_investor_profile.id
     results_financing_model = repository.add(test_financing_model)
     assert results_financing_model
-    session.commit()
+    # session.commit()
     session.flush()
     #
     # # Check that new financing record was created
     # session.begin()
-    # newly_created_financing = repository.get_by_id(results_financing_model.id)
-    # assert newly_created_financing
+    newly_created_financing = repository.get_by_id(results_financing_model.id)
+    assert newly_created_financing.id != 0
 
-
-
-
+    session.commit()
 
     # assert newly_created.id == results.id
     # assert newly_created.state == results.state

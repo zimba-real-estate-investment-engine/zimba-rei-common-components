@@ -235,8 +235,8 @@ class FinancingModel(Base):
 
     investor_profile = relationship("InvestorProfileModel", back_populates='financing_sources')
 
-    def __init__(self, id: int):
-        self.id = id
+    def __init__(self):
+        pass
 
     # def get_total_available(self) -> float:
     #     return sum(mortgage.appraisal_value for mortgage in self.mortgages)
