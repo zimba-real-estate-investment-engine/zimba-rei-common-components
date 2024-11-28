@@ -106,7 +106,6 @@ class ListingModel(Base):
     ):
         self.id = id
         self.email = email
-        # self.property_id = property_id
         self.beds = beds
         self.price = price
         self.baths = baths
