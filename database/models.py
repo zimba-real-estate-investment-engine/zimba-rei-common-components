@@ -299,7 +299,7 @@ class Mortgage(Base):
         pre_approved: bool,
         loan_to_value: float,
         term: int,
-        amortization: int,
+        amortization_period: int,
         monthly_payment: float,
         owner_occupied: bool,
         insurance: float
@@ -312,7 +312,7 @@ class Mortgage(Base):
         self.pre_approved = pre_approved
         self.loan_to_value = loan_to_value
         self.term = term
-        self.amortization = amortization
+        self.amortization_period = amortization_period
         self.monthly_payment = monthly_payment
         self.owner_occupied = owner_occupied
         self.insurance = insurance
