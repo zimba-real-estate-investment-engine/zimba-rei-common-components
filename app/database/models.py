@@ -72,6 +72,7 @@ class ListingModel(Base):
     __tablename__ = 'listing'
 
     id = Column(Integer, primary_key=True, nullable=False)
+    address_id = Column(Integer, ForeignKey('address.id'))
     email = Column(String(255))
     price = Column(Float)
     beds = Column(Integer)
@@ -85,6 +86,8 @@ class ListingModel(Base):
     basement = Column(String(255))
     square_feet = Column(Float)
     listing_date = Column(TIMESTAMP)
+
+    address = relationship("AddressModel", uselist=False)
 
     def __init__(
             self,
