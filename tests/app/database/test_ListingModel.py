@@ -1,24 +1,24 @@
+from app.database.models import AddressModel, ListingModel
 from app.repositories.BaseRepository import BaseRepository
-from app.models.SubscriptionModel import SubscriptionModel
+from app.database.models import SubscriptionModel
 
 
-def test_crud_subscription_model(get_test_subscription_model, get_test_db):
+def test_crud_list_model(get_test_listing_model, get_test_db):
     session = get_test_db
-    new_subscription_model = get_test_subscription_model
+    new_listing_model = get_test_listing_model
 
-    repo = BaseRepository[SubscriptionModel](session, SubscriptionModel)
+    repo = BaseRepository[ListingModel](session, ListingModel)
 
     # CREATE
-    results = repo.add(new_subscription_model)
+    results = repo.add(new_listing_model)
     assert results
     session.commit()
 
     # READ
     newly_created = repo.get_by_id(results.id)
     assert newly_created.id == results.id
-    assert newly_created.created_date == results.created_date
 
-    # DELETE
+    # DELETE and commit, we'll need to clean up test data
     repo.delete(results.id)
     # session.commit()
 

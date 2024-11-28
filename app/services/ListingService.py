@@ -15,10 +15,10 @@ from app.schemas.EmailSchema import EmailSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 
 
-class SubscriptionService:
+class ListingService:
     def __init__(self, db: Session):
         self.db = db
-        self.repo = BaseRepository[SubscriptionModel](self.db, SubscriptionModel)
+        self.repo = BaseRepository[ListingModel](self.db, SubscriptionModel)
 
     def save_subscription(self, subscription_data: SubscriptionSchema) -> SubscriptionSchema:
         #TODO  Check if a user with the same email already exists

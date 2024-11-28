@@ -1,6 +1,6 @@
 from typing import TypeVar, List, Optional
 from .BaseRepository import BaseRepository
-from app.models.SubscriptionModel import SubscriptionModel
+from app.database.models import SubscriptionModel
 
 from sqlalchemy.orm import Session
 

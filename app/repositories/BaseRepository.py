@@ -4,13 +4,13 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, delete, inspect
 from pydantic import BaseModel
 
-# Generic type for SQLAlchemy models
+# Generic type for SQLAlchemy database
 T = TypeVar('T')
 
 
 class BaseRepository(Generic[T]):
     """
-    A generic repository interface for SQLAlchemy models.
+    A generic repository interface for SQLAlchemy database.
     Transaction management is handled outside the repository.
     """
 

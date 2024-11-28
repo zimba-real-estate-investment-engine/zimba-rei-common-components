@@ -1,6 +1,6 @@
 import time
 
-from app.models.SubscriptionModel import SubscriptionModel
+from app.database.models import SubscriptionModel
 from app.repositories.BaseRepository import BaseRepository
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 
@@ -16,7 +16,7 @@ def test_create_subscription(get_test_subscription_schema, test_fastapi_client, 
     # Confirms that the returned value can be instantiated from the pydantic schema
     newly_created_subscription = SubscriptionSchema(**response.json())
 
-    # Clean up to avoid bloated database. Using BaseRepository which uses SqlAlchemy models ¯\_(ツ)_/¯
+    # Clean up to avoid bloated database. Using BaseRepository which uses SqlAlchemy database ¯\_(ツ)_/¯
     subscription_model = SubscriptionModel(**newly_created_subscription.model_dump())
     base_repo = BaseRepository(test_db, SubscriptionModel)
     base_repo.delete(subscription_model.id)

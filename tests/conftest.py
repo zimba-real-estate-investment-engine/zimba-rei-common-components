@@ -10,8 +10,10 @@ from time import timezone
 from urllib.parse import quote_plus
 from fastapi.testclient import TestClient
 from app.main import app, get_db
+from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel
+# from app.database.models import RealEstatePropertyModel
 
-from app.models.SubscriptionModel import SubscriptionModel
+from app.database.models import SubscriptionModel
 
 import pytest
 
@@ -64,11 +66,23 @@ def get_current_time_in_seconds_string() -> str:
 @pytest.fixture
 def get_test_listing_schema() -> ListingSchema:
     current_time_string = __get_time_string()
-    listing_schema = ListingSchema(id=current_time_string, price=300000, email="email@example.com",
-                                   year_built=datetime(2000, 1, 1), baths=3,
+    listing_schema = ListingSchema(id=int(current_time_string), price=300000, email="email@example.com",
+                                   year_built=datetime(2000, 1, 1), baths=3, beds=5,
                                    listing_date=datetime(2024, 4, 1),
-                                   square_feet=2500)
+                                   square_feet=2500, parking_spaces="4", air_conditioning=False, balcony=False,
+                                   basement='crawl space only', dishwasher=True, hardwood_floor='ground floor')
     return listing_schema
+
+
+@pytest.fixture
+def get_test_listing_model() -> ListingModel:
+    current_time_string = __get_time_string()
+    listing_model = ListingModel(id=int(current_time_string), price=300000, email="email@example.com",
+                                 year_built=datetime(2000, 1, 1), baths=3, beds=5,
+                                 listing_date=datetime(2024, 4, 1),
+                                 square_feet=2500, parking_spaces="4", air_conditioning=False, balcony=False,
+                                 basement='crawl space only', dishwasher=True, hardwood_floor='ground floor')
+    return listing_model
 
 
 @pytest.fixture
@@ -78,15 +92,43 @@ def get_test_investor_profile_schema() -> InvestorProfileSchema:
     l_name = "lname" + current_time_string
 
     investor_profile_schema = InvestorProfileSchema(
-        id=current_time_string, price=300000, first_name=f_name, last_name=l_name,
+        id=int(current_time_string), price=300000, first_name=f_name, last_name=l_name,
         email="email@example.com", title="Ms.", phone="1-888-454-1234",
-        preferred_property_type="rental", preferred_locations=["SE", "NE"],
+        preferred_property_types="rental", preferred_locations="SE, NE",
         bedrooms_max=8, bedrooms_min=2, bathrooms_min=2, bathrooms_max=3, budget_max=100000000, budget_min=200000,
         years_built_max=80, years_built_min=30, investment_purpose="rental",
         assigned_parking_required=True, central_heat_required=True, dishwasher_required=True,
         balcony_required=True
     )
+
     return investor_profile_schema
+
+
+@pytest.fixture
+def get_test_investor_profile_model() -> InvestorProfileModel:
+    current_time_string = __get_time_string()
+    f_name = "fname" + current_time_string
+    l_name = "lname" + current_time_string
+
+    investor_profile_model = InvestorProfileModel(
+        price=300000, first_name=f_name, last_name=l_name,
+        email="email@example.com", title="Ms.", phone="1-888-454-1234",
+        budget_min=343.33, budget_max=2343.00, preferred_property_types="rental",
+        bedrooms_max=8, bedrooms_min=2, bathrooms_min=2, bathrooms_max=3,  investment_purpose="rental",
+    )
+
+    investor_profile_model.years_built_min = 5
+    investor_profile_model.years_built_max = 30
+    investor_profile_model.assigned_parking_required = True
+    investor_profile_model.air_conditioning_required = True
+    investor_profile_model.central_heat_required = True
+    investor_profile_model.min_roi = 34000.23
+    investor_profile_model.preferred_property_types = "Student Rental, Multi-family unit"
+    investor_profile_model.preferred_locations = "SE, NE"
+    investor_profile_model.dishwasher_required = True
+    investor_profile_model.balcony_required = False
+
+    return investor_profile_model
 
 
 @pytest.fixture
@@ -166,6 +208,18 @@ def get_test_expense_schema() -> ExpenseSchema:
 
 
 @pytest.fixture
+def get_test_expense_model() -> ExpenseModel:
+    current_time_string = __get_time_string()
+    expense_type = current_time_string + '_expense_type'
+
+    expense_model = ExpenseModel(
+        id=int(current_time_string), expense_type=expense_type, monthly_cost=3343.23,
+    )
+
+    return expense_model
+
+
+@pytest.fixture
 def get_test_email_schema() -> EmailSchema:
     current_time_string = __get_time_string()
     expense_type = current_time_string + '_expense_type'
@@ -176,18 +230,6 @@ def get_test_email_schema() -> EmailSchema:
     )
 
     return email_schema
-
-
-@pytest.fixture
-def get_test_real_estate_property_schema() -> RealEstatePropertySchema:
-    current_time_string = __get_time_string()
-    expense_type = current_time_string + '_expense_type'
-
-    expense_schema = ExpenseSchema(
-        id=int(current_time_string), expense_type=expense_type, monthly_cost=3343.23,
-    )
-
-    return expense_schema
 
 
 @pytest.fixture
@@ -204,6 +246,19 @@ def get_test_subscription_schema() -> SubscriptionSchema:
         unsubscribe_token=user_unsubscribe_token
     )
     return subscription_schema
+
+
+@pytest.fixture
+def get_test_real_state_property_schema_unpopulated() -> RealEstatePropertySchema:
+    real_estate_property_schema = RealEstatePropertySchema()
+    return real_estate_property_schema
+
+
+@pytest.fixture
+def get_test_real_estate_property_model() -> RealEstatePropertyModel:
+    current_time_string = __get_time_string()
+    real_estate_property_model = RealEstatePropertyModel()
+    return real_estate_property_model   # ensures mappings are correct
 
 
 def __get_time_string() -> str:
@@ -227,7 +282,7 @@ def __test_db():
         engine = create_engine(
             DATABASE_URL,
             pool_pre_ping=True,  # Enables automatic reconnection
-            pool_size=5,  # Maximum number of connections to keep persistently
+            pool_size=20,  # Maximum number of connections to keep persistently
             max_overflow=10,  # Maximum number of connections that can be created beyond pool_size
             echo=True,
         )
@@ -253,6 +308,24 @@ def get_test_subscription_model() -> SubscriptionModel:
         unsubscribe_token=user_unsubscribe_token
     )
     return subscription_model
+
+
+@pytest.fixture
+def get_test_address_model() -> AddressModel:
+    current_time_string = __get_time_string()
+    street_address = current_time_string + '_street_address'
+    street_address_two = current_time_string + '_street_address_two'
+    city = current_time_string + '_city'
+    postal_code = current_time_string + '_postal_code'
+    state='ON'
+    country = current_time_string + '_country'
+    long_lat_location = current_time_string + '_long_lat_location'
+
+    address_model = AddressModel(
+        id=int(current_time_string), street_address=street_address, street_address_two=street_address_two,
+        city=city, postal_code=postal_code, state=state, country=country, long_lat_location=long_lat_location,
+    )
+    return address_model
 
 
 @pytest.fixture
