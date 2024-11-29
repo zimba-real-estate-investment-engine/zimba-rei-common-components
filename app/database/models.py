@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Annotated, Optional
 
 from sqlalchemy import Boolean, Column, String, TIMESTAMP, text, Integer, ForeignKey, Float
 from sqlalchemy.ext.declarative import declarative_base
@@ -89,6 +89,8 @@ class ListingModel(Base):
 
     address = relationship("AddressModel", uselist=False)
 
+    # def __init__(self, **kwargs):
+    #     pass
     def __init__(
             self,
             id: int,
@@ -105,8 +107,10 @@ class ListingModel(Base):
             year_built: datetime,
             basement: str,
             square_feet: float,
-            listing_date: datetime
+            listing_date: datetime,
+            address: Annotated[Optional[AddressModel], "could be missing"] = None
     ):
+        self.address = address
         self.id = id
         self.email = email
         self.beds = beds
@@ -121,6 +125,8 @@ class ListingModel(Base):
         self.basement = basement
         self.square_feet = square_feet
         self.listing_date = listing_date
+        self.address = address
+
 
     def __repr__(self):
         return f"<Listing(id={self.id}, beds={self.beds}, baths={self.baths})>"

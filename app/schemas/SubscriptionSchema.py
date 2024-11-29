@@ -15,3 +15,6 @@ class SubscriptionSchema(BaseModel):
     unsubscribed_date: Optional[datetime]
     unsubscribe_token: Optional[str] = None
     #TODO more to be added from data dictionary as necessary
+
+    class Config:
+        orm_mode = True

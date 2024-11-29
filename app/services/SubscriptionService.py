@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from sqlalchemy.orm import Session
@@ -15,8 +16,11 @@ from app.schemas.EmailSchema import EmailSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 
 
+logger = logging.getLogger(__name__)
+
 class SubscriptionService:
     def __init__(self, db: Session):
+        self.logger = logger
         self.db = db
         self.repo = BaseRepository[SubscriptionModel](self.db, SubscriptionModel)
 
@@ -28,9 +32,23 @@ class SubscriptionService:
         #         status_code=status.HTTP_400_BAD_REQUEST,
         #         detail="Email already registered"
         #     )
-        subscription_model = SubscriptionModel(**subscription_data.model_dump())
+        try:
+            subscription_model = BaseRepository.pydantic_to_sqlalchemy(subscription_data, SubscriptionModel)
 
-        subscription_model.unsubscribe_token = Subscription.generate_unsubscribe_token()
+            subscription_model.unsubscribe_token = Subscription.generate_unsubscribe_token()
+
+            new_subscription_model = self.repo.add(subscription_model)
+            new_subscription_schema = BaseRepository.sqlalchemy_to_pydantic(new_subscription_model, SubscriptionSchema)
+
+            self.db.commit()    # make sure commit to db was successful
+
+            return new_subscription_schema
+
+        except Exception as e:
+            self.logger.error(f'Error saving {subscription_data}:: {str(e)}')
+            raise
+
+
 
 
         new_subscription_model = self.repo.add(subscription_model)

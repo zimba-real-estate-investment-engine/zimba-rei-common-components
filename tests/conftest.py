@@ -199,7 +199,7 @@ def get_test_address_schema() -> AddressSchema:
 
     address_schema = AddressSchema(
         id=int(current_time_string), street_address=street_address, street_address_two=street_address_two,
-        city=city, postal_code=postal_code, country=country, long_lat_location=long_lat_location,
+        city=city, postal_code=postal_code, country=country, long_lat_location=long_lat_location, state="ON",
     )
 
     return address_schema

@@ -33,6 +33,7 @@ def test_crud_list_model(get_test_listing_model, get_test_db):
     # returned_instance = repository.get(id)
     # assert returned_instance
 
+
 def test_crud_list_model_cascade_to_address(get_test_listing_model, get_test_address_model, get_test_db):
     session = get_test_db
     test_listing_model = get_test_listing_model
