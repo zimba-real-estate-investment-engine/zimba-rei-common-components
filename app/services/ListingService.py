@@ -35,5 +35,5 @@ class ListingService:
         listing_model_list = self.repository.get_all()
 
         listing_schema_list = \
-            [self.repository.sqlalchemy_to_pydantic(x, ListingSchema) for x in listing_model_list]
+            [BaseRepository.sqlalchemy_to_pydantic(x, ListingSchema) for x in listing_model_list]
         return listing_schema_list

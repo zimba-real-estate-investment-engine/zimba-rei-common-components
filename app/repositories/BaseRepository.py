@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, delete, inspect
 from sqlalchemy.ext.declarative import declarative_base
 from pydantic import BaseModel
-from pydantic_sqlalchemy import sqlalchemy_to_pydantic
 
 Base = declarative_base()
 # Generic type for SQLAlchemy database

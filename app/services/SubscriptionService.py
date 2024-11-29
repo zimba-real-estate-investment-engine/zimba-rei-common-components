@@ -15,8 +15,8 @@ from app.repositories.BaseRepository import BaseRepository
 from app.schemas.EmailSchema import EmailSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 
-
 logger = logging.getLogger(__name__)
+
 
 class SubscriptionService:
     def __init__(self, db: Session):
@@ -40,21 +40,13 @@ class SubscriptionService:
             new_subscription_model = self.repo.add(subscription_model)
             new_subscription_schema = BaseRepository.sqlalchemy_to_pydantic(new_subscription_model, SubscriptionSchema)
 
-            self.db.commit()    # make sure commit to db was successful
+            self.db.commit()  # make sure commit to db was successful
 
             return new_subscription_schema
 
         except Exception as e:
             self.logger.error(f'Error saving {subscription_data}:: {str(e)}')
             raise
-
-
-
-
-        new_subscription_model = self.repo.add(subscription_model)
-        new_subscription_schema = self.repo.sqlalchemy_to_pydantic(new_subscription_model, SubscriptionSchema)
-
-        self.db.commit()
 
         #TODO # Also send confirmation message
         # message_subject = f'Welcome to our {subscription_data.service_subscribed_to}'
@@ -68,11 +60,9 @@ class SubscriptionService:
         #     body_text='SES Unit Test Email body', body_html=message_html_body
         # )
 
-        return new_subscription_schema  # Convert to response schema
-
     def get_all(self) -> List[SubscriptionSchema]:
         subscription_model_list = self.repo.get_all()
 
         subscription_schema_list = \
-            [self.repo.sqlalchemy_to_pydantic(x, SubscriptionSchema) for x in subscription_model_list]
+            [BaseRepository.sqlalchemy_to_pydantic(x, SubscriptionSchema) for x in subscription_model_list]
         return subscription_schema_list

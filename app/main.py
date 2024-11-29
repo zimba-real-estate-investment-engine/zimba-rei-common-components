@@ -7,11 +7,13 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends
 from app.core import database
 from app.database.models import SubscriptionModel
+from app.schemas.ListingSchema import ListingSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from urllib.parse import quote_plus
 
+from app.services.ListingService import ListingService
 from app.services.SubscriptionService import SubscriptionService
 
 # Create the FastAPI app
@@ -83,6 +85,13 @@ async def get_subscriptions(db: Session = Depends(get_db)):
     subscription_json_list = list(map(lambda x: x.model_dump(), subscription_schema_list))
     return subscription_json_list
 
+
+@app.get("/listings/", response_model=List[ListingSchema])
+async def get_listings(db: Session = Depends(get_db)):
+    listing_service = ListingService(db)
+    listing_schema_list = listing_service.get_all()
+    listing_json_list = list(map(lambda x: x.model_dump(), listing_schema_list))
+    return listing_json_list
 
 # Include the routes if external
 # app.include_router(users.router, prefix="/users", tags=["Users"])
