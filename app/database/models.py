@@ -201,6 +201,7 @@ class InvestorProfileModel(Base):
 
     def __init__(
             self,
+            id: int = 0,
             price: int = 0,
             first_name: str = '',
             last_name: str = '',
@@ -210,12 +211,21 @@ class InvestorProfileModel(Base):
             budget_min: float = 0,
             budget_max: float = 0,
             preferred_property_types: str = '',
+            preferred_locations: str = '',
+            assigned_parking_required: bool = False,
             bedrooms_min: int = 1,
             bedrooms_max: int = 1,
             bathrooms_min: int = 1,
             bathrooms_max: int = 0,
+            years_built_min: int = 0,
+            years_built_max: int = 0,
             investment_purpose: str = '',
+            central_heat_required: bool = False,
+            dishwasher_required: bool = False,
+            balcony_required: bool = False,
+            # financing_sources: Annotated[Optional[List[FinancingModel]], "could be missing"] = None
     ):
+        self.id = id
         self.price = price
         self.first_name = first_name
         self.last_name = last_name
@@ -225,11 +235,18 @@ class InvestorProfileModel(Base):
         self.budget_min = budget_min
         self.budget_max = budget_max
         self.preferred_property_types = preferred_property_types
+        self.preferred_locations = preferred_locations
+        self.assigned_parking_required = assigned_parking_required
         self.bedrooms_min = bedrooms_min
         self.bedrooms_max = bedrooms_max
         self.bathrooms_min = bathrooms_min
         self.bathrooms_max = bathrooms_max
+        self.years_built_max = years_built_max
+        self.years_built_min = years_built_min
         self.investment_purpose = investment_purpose
+        self.central_heat_required = central_heat_required
+        self.dishwasher_required = dishwasher_required
+        self.balcony_required = balcony_required
 
     def __repr__(self):
         return f"<InvestorProfile(id={self.id}, budget_range=${self.budget_min:,.2f}-${self.budget_max:,.2f})>"

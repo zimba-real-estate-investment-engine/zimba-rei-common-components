@@ -12,7 +12,7 @@ def test_crud_investor_profile_model(get_test_investor_profile_model, get_test_d
     # CREATE
     results = repo.add(new_investor_profile_model)
     assert results
-    session.commit()
+    session.flush()
 
     # READ
     newly_created = repo.get_by_id(results.id)
@@ -50,7 +50,7 @@ def test_crud_investor_profile_cascade_to_financing(get_test_investor_profile_mo
     # CREATE
     results = repo.add(test_investor_profile_model)
     assert results
-    session.commit()
+    session.flush()
 
     # READ
     newly_created = repo.get_by_id(results.id)

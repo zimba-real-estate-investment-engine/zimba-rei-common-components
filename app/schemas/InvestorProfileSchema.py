@@ -3,7 +3,7 @@ from typing import List, Optional
 from pydantic import BaseModel, EmailStr, validator
 from datetime import datetime
 
-from app.schemas.MortgageSchema import MortgageSchema
+from app.schemas.FinancingSchema import FinancingSchema
 
 
 class InvestorProfileSchema(BaseModel):
@@ -29,7 +29,7 @@ class InvestorProfileSchema(BaseModel):
     central_heat_required: bool
     dishwasher_required: bool
     balcony_required: bool
-    mortgage: Optional[MortgageSchema] = None
+    financing_sources: Optional[List[FinancingSchema]] = None
 
     class Config:
         orm_mode = True
