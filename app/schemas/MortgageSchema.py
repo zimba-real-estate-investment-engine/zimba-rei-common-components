@@ -17,3 +17,6 @@ class MortgageSchema(BaseModel):
     owner_occupied: bool
     insurance: float
     #TODO more to be added from data dictionary as necessary
+
+    class Config:
+        orm_mode = True

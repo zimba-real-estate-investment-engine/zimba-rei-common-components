@@ -12,3 +12,6 @@ class UnderwritingSchema(BaseModel):
     approval_status: str
     risk_assessment: str
     #TODO more to be added from data dictionary as necessary
+
+    class Config:
+        orm_mode = True

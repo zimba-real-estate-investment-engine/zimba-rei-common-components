@@ -9,3 +9,6 @@ class EmailSchema(BaseModel):
     body_text: str
     body_html: Optional[str] = None
     sender: Optional[EmailStr] = None
+
+    class Config:
+        orm_mode = True

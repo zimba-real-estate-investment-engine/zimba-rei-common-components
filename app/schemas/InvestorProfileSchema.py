@@ -31,3 +31,5 @@ class InvestorProfileSchema(BaseModel):
     balcony_required: bool
     mortgage: Optional[MortgageSchema] = None
 
+    class Config:
+        orm_mode = True

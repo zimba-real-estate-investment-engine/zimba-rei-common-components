@@ -12,3 +12,6 @@ class RealEstatePropertySchema(BaseModel):
     target_listing: Optional[ListingSchema] = None  # this property that will be used in underwriting
     expenses: Optional[List[ExpenseSchema]] = None
     #TODO more to be added from data dictionary as necessary
+
+    class Config:
+        orm_mode = True
