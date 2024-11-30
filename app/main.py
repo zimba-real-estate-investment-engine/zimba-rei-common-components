@@ -7,12 +7,14 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends
 from app.core import database
 from app.database.models import SubscriptionModel
+from app.schemas.AddressSchema import AddressSchema
 from app.schemas.ListingSchema import ListingSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from urllib.parse import quote_plus
 
+from app.services.AddressService import AddressService
 from app.services.ListingService import ListingService
 from app.services.SubscriptionService import SubscriptionService
 
@@ -92,6 +94,14 @@ async def get_listings(db: Session = Depends(get_db)):
     listing_schema_list = listing_service.get_all()
     listing_json_list = list(map(lambda x: x.model_dump(), listing_schema_list))
     return listing_json_list
+
+
+@app.get("/addresses/", response_model=List[AddressSchema])
+async def get_addresses(db: Session = Depends(get_db)):
+    address_service = AddressService(db)
+    address_schema_list = address_service.get_all()
+    address_json_list = list(map(lambda x: x.model_dump(), address_schema_list))
+    return address_json_list
 
 # Include the routes if external
 # app.include_router(users.router, prefix="/users", tags=["Users"])
