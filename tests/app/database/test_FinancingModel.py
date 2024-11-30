@@ -16,11 +16,9 @@ def test_crud_financing_with_pre_existing_investor_profile(get_test_investor_pro
     # First create the investor profile
     results = repository.add(test_investor_profile_model)
     assert results
-    session.commit()
     session.flush()
 
     # READ
-    session.begin()
     newly_created_investor_profile = repository.get_by_id(results.id)
     assert newly_created_investor_profile
 

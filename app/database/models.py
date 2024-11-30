@@ -127,27 +127,8 @@ class ListingModel(Base):
         self.listing_date = listing_date
         self.address = address
 
-
     def __repr__(self):
         return f"<Listing(id={self.id}, beds={self.beds}, baths={self.baths})>"
-
-
-class RealEstatePropertyModel(Base):
-    __tablename__ = 'real_estate_property'
-
-    id = Column(Integer, primary_key=True, nullable=False)
-    address_id = Column(Integer, ForeignKey('address.id'))
-    listing_id = Column(Integer, ForeignKey('listing.id'))
-
-    address = relationship("AddressModel", uselist=False)
-    listing = relationship("ListingModel", uselist=False)
-    expenses = relationship("ExpenseModel", back_populates="real_estate_property")
-
-    def __init__(self):
-        pass
-
-    def __repr__(self):
-        return f"<RealEstateProperty(id={self.id})>"
 
 
 class ExpenseModel(Base):
@@ -167,6 +148,33 @@ class ExpenseModel(Base):
 
     def __repr__(self):
         return f"<Expense(id={self.id}, type={self.expense_type}, monthly_cost=${self.monthly_cost:,.2f})>"
+
+
+class RealEstatePropertyModel(Base):
+    __tablename__ = 'real_estate_property'
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    address_id = Column(Integer, ForeignKey('address.id'))
+    listing_id = Column(Integer, ForeignKey('listing.id'))
+
+    address = relationship("AddressModel", uselist=False)
+    listing = relationship("ListingModel", uselist=False)
+    expenses = relationship("ExpenseModel", back_populates="real_estate_property")
+
+    def __init__(
+            self,
+            id,
+            listing: Annotated[Optional[ListingModel], 'could be missing'] = None,
+            address: Annotated[Optional[AddressModel], 'could be yet to be filled'] = None,
+            expenses: Annotated[Optional[List[ExpenseModel]], 'could be yet to be filled'] = None
+    ):
+        self.id = id
+        self.listing = listing
+        self.address = address
+        self.expenses = expenses if expenses else []
+
+    def __repr__(self):
+        return f"<RealEstateProperty(id={self.id})>"
 
 
 class InvestorProfileModel(Base):
@@ -269,7 +277,7 @@ class FinancingModel(Base):
 
     def __repr__(self):
         return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
-
+        # return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
 
 
 class MortgageModel(Base):
@@ -291,18 +299,18 @@ class MortgageModel(Base):
     financing = relationship("FinancingModel", back_populates="mortgages")
 
     def __init__(
-        self,
-        id: int,
-        appraisal_value: float,
-        principal: float,
-        pre_qualified: bool,
-        pre_approved: bool,
-        loan_to_value: float,
-        term: int,
-        amortization_period: int,
-        monthly_payment: float,
-        owner_occupied: bool,
-        insurance: float
+            self,
+            id: int,
+            appraisal_value: float,
+            principal: float,
+            pre_qualified: bool,
+            pre_approved: bool,
+            loan_to_value: float,
+            term: int,
+            amortization_period: int,
+            monthly_payment: float,
+            owner_occupied: bool,
+            insurance: float
     ):
         self.id = id
         self.appraisal_value = appraisal_value

@@ -44,7 +44,6 @@ def get_current_time_in_seconds_str() -> str:
     mills = int(current_time.timestamp())
     return str(mills)
 
-
 from datetime import datetime, timezone, timedelta
 
 from dateutil.relativedelta import relativedelta
@@ -112,10 +111,10 @@ def get_test_investor_profile_model() -> InvestorProfileModel:
     l_name = "lname" + current_time_string
 
     investor_profile_model = InvestorProfileModel(
-        price=300000, first_name=f_name, last_name=l_name,
+        id=int(current_time_string), price=300000, first_name=f_name, last_name=l_name,
         email="email@example.com", title="Ms.", phone="1-888-454-1234",
         budget_min=343.33, budget_max=2343.00, preferred_property_types="rental",
-        bedrooms_max=8, bedrooms_min=2, bathrooms_min=2, bathrooms_max=3,  investment_purpose="rental",
+        bedrooms_max=8, bedrooms_min=2, bathrooms_min=2, bathrooms_max=3, investment_purpose="rental",
     )
 
     investor_profile_model.years_built_min = 5
@@ -273,7 +272,8 @@ def get_test_subscription_schema() -> SubscriptionSchema:
 
 @pytest.fixture
 def get_test_real_state_property_schema_unpopulated() -> RealEstatePropertySchema:
-    real_estate_property_schema = RealEstatePropertySchema()
+    current_time_string = __get_time_string()
+    real_estate_property_schema = RealEstatePropertySchema(id=int(current_time_string))
     return real_estate_property_schema
 
 
@@ -281,7 +281,7 @@ def get_test_real_state_property_schema_unpopulated() -> RealEstatePropertySchem
 def get_test_real_estate_property_model() -> RealEstatePropertyModel:
     current_time_string = __get_time_string()
     real_estate_property_model = RealEstatePropertyModel()
-    return real_estate_property_model   # ensures mappings are correct
+    return real_estate_property_model  # ensures mappings are correct
 
 
 def __get_time_string() -> str:
@@ -340,7 +340,7 @@ def get_test_address_model() -> AddressModel:
     street_address_two = current_time_string + '_street_address_two'
     city = current_time_string + '_city'
     postal_code = current_time_string + '_postal_code'
-    state='ON'
+    state = 'ON'
     country = current_time_string + '_country'
     long_lat_location = current_time_string + '_long_lat_location'
 
@@ -360,7 +360,7 @@ def test_fastapi_client():
 
 @pytest.fixture
 def test_sample_html() -> str:
-    DATA_FILE_PATH = Path(__file__).parent/ "test_data" / "sample_html_text.html"
+    DATA_FILE_PATH = Path(__file__).parent / "test_data" / "sample_html_text.html"
 
     with DATA_FILE_PATH.open() as file:
         html_content = file.read()
