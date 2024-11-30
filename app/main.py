@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends
 from app.core import database
 from app.database.models import SubscriptionModel
+from app.domain.RealEstateProperty import RealEstateProperty
 from app.schemas.AddressSchema import AddressSchema
 from app.schemas.ListingSchema import ListingSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
@@ -16,6 +17,7 @@ from urllib.parse import quote_plus
 
 from app.services.AddressService import AddressService
 from app.services.ListingService import ListingService
+from app.services.RealEstatePropertyService import RealEstatePropertyService
 from app.services.SubscriptionService import SubscriptionService
 
 # Create the FastAPI app
@@ -102,6 +104,14 @@ async def get_addresses(db: Session = Depends(get_db)):
     address_schema_list = address_service.get_all()
     address_json_list = list(map(lambda x: x.model_dump(), address_schema_list))
     return address_json_list
+
+
+@app.get("/real-estate-properties/", response_model=List[RealEstateProperty])
+async def get_real_estate_properties(db: Session = Depends(get_db)):
+    real_estate_property_service = RealEstatePropertyService(db)
+    real_estate_property_schema_list = real_estate_property_service.get_all()
+    real_estate_property_json_list = list(map(lambda x: x.model_dump(), real_estate_property_schema_list))
+    return real_estate_property_json_list
 
 # Include the routes if external
 # app.include_router(users.router, prefix="/users", tags=["Users"])

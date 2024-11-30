@@ -97,8 +97,8 @@ def test_crud_investor_profile_cascade_to_mortgage(get_test_investor_profile_mod
     # assert len(newly_created.financing_sources) == 3
 
     # DELETE and commit, we'll need to clean up test data
-    # repository.delete(results.id)
-    session.commit()
+    # # repository.delete(results.id)
+    # session.commit()
 
     #
     #

@@ -280,7 +280,7 @@ def get_test_real_state_property_schema_unpopulated() -> RealEstatePropertySchem
 @pytest.fixture
 def get_test_real_estate_property_model() -> RealEstatePropertyModel:
     current_time_string = __get_time_string()
-    real_estate_property_model = RealEstatePropertyModel()
+    real_estate_property_model = RealEstatePropertyModel(id=int(current_time_string))
     return real_estate_property_model  # ensures mappings are correct
 
 
