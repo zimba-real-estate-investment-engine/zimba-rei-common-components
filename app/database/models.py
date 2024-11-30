@@ -1,12 +1,22 @@
+from __future__ import annotations  # Ensures cyclical references are handled correctly
 from datetime import datetime
 from typing import List, Annotated, Optional
 
-from sqlalchemy import Boolean, Column, String, TIMESTAMP, text, Integer, ForeignKey, Float
+from sqlalchemy import Boolean, Column, String, TIMESTAMP, text, Integer, ForeignKey, Float, Table
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, declarative_mixin
 
 Base = declarative_base()
 
+
+@declarative_mixin
+class ModelMixin:
+    __table__ = None
+
+    @classmethod
+    def __declare_first__(cls):
+        cls.__table__ = Table(cls.__name__, cls.metadata,
+                              Column('id', Integer, primary_key=True))
 
 class SubscriptionModel(Base):
     __tablename__ = 'subscription'
@@ -177,6 +187,34 @@ class RealEstatePropertyModel(Base):
         return f"<RealEstateProperty(id={self.id})>"
 
 
+class FinancingModel(Base):
+    __tablename__ = 'financing'
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    investor_profile_id = Column(Integer, ForeignKey('investor_profile.id'))
+    mortgages = relationship("MortgageModel", back_populates="financing")
+
+    investor_profile = relationship("InvestorProfileModel", back_populates='financing_sources')
+
+    def __init__(
+            self,
+            id: int,
+            investor_profile: Annotated[Optional[InvestorProfileModel], 'could be yet to be filled'] = None,
+            mortgages: Annotated[Optional[List[MortgageModel]], 'could be yet to be filled'] = None,
+    ):
+        self.id = id
+        self.investor_profile = investor_profile
+        self.mortgages = mortgages if mortgages else []
+
+    # def get_total_available(self) -> float:
+    #     return sum(mortgage.appraisal_value for mortgage in self.mortgages)
+
+    def __repr__(self):
+        return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
+        # return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
+
+
+
 class InvestorProfileModel(Base):
     __tablename__ = 'investor_profile'
 
@@ -231,7 +269,7 @@ class InvestorProfileModel(Base):
             central_heat_required: bool = False,
             dishwasher_required: bool = False,
             balcony_required: bool = False,
-            # financing_sources: Annotated[Optional[List[FinancingModel]], "could be missing"] = None
+            financing_sources: Annotated[Optional[List[FinancingModel]], 'could be yet to be filled'] = None
     ):
         self.id = id
         self.price = price
@@ -255,29 +293,11 @@ class InvestorProfileModel(Base):
         self.central_heat_required = central_heat_required
         self.dishwasher_required = dishwasher_required
         self.balcony_required = balcony_required
+        self.financing_sources = financing_sources if financing_sources else []
 
     def __repr__(self):
         return f"<InvestorProfile(id={self.id}, budget_range=${self.budget_min:,.2f}-${self.budget_max:,.2f})>"
 
-
-class FinancingModel(Base):
-    __tablename__ = 'financing'
-
-    id = Column(Integer, primary_key=True, nullable=False)
-    investor_profile_id = Column(Integer, ForeignKey('investor_profile.id'))
-    mortgages = relationship("MortgageModel", back_populates="financing")
-
-    investor_profile = relationship("InvestorProfileModel", back_populates='financing_sources')
-
-    def __init__(self):
-        pass
-
-    # def get_total_available(self) -> float:
-    #     return sum(mortgage.appraisal_value for mortgage in self.mortgages)
-
-    def __repr__(self):
-        return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
-        # return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
 
 
 class MortgageModel(Base):
@@ -326,3 +346,30 @@ class MortgageModel(Base):
 
     def __repr__(self):
         return f"<Mortgage(id={self.id}, principal=${self.principal:,.2f}, term={self.term}mo)>"
+#
+#
+# class FinancingModel(Base):
+#     __tablename__ = 'financing'
+#
+#     id = Column(Integer, primary_key=True, nullable=False)
+#     investor_profile_id = Column(Integer, ForeignKey('investor_profile.id'))
+#     mortgages = relationship("MortgageModel", back_populates="financing")
+#
+#     investor_profile = relationship("InvestorProfileModel", back_populates='financing_sources')
+#
+#     def __init__(
+#             self,
+#             id: int,
+#             investor_profile: Annotated[Optional[InvestorProfileModel], 'could be yet to be filled'] = None,
+#             mortgages: Annotated[Optional[List[MortgageModel]], 'could be yet to be filled'] = None,
+#     ):
+#         self.id = id
+#         self.investor_profile = investor_profile
+#         self.mortgages = mortgages if mortgages else []
+#
+#     # def get_total_available(self) -> float:
+#     #     return sum(mortgage.appraisal_value for mortgage in self.mortgages)
+#
+#     def __repr__(self):
+#         return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
+#         # return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
