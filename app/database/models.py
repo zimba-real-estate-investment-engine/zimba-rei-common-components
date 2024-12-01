@@ -45,7 +45,7 @@ class SubscriptionModel(Base):
 class AddressModel(Base):
     __tablename__ = 'address'
 
-    id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     street_address = Column(String(255))
     street_address_two = Column(String(255))
     city = Column(String(255))
@@ -56,14 +56,14 @@ class AddressModel(Base):
 
     def __init__(
             self,
-            id: int,
             street_address: str,
             street_address_two: str,
             city: str,
             state: str,
             postal_code: str,
             country: str,
-            long_lat_location: str
+            long_lat_location: str,
+            id: int | None = None,     # Allow none so the database creates it for new objects.
     ):
         self.id = id
         self.street_address = street_address
@@ -81,7 +81,7 @@ class AddressModel(Base):
 class ListingModel(Base):
     __tablename__ = 'listing'
 
-    id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     address_id = Column(Integer, ForeignKey('address.id'))
     email = Column(String(255))
     price = Column(Float)
@@ -103,7 +103,6 @@ class ListingModel(Base):
     #     pass
     def __init__(
             self,
-            id: int,
             email: str,
             price: float,
             # property_id: str,
@@ -118,7 +117,8 @@ class ListingModel(Base):
             basement: str,
             square_feet: float,
             listing_date: datetime,
-            address: Annotated[Optional[AddressModel], "could be missing"] = None
+            address: Annotated[Optional[AddressModel], "could be missing"] = None,
+            id: int | None = None,     # Allow none so the database creates it for new objects.
     ):
         self.address = address
         self.id = id
@@ -163,7 +163,7 @@ class ExpenseModel(Base):
 class RealEstatePropertyModel(Base):
     __tablename__ = 'real_estate_property'
 
-    id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     address_id = Column(Integer, ForeignKey('address.id'))
     listing_id = Column(Integer, ForeignKey('listing.id'))
 
@@ -173,10 +173,10 @@ class RealEstatePropertyModel(Base):
 
     def __init__(
             self,
-            id,
             listing: Annotated[Optional[ListingModel], 'could be missing'] = None,
             address: Annotated[Optional[AddressModel], 'could be yet to be filled'] = None,
-            expenses: Annotated[Optional[List[ExpenseModel]], 'could be yet to be filled'] = None
+            expenses: Annotated[Optional[List[ExpenseModel]], 'could be yet to be filled'] = None,
+            id: int | None = None,     # Allow none so the database creates it for new objects.
     ):
         self.id = id
         self.listing = listing
@@ -190,27 +190,25 @@ class RealEstatePropertyModel(Base):
 class FinancingModel(Base):
     __tablename__ = 'financing'
 
-    id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     investor_profile_id = Column(Integer, ForeignKey('investor_profile.id'))
-    mortgages = relationship("MortgageModel", back_populates="financing")
 
+    mortgages = relationship("MortgageModel", back_populates="financing")
     investor_profile = relationship("InvestorProfileModel", back_populates='financing_sources')
 
     def __init__(
             self,
-            id: int,
-            investor_profile: Annotated[Optional[InvestorProfileModel], 'could be yet to be filled'] = None,
             mortgages: Annotated[Optional[List[MortgageModel]], 'could be yet to be filled'] = None,
+            id: int | None = None,     # Allow none so the database creates it for new objects.
     ):
         self.id = id
-        self.investor_profile = investor_profile
         self.mortgages = mortgages if mortgages else []
 
     # def get_total_available(self) -> float:
     #     return sum(mortgage.appraisal_value for mortgage in self.mortgages)
 
     def __repr__(self):
-        return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
+        return f"<Financing(id={self.id})>"
         # return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
 
 
@@ -218,7 +216,7 @@ class FinancingModel(Base):
 class InvestorProfileModel(Base):
     __tablename__ = 'investor_profile'
 
-    id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     price = Column(Float)
     first_name = Column(String(255))
     last_name = Column(String(255))
@@ -247,7 +245,6 @@ class InvestorProfileModel(Base):
 
     def __init__(
             self,
-            id: int = 0,
             price: int = 0,
             first_name: str = '',
             last_name: str = '',
@@ -269,7 +266,8 @@ class InvestorProfileModel(Base):
             central_heat_required: bool = False,
             dishwasher_required: bool = False,
             balcony_required: bool = False,
-            financing_sources: Annotated[Optional[List[FinancingModel]], 'could be yet to be filled'] = None
+            financing_sources: Annotated[Optional[List[FinancingModel]], 'could be yet to be filled'] = None,
+            id: int | None = None,     # Allow none so the database creates it for new objects.
     ):
         self.id = id
         self.price = price
@@ -303,7 +301,7 @@ class InvestorProfileModel(Base):
 class MortgageModel(Base):
     __tablename__ = 'mortgage'
 
-    id = Column(String(255), primary_key=True)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     financing_id = Column(String(255), ForeignKey('financing.id'))
     appraisal_value = Column(Float)
     principal = Column(Float)
@@ -320,17 +318,19 @@ class MortgageModel(Base):
 
     def __init__(
             self,
-            id: int,
             appraisal_value: float,
             principal: float,
             pre_qualified: bool,
             pre_approved: bool,
             loan_to_value: float,
             term: int,
+            interest_rate: float,
             amortization_period: int,
             monthly_payment: float,
             owner_occupied: bool,
-            insurance: float
+            insurance: float,
+            financing: Annotated[Optional[FinancingModel], 'could be yet to be filled'] = None,
+            id: int | None = None,     # Allow none so the database creates it for new objects.
     ):
         self.id = id
         self.appraisal_value = appraisal_value
@@ -339,10 +339,12 @@ class MortgageModel(Base):
         self.pre_approved = pre_approved
         self.loan_to_value = loan_to_value
         self.term = term
-        self.amortization = amortization_period
+        self.interest_rate = interest_rate
+        self.amortization_period = amortization_period
         self.monthly_payment = monthly_payment
         self.owner_occupied = owner_occupied
         self.insurance = insurance
+        self.financing = financing
 
     def __repr__(self):
         return f"<Mortgage(id={self.id}, principal=${self.principal:,.2f}, term={self.term}mo)>"

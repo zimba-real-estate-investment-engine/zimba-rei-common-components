@@ -23,7 +23,6 @@ def test_save_real_estate_property(get_test_db, get_test_real_state_property_sch
 def test_get_all(get_test_db, get_test_real_state_property_schema_unpopulated, get_test_address_schema):
     db = get_test_db
 
-
     # Setup first real estate property
     test_real_estate_property_1 = get_test_real_state_property_schema_unpopulated
     test_address_1 = get_test_address_schema

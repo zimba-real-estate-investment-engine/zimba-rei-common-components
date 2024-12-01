@@ -1,5 +1,8 @@
+import copy
 from datetime import datetime
 
+from app.database.models import InvestorProfileModel
+from app.repositories.BaseRepository import BaseRepository
 from app.services.InvestorProfileService import InvestorProfileService
 from app.services.ListingService import ListingService
 from app.services.SubscriptionService import SubscriptionService
@@ -13,8 +16,46 @@ def test_save_investor_profile_no_child_objects(get_test_db, get_test_investor_p
 
     newly_saved_investor_profile = investor_profile_service.save_investor_profile(test_investor_profile)
 
+    db.flush()
     # db.commit() Only commit if you want to actually save in db.
-    assert newly_saved_investor_profile
+    assert newly_saved_investor_profile.id != 0
+
+
+def test_save_investor_profile_cascade_to_financing(get_test_db, get_test_investor_profile_schema,
+                                                    get_test_financing_schema_minimum):
+    db = get_test_db
+    test_investor_profile = get_test_investor_profile_schema
+    test_financing_source_1 = get_test_financing_schema_minimum
+
+    test_investor_profile.financing_sources = [test_financing_source_1]
+
+    investor_profile_service = InvestorProfileService(db)
+
+    newly_saved_investor_profile = investor_profile_service.save_investor_profile(test_investor_profile)
+
+    db.flush()
+    # db.commit() Only commit if you want to actually save in db.
+    assert newly_saved_investor_profile.id != 0
+
+def test_get_all(get_test_db, get_test_investor_profile_schema):
+    db = get_test_db
+    test_investor_profile_1 = get_test_investor_profile_schema
+    test_investor_profile_1.financing_sources = []
+    test_investor_profile_2 = copy.deepcopy(test_investor_profile_1)
+    test_investor_profile_2.id = test_investor_profile_1.id + 1
+    test_investor_profile_2.financing_sources = []
+
+    investor_profile_service = InvestorProfileService(db)
+
+    newly_saved_investor_profile_1 = investor_profile_service.save_investor_profile(test_investor_profile_1)
+    newly_saved_investor_profile_2 = investor_profile_service.save_investor_profile(test_investor_profile_2)
+
+    db.flush()
+
+    investor_profiles = investor_profile_service.get_all()
+    assert investor_profiles
+
+
 
 #
 # def test_get_all(get_test_db, get_test_listing_schema, get_test_address_schema):

@@ -1,3 +1,4 @@
+from __future__ import annotations
 import os
 import time
 from typing import List
@@ -11,17 +12,25 @@ from urllib.parse import quote_plus
 from fastapi.testclient import TestClient
 from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
-    FinancingModel, MortgageModel
-# from app.database.models import RealEstatePropertyModel
+    FinancingModel, MortgageModel, SubscriptionModel
+from app.database.models import RealEstatePropertyModel
+from datetime import datetime, timezone, timedelta
 
-from app.database.models import SubscriptionModel
+from dateutil.relativedelta import relativedelta
 
-import pytest
-
+from app.schemas.ListingSchema import ListingSchema
+from app.schemas.DealSchema import DealSchema
+from app.schemas.FinancingSchema import FinancingSchema
+from app.schemas.InvestorProfileSchema import InvestorProfileSchema
+from app.schemas.UnderwritingSchema import UnderwritingSchema
+from app.schemas.MortgageSchema import MortgageSchema
+from app.schemas.SubscriptionSchema import SubscriptionSchema
 from app.schemas.EmailSchema import EmailSchema
 from app.schemas.AddressSchema import AddressSchema
 from app.schemas.ExpenseSchema import ExpenseSchema
 from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
+
+import pytest
 
 engine = None
 
@@ -31,31 +40,11 @@ def get_test_db():
     yield __test_db()
 
 
-# @pytest.fixture
-# def get_test_repository() -> Repository:
-#     db = __test_db()
-#     sqlalchemy_repository = SQLAlchemyRepository(db)
-#     yield sqlalchemy_repository
-
-
 @pytest.fixture
 def get_current_time_in_seconds_str() -> str:
     current_time = datetime.now(timezone.utc)
     mills = int(current_time.timestamp())
     return str(mills)
-
-from datetime import datetime, timezone, timedelta
-
-from dateutil.relativedelta import relativedelta
-
-from app.schemas.ListingSchema import ListingSchema
-from app.schemas.DealSchema import DealSchema
-from app.schemas.InvestorProfileSchema import InvestorProfileSchema
-from app.schemas.UnderwritingSchema import UnderwritingSchema
-from app.schemas.MortgageSchema import MortgageSchema
-from app.schemas.SubscriptionSchema import SubscriptionSchema
-
-import pytest
 
 
 @pytest.fixture
@@ -77,7 +66,7 @@ def get_test_listing_schema() -> ListingSchema:
 @pytest.fixture
 def get_test_listing_model() -> ListingModel:
     current_time_string = __get_time_string()
-    listing_model = ListingModel(id=int(current_time_string), price=300000, email="email@example.com",
+    listing_model = ListingModel(price=300000, email="email@example.com",
                                  year_built=datetime(2000, 1, 1), baths=3, beds=5,
                                  listing_date=datetime(2024, 4, 1),
                                  square_feet=2500, parking_spaces="4", air_conditioning=False, balcony=False,
@@ -92,7 +81,7 @@ def get_test_investor_profile_schema() -> InvestorProfileSchema:
     l_name = "lname" + current_time_string
 
     investor_profile_schema = InvestorProfileSchema(
-        id=int(current_time_string), price=300000, first_name=f_name, last_name=l_name,
+        price=300000, first_name=f_name, last_name=l_name,
         email="email@example.com", title="Ms.", phone="1-888-454-1234",
         preferred_property_types="rental", preferred_locations="SE, NE",
         bedrooms_max=8, bedrooms_min=2, bathrooms_min=2, bathrooms_max=3, budget_max=100000000, budget_min=200000,
@@ -111,7 +100,7 @@ def get_test_investor_profile_model() -> InvestorProfileModel:
     l_name = "lname" + current_time_string
 
     investor_profile_model = InvestorProfileModel(
-        id=int(current_time_string), price=300000, first_name=f_name, last_name=l_name,
+        price=300000, first_name=f_name, last_name=l_name,
         email="email@example.com", title="Ms.", phone="1-888-454-1234",
         budget_min=343.33, budget_max=2343.00, preferred_property_types="rental",
         bedrooms_max=8, bedrooms_min=2, bathrooms_min=2, bathrooms_max=3, investment_purpose="rental",
@@ -141,6 +130,15 @@ def get_test_financing_model_minimum() -> FinancingModel:
 
 
 @pytest.fixture
+def get_test_financing_schema_minimum() -> FinancingSchema:
+    current_time_string = __get_time_string()
+
+    financing_schema = FinancingSchema()
+
+    return financing_schema
+
+
+@pytest.fixture
 def get_test_deal_schema() -> DealSchema:
     current_time_string = __get_time_string()
     deal_date = datetime.now()
@@ -148,7 +146,7 @@ def get_test_deal_schema() -> DealSchema:
     underwriting_date = datetime.now() + relativedelta(months=2)
 
     deal_schema = DealSchema(
-        id=current_time_string, listing_id=current_time_string, investor_id=current_time_string,
+        listing_id=current_time_string, investor_id=current_time_string,
         deal_date=deal_date, deal_status="open", offer_price=300000, sale_price=350000,
         closing_date=closing_date, underwriting_id=current_time_string,
         appraisal_value=320000, loan_amount=240000, loan_to_value=0.8,
@@ -177,7 +175,7 @@ def get_test_mortgage_schema() -> MortgageSchema:
     issued_date = datetime.now()
 
     mortgage_schema = MortgageSchema(
-        id=current_time_string, appraisal_value=300000.00, principal=240000.03, issued_date=issued_date,
+        appraisal_value=300000.00, principal=240000.03, issued_date=issued_date,
         pre_qualifid=True, pre_approved=True, loan_to_value=80.0, interest_rate=3.75,
         term=timedelta(days=3 * 365), amortization_period=timedelta(days=30 * 365), monthly_payment=3565.25,
         owner_occupied=True, insurance=3500.75,
@@ -197,7 +195,7 @@ def get_test_address_schema() -> AddressSchema:
     long_lat_location = current_time_string + '_long_lat_location'
 
     address_schema = AddressSchema(
-        id=int(current_time_string), street_address=street_address, street_address_two=street_address_two,
+        street_address=street_address, street_address_two=street_address_two,
         city=city, postal_code=postal_code, country=country, long_lat_location=long_lat_location, state="ON",
     )
 
@@ -210,7 +208,7 @@ def get_test_expense_schema() -> ExpenseSchema:
     expense_type = current_time_string + '_expense_type'
 
     expense_schema = ExpenseSchema(
-        id=int(current_time_string), expense_type=expense_type, monthly_cost=3343.23,
+        expense_type=expense_type, monthly_cost=3343.23,
     )
 
     return expense_schema
@@ -221,9 +219,8 @@ def get_test_expense_model() -> ExpenseModel:
     current_time_string = __get_time_string()
     expense_type = current_time_string + '_expense_type'
 
-    expense_model = ExpenseModel(
-        id=int(current_time_string), expense_type=expense_type, monthly_cost=3343.23,
-    )
+    expense_model = ExpenseModel(expense_type=expense_type, monthly_cost=3343.23,
+                                 )
 
     return expense_model
 
@@ -231,12 +228,11 @@ def get_test_expense_model() -> ExpenseModel:
 @pytest.fixture
 def get_test_mortgage_model() -> MortgageModel:
     current_time_string = __get_time_string()
-    expense_type = current_time_string + '_expense_type'
 
-    mortgage_model = MortgageModel(
-        id=int(current_time_string), appraisal_value=345555, principal=234343.00, pre_qualified=True,
-        pre_approved=False, loan_to_value=80.00, term=5, amortization_period=30, monthly_payment=2343.55,
-        owner_occupied=True, insurance=200.00)
+    mortgage_model = MortgageModel(appraisal_value=345555, principal=234343.00, pre_qualified=True,
+                                   pre_approved=False, loan_to_value=80.00, term=5, interest_rate=5.0,
+                                   amortization_period=30, monthly_payment=2343.55,
+                                   owner_occupied=True, insurance=200.00, )
 
     return mortgage_model
 
@@ -263,7 +259,7 @@ def get_test_subscription_schema() -> SubscriptionSchema:
     user_unsubscribe_token = current_time_string + '_token'
 
     subscription_schema = SubscriptionSchema(
-        id=int(current_time_string), email=user_email, name=user_name, service_subscribed_to='get_on_shortlist',
+        email=user_email, name=user_name, service_subscribed_to='get_on_shortlist',
         source_url='index.html', form_id='subscribe_to_shortlist', subscribed=True, unsubscribed_date=issued_date,
         unsubscribe_token=user_unsubscribe_token
     )
@@ -273,14 +269,13 @@ def get_test_subscription_schema() -> SubscriptionSchema:
 @pytest.fixture
 def get_test_real_state_property_schema_unpopulated() -> RealEstatePropertySchema:
     current_time_string = __get_time_string()
-    real_estate_property_schema = RealEstatePropertySchema(id=int(current_time_string))
+    real_estate_property_schema = RealEstatePropertySchema()
     return real_estate_property_schema
 
 
 @pytest.fixture
 def get_test_real_estate_property_model() -> RealEstatePropertyModel:
-    current_time_string = __get_time_string()
-    real_estate_property_model = RealEstatePropertyModel(id=int(current_time_string))
+    real_estate_property_model = RealEstatePropertyModel()
     return real_estate_property_model  # ensures mappings are correct
 
 
@@ -326,7 +321,7 @@ def get_test_subscription_model() -> SubscriptionModel:
     user_unsubscribe_token = current_time_string + '_token'
 
     subscription_model = SubscriptionModel(
-        id=current_time_string, email=user_email, name=user_name, service_subscribed_to='get_on_shortlist',
+        email=user_email, name=user_name, service_subscribed_to='get_on_shortlist',
         source_url='index.html', form_id='subscribe_to_shortlist', subscribed=True, unsubscribed_date=issued_date,
         unsubscribe_token=user_unsubscribe_token
     )
@@ -345,7 +340,7 @@ def get_test_address_model() -> AddressModel:
     long_lat_location = current_time_string + '_long_lat_location'
 
     address_model = AddressModel(
-        id=int(current_time_string), street_address=street_address, street_address_two=street_address_two,
+        street_address=street_address, street_address_two=street_address_two,
         city=city, postal_code=postal_code, state=state, country=country, long_lat_location=long_lat_location,
     )
     return address_model

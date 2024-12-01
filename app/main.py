@@ -9,13 +9,16 @@ from app.core import database
 from app.database.models import SubscriptionModel
 from app.domain.RealEstateProperty import RealEstateProperty
 from app.schemas.AddressSchema import AddressSchema
+from app.schemas.InvestorProfileSchema import InvestorProfileSchema
 from app.schemas.ListingSchema import ListingSchema
+from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from urllib.parse import quote_plus
 
 from app.services.AddressService import AddressService
+from app.services.InvestorProfileService import InvestorProfileService
 from app.services.ListingService import ListingService
 from app.services.RealEstatePropertyService import RealEstatePropertyService
 from app.services.SubscriptionService import SubscriptionService
@@ -106,12 +109,28 @@ async def get_addresses(db: Session = Depends(get_db)):
     return address_json_list
 
 
-@app.get("/real-estate-properties/", response_model=List[RealEstateProperty])
+@app.get("/real-estate-properties/", response_model=List[RealEstatePropertySchema])
 async def get_real_estate_properties(db: Session = Depends(get_db)):
     real_estate_property_service = RealEstatePropertyService(db)
     real_estate_property_schema_list = real_estate_property_service.get_all()
     real_estate_property_json_list = list(map(lambda x: x.model_dump(), real_estate_property_schema_list))
     return real_estate_property_json_list
+
+
+@app.get("/investor-profiles/", response_model=List[InvestorProfileSchema])
+async def get_investor_profiles(db: Session = Depends(get_db)):
+    investor_profile_service = InvestorProfileService(db)
+    investor_profile_schema_list = investor_profile_service.get_all()
+    investor_profile_json_list = list(map(lambda x: x.model_dump(), investor_profile_schema_list))
+    return investor_profile_json_list
+
+
+@app.post("/investor-profiles/", response_model=InvestorProfileSchema)
+async def create_investor_profiles(investor_profile: InvestorProfileSchema, db: Session = Depends(get_db)):
+    investor_profile_service = InvestorProfileService(db)
+    newly_saved_investor_profile = investor_profile_service.save_investor_profile(investor_profile)
+    return newly_saved_investor_profile
+
 
 # Include the routes if external
 # app.include_router(users.router, prefix="/users", tags=["Users"])
