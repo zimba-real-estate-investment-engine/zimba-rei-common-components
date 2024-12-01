@@ -22,6 +22,8 @@ class ListingService:
             listing_model = BaseRepository.pydantic_to_sqlalchemy(listing_data, ListingModel)
 
             new_listing_model = self.repository.add(listing_model)
+            self.db.flush()   # Makes sure the id is auto-incremented
+
             new_listing_schema = BaseRepository.sqlalchemy_to_pydantic(new_listing_model, ListingSchema)
 
             self.db.commit()

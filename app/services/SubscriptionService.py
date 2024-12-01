@@ -38,6 +38,7 @@ class SubscriptionService:
             subscription_model.unsubscribe_token = Subscription.generate_unsubscribe_token()
 
             new_subscription_model = self.repo.add(subscription_model)
+            self.db.flush()   # Makes sure the id is auto-incremented
             new_subscription_schema = BaseRepository.sqlalchemy_to_pydantic(new_subscription_model, SubscriptionSchema)
 
             self.db.commit()  # make sure commit to db was successful

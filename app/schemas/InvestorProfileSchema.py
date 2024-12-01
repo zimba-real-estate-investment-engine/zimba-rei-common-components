@@ -8,7 +8,7 @@ from app.schemas.FinancingSchema import FinancingSchema
 
 
 class InvestorProfileSchema(BaseModel):
-    id: int
+    id: Optional[int] = None
     price: float
     first_name: str
     last_name: str

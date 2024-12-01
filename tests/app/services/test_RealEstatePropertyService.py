@@ -5,47 +5,54 @@ from app.services.RealEstatePropertyService import RealEstatePropertyService
 from app.services.SubscriptionService import SubscriptionService
 
 
-def test_save_real_estate_property(get_test_db, get_test_real_state_property_schema_unpopulated, get_test_address_schema):
+def test_save_real_estate_property(get_test_db, get_test_real_state_property_schema_unpopulated, get_test_address_schema,
+                                   get_test_listing_schema):
     db = get_test_db
     test_real_estate_property = get_test_real_state_property_schema_unpopulated
     test_real_estate_property.address = get_test_address_schema
+    test_real_estate_property.listing = get_test_listing_schema
 
     real_estate_property_service = RealEstatePropertyService(db)
 
     newly_saved_real_estate_property = real_estate_property_service.save_real_estate_property(test_real_estate_property)
 
-    db.commit()
+    db.flush()
 
     # db.commit() Only commit if you want to actually save in db.
-    assert newly_saved_real_estate_property.id != 0
+    assert newly_saved_real_estate_property.id and newly_saved_real_estate_property.id != 0
+    assert newly_saved_real_estate_property.address.id and newly_saved_real_estate_property.address.id != 0
+    assert newly_saved_real_estate_property.listing.id and newly_saved_real_estate_property.listing.id != 0
 
 
-def test_get_all(get_test_db, get_test_real_state_property_schema_unpopulated, get_test_address_schema):
+def test_get_all(get_test_db, get_test_real_state_property_schema_unpopulated, get_test_address_schema,
+                 get_test_listing_schema):
     db = get_test_db
 
     # Setup first real estate property
     test_real_estate_property_1 = get_test_real_state_property_schema_unpopulated
     test_address_1 = get_test_address_schema
+    test_listing_1 = get_test_listing_schema
     test_real_estate_property_1.address = test_address_1
+    test_real_estate_property_1.listing = test_listing_1
 
     # Setup the second test real estate property
     test_real_estate_property_2 = copy.deepcopy(test_real_estate_property_1)
-    test_real_estate_property_2.id = test_real_estate_property_1.id + 1
     test_address_2 = copy.deepcopy(test_address_1)
-    test_address_2.id = test_address_1.id + 1
+    test_listing_2 = copy.deepcopy(test_listing_1)
     test_address_2.street_address = 'street_address_' + str(datetime.now())
 
     test_real_estate_property_2.address = test_address_2
+    test_real_estate_property_2.listing = test_listing_2
 
     real_estate_property_service = RealEstatePropertyService(db)
 
     newly_saved_real_estate_property_1 = real_estate_property_service.save_real_estate_property(test_real_estate_property_1)
     newly_saved_real_estate_property_2 = real_estate_property_service.save_real_estate_property(test_real_estate_property_2)
 
-    assert newly_saved_real_estate_property_1
-    assert newly_saved_real_estate_property_2
     db.flush()
 
+    assert newly_saved_real_estate_property_1.id and newly_saved_real_estate_property_1.id != 0
+    assert newly_saved_real_estate_property_2.id and newly_saved_real_estate_property_2.id != 0
     real_estate_properties = real_estate_property_service.get_all()
 
     assert len(real_estate_properties) >= 2   # There must be at least 2 records

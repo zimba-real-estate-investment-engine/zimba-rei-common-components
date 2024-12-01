@@ -23,6 +23,8 @@ class ExpenseService:
             expense_model = BaseRepository.pydantic_to_sqlalchemy(expense_data, ExpenseModel)
 
             new_expense_model = self.repository.add(expense_model)
+            self.db.flush()   # Makes sure the id is auto-incremented
+
             new_expense_schema = BaseRepository.sqlalchemy_to_pydantic(new_expense_model, ExpenseSchema)
 
             self.db.commit()

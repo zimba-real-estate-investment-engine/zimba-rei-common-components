@@ -55,7 +55,7 @@ def get_current_time_in_seconds_string() -> str:
 @pytest.fixture
 def get_test_listing_schema() -> ListingSchema:
     current_time_string = __get_time_string()
-    listing_schema = ListingSchema(id=int(current_time_string), price=300000, email="email@example.com",
+    listing_schema = ListingSchema(price=300000, email="email@example.com",
                                    year_built=datetime(2000, 1, 1), baths=3, beds=5,
                                    listing_date=datetime(2024, 4, 1),
                                    square_feet=2500, parking_spaces="4", air_conditioning=False, balcony=False,
@@ -146,7 +146,6 @@ def get_test_deal_schema() -> DealSchema:
     underwriting_date = datetime.now() + relativedelta(months=2)
 
     deal_schema = DealSchema(
-        listing_id=current_time_string, investor_id=current_time_string,
         deal_date=deal_date, deal_status="open", offer_price=300000, sale_price=350000,
         closing_date=closing_date, underwriting_id=current_time_string,
         appraisal_value=320000, loan_amount=240000, loan_to_value=0.8,
@@ -176,8 +175,8 @@ def get_test_mortgage_schema() -> MortgageSchema:
 
     mortgage_schema = MortgageSchema(
         appraisal_value=300000.00, principal=240000.03, issued_date=issued_date,
-        pre_qualifid=True, pre_approved=True, loan_to_value=80.0, interest_rate=3.75,
-        term=timedelta(days=3 * 365), amortization_period=timedelta(days=30 * 365), monthly_payment=3565.25,
+        pre_qualified=True, pre_approved=True, loan_to_value=80.0, interest_rate=3.75,
+        term=3, amortization_period=30, monthly_payment=3565.25,
         owner_occupied=True, insurance=3500.75,
     )
     return mortgage_schema
@@ -186,7 +185,6 @@ def get_test_mortgage_schema() -> MortgageSchema:
 @pytest.fixture
 def get_test_address_schema() -> AddressSchema:
     current_time_string = __get_time_string()
-    issued_date = datetime.now()
     street_address = current_time_string + '_street_address'
     street_address_two = current_time_string + '_street_address_two'
     city = current_time_string + '_city'

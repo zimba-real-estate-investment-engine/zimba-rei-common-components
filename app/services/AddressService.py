@@ -23,6 +23,8 @@ class AddressService:
             address_model = BaseRepository.pydantic_to_sqlalchemy(address_data, AddressModel)
 
             new_address_model = self.repository.add(address_model)
+            self.db.flush()   # to make sure the newly created ID is passed back
+
             new_address_schema = BaseRepository.sqlalchemy_to_pydantic(new_address_model, AddressSchema)
 
             self.db.commit()

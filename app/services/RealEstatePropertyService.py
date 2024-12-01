@@ -23,6 +23,8 @@ class RealEstatePropertyService:
                                                                                RealEstatePropertyModel)
 
             new_real_estate_property_model = self.repository.add(real_estate_property_model)
+            self.db.flush()   # Makes sure the id is auto-incremented
+
             new_real_estate_property_schema = BaseRepository.sqlalchemy_to_pydantic(new_real_estate_property_model,
                                                                                     RealEstatePropertySchema)
 

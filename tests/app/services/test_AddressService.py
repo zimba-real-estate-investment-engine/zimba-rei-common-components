@@ -23,9 +23,7 @@ def test_get_all(get_test_db, get_test_address_schema):
     test_address_2 = copy.deepcopy(test_address_1)
     test_address_3 = copy.deepcopy(test_address_2)
 
-    test_address_2.id = get_test_address_schema.id + 1
     test_address_2.street_address = 'street_' + str(datetime.now())
-    test_address_3.id = get_test_address_schema.id + 2
     test_address_3.street_address = 'street_' + str(datetime.now())
 
     address_service = AddressService(db)
@@ -34,9 +32,11 @@ def test_get_all(get_test_db, get_test_address_schema):
     newly_saved_address_2 = address_service.save_address(test_address_2)
     newly_saved_address_3 = address_service.save_address(test_address_3)
 
-    assert newly_saved_address_1
-    assert newly_saved_address_2
-    assert newly_saved_address_3
+    db.flush()
+
+    assert newly_saved_address_1.id and newly_saved_address_1.id != 0
+    assert newly_saved_address_2.id and newly_saved_address_2.id != 0
+    assert newly_saved_address_3.id and newly_saved_address_3.id != 0
 
     db.flush()
 

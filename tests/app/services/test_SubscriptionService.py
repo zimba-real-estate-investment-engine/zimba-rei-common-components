@@ -9,5 +9,10 @@ def test_save_subscription(get_test_db, get_test_subscription_schema):
 
     newly_saved_subscription = subscription_service.save_subscription(test_subscription)
 
-    # db.commit() Only commit if you want to actually save in db.
+    # Make sure ID was successfully auto-incremented
+    assert newly_saved_subscription.id and newly_saved_subscription.id != 0
     assert newly_saved_subscription.unsubscribe_token != test_subscription.unsubscribe_token  # Generated at saving
+
+    # Clean up TBD
+
+    db.commit() # Only commit if you want to actually save in db.

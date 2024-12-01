@@ -305,9 +305,11 @@ class MortgageModel(Base):
     financing_id = Column(String(255), ForeignKey('financing.id'))
     appraisal_value = Column(Float)
     principal = Column(Float)
+    issued_date = Column(TIMESTAMP)
     pre_qualified = Column(Boolean)
     pre_approved = Column(Boolean)
     loan_to_value = Column(Float)
+    interest_rate = Column(Float)
     term = Column(Integer)
     amortization_period = Column(Integer)
     monthly_payment = Column(Float)
@@ -320,6 +322,7 @@ class MortgageModel(Base):
             self,
             appraisal_value: float,
             principal: float,
+            issued_date: datetime,
             pre_qualified: bool,
             pre_approved: bool,
             loan_to_value: float,
@@ -335,6 +338,7 @@ class MortgageModel(Base):
         self.id = id
         self.appraisal_value = appraisal_value
         self.principal = principal
+        self.issued_date = issued_date
         self.pre_qualified = pre_qualified
         self.pre_approved = pre_approved
         self.loan_to_value = loan_to_value
