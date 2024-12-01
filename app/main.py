@@ -9,6 +9,8 @@ from app.core import database
 from app.database.models import SubscriptionModel
 from app.domain.RealEstateProperty import RealEstateProperty
 from app.schemas.AddressSchema import AddressSchema
+from app.schemas.ExpenseSchema import ExpenseSchema
+from app.schemas.FinancingSchema import FinancingSchema
 from app.schemas.InvestorProfileSchema import InvestorProfileSchema
 from app.schemas.ListingSchema import ListingSchema
 from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
@@ -18,6 +20,8 @@ from sqlalchemy.orm import Session, sessionmaker
 from urllib.parse import quote_plus
 
 from app.services.AddressService import AddressService
+from app.services.ExpenseService import ExpenseService
+from app.services.FinancingService import FinancingService
 from app.services.InvestorProfileService import InvestorProfileService
 from app.services.ListingService import ListingService
 from app.services.RealEstatePropertyService import RealEstatePropertyService
@@ -131,6 +135,21 @@ async def create_investor_profiles(investor_profile: InvestorProfileSchema, db: 
     newly_saved_investor_profile = investor_profile_service.save_investor_profile(investor_profile)
     return newly_saved_investor_profile
 
+
+@app.get("/expenses/", response_model=List[ExpenseSchema])
+async def get_expenses(db: Session = Depends(get_db)):
+    expense_service = ExpenseService(db)
+    expense_schema_list = expense_service.get_all()
+    expense_json_list = list(map(lambda x: x.model_dump(), expense_schema_list))
+    return expense_json_list
+
+
+@app.get("/financing/", response_model=List[FinancingSchema])
+async def get_financing(db: Session = Depends(get_db)):
+    financing_service = FinancingService(db)
+    financing_schema_list = financing_service.get_all()
+    financing_json_list = list(map(lambda x: x.model_dump(), financing_schema_list))
+    return financing_json_list
 
 # Include the routes if external
 # app.include_router(users.router, prefix="/users", tags=["Users"])
