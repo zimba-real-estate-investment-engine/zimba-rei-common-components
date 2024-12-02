@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components_nginx
+    environment:
+      - LISTEN_PORT=0.0.0.0:8080 # Force IPV4 only
+    ports:
+      - "8080:80"
+    depends_on:
+      - deals-api
+      - listings-api
+      - investor-profiles-api
+      - mortgages-api
+      - underwritings-api
+      - subscriptions-api
+    networks:
+      - zimba-rei-common-components
+    restart: always
+
+  deals-api:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components_deals-api
+    volumes:
+      - ./deals_api:/app
+    networks:
+      - zimba-rei-common-components
+    restart: always
+
+  listings-api:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components-listings-api
+    volumes:
+      - ./listings_api:/app
+    networks:
+      - zimba-rei-common-components
+    restart: always
+
+  investor-profiles-api:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components-investor-profiles-api
+    volumes:
+      - ./investor_profiles_api:/app
+    networks:
+      - zimba-rei-common-components
+    restart: always
+
+  mortgages-api:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components-mortgages-api
+    volumes:
+      - ./mortgages_api:/app
+    networks:
+      - zimba-rei-common-components
+    restart: always
+
+  subscriptions-api:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components-subscriptions-api
+    volumes:
+      - ./subscriptions_api:/app
+    networks:
+      - zimba-rei-common-components
+    restart: always
+
+  underwritings-api:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components-underwritings-api
+    volumes:
+      - ./underwritings_api:/app
+    networks:
+      - zimba-rei-common-components
+    restart: always
+
+networks:
+  zimba-rei-common-components:
+      driver: bridge

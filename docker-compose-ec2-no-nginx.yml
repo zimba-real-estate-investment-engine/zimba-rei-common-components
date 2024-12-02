@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+
+  deals-api:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components_deals-api
+    volumes:
+      - ./deals_api:/app
+    networks:
+      - zimba-rei-common-components
+
+  listings-api:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components-listings-api
+    volumes:
+      - ./listings_api:/app
+    networks:
+      - zimba-rei-common-components
+
+  investor-profiles-api:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components-investor-profiles-api
+    volumes:
+      - ./investor_profiles_api:/app
+    networks:
+      - zimba-rei-common-components
+
+  mortgages-api:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components-mortgages-api
+    volumes:
+      - ./mortgages_api:/app
+    networks:
+      - zimba-rei-common-components
+
+  subscriptions-api:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components-subscriptions-api
+    volumes:
+      - ./subscriptions_api:/app
+    networks:
+      - zimba-rei-common-components
+
+  underwritings-api:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components-underwritings-api
+    volumes:
+      - ./underwritings_api:/app
+    networks:
+      - zimba-rei-common-components
+    
+networks:
+  zimba-rei-common-components:
+      driver: bridge

@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  underwriting:
+    image: 975050215890.dkr.ecr.us-east-2.amazonaws.com/rei-engine-ecr-repo:zimba-rei-common-components_underwriting
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+#    environment:
+#      - DB_USER='xxxxxxx'
+#      - DB_PASSWORD='xxxxxxxx'
+#      - DB_HOST='xxxxxxxx.rds.amazonaws.com'
+#      - DB_NAME='xxxxxxxx'
+#      - DB_PORT=3306
+#      - DB_TEST_NAME='xxxxxxx'
+#      - DB_ECHO_SQL_COMMANDS=True
+    healthcheck:
+      test: ["CMD", "curl", "-s", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
