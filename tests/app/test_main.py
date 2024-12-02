@@ -2,7 +2,7 @@ import time
 
 from app.database.models import SubscriptionModel
 from app.repositories.BaseRepository import BaseRepository
-from app.schemas.InvestorProfileSchema import InvestorProfileSchema
+from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileRequestSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 
 
@@ -36,6 +36,20 @@ def test_get_investor_profiles(test_fastapi_client, request):
     assert response.status_code == 200
 
 
+def test_get_investor_profile(test_fastapi_client, request):
+    client = test_fastapi_client
+
+    request_payload = InvestorProfileRequestSchema(id=70)
+    request_json = request_payload.json()
+
+    response = client.post("/investor-profiles/find-by-id", data=request_json)
+    assert response.status_code == 200
+
+    result_json = response.json()
+    investor_profile_schema = InvestorProfileSchema(**result_json)  # Ensure we can instantiate the pydantic object
+    assert investor_profile_schema.id and investor_profile_schema.id != 0
+
+
 def test_create_investor_profile(test_fastapi_client, request, get_test_investor_profile_schema):
     test_investor_profile = get_test_investor_profile_schema
     request_json = test_investor_profile.json()
@@ -49,3 +63,7 @@ def test_create_investor_profile(test_fastapi_client, request, get_test_investor
     assert investor_profile_schema.id and investor_profile_schema.id != 0
 
 
+def test_get_underwritings(test_fastapi_client, request):
+    client = test_fastapi_client
+    response = client.get("/underwritings/")
+    assert response.status_code == 200

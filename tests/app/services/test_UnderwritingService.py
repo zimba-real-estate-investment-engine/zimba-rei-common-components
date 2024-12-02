@@ -124,3 +124,11 @@ def test_get_all(get_test_db, get_test_investor_profile_schema, get_test_real_st
 
     # We don't want this to be too large for testing.
     assert len(underwriting_list) < 100000
+
+
+def test_get_all_optimistic(get_test_db):
+    db = get_test_db
+
+    underwriting_service = UnderwritingService(db)
+    underwriting_list = underwriting_service.get_all()
+    assert len(underwriting_list) > 0

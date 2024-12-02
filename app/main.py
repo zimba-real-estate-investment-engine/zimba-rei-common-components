@@ -19,6 +19,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from urllib.parse import quote_plus
 
+from app.schemas.UnderwritingSchema import UnderwritingSchema
 from app.services.AddressService import AddressService
 from app.services.ExpenseService import ExpenseService
 from app.services.FinancingService import FinancingService
@@ -27,6 +28,7 @@ from app.services.ListingService import ListingService
 from app.services.MortgageService import MortgageService
 from app.services.RealEstatePropertyService import RealEstatePropertyService
 from app.services.SubscriptionService import SubscriptionService
+from app.services.UnderwritingService import UnderwritingService
 
 # Create the FastAPI app
 app = FastAPI()
@@ -43,7 +45,7 @@ def get_db():
     DB_HOST = os.getenv('DB_HOST')
     DB_PORT = os.getenv('DB_PORT')
     DB_NAME = os.getenv('DB_NAME')
-    DB_ECHO_SQL_COMMANDS = os.getenv('DB_ECHO_SQL_COMMANDS', 'false').lower()=='true'
+    DB_ECHO_SQL_COMMANDS = os.getenv('DB_ECHO_SQL_COMMANDS', 'false').lower() == 'true'
 
     # Create the SQLAlchemy database URL
     # We use quote_plus to properly encode the password
@@ -130,27 +132,22 @@ async def get_investor_profiles(db: Session = Depends(get_db)):
     return investor_profile_json_list
 
 
-# @app.post("/investor-profiles/", response_model=List[InvestorProfileSchema])
-# async def get_investor_profile( request: InvestorProfileRequestSchema, db: Session = Depends(get_db)):
-#
-#     id = request.id
-#
-#     if id is None:
-#         raise ValueError("ID is required")
-#
-#
-#     investor_profile_service = InvestorProfileService(db)
-#     # Filter the investor profile based on the ID
-#     for profile in investor_profiles:
-#         if profile["id"] == id:
-#             return profile
-#
-#     # Raise an error if not found
-#     raise ValueError("Investor profile not found")
-#
-#     investor_profile_schema_list = investor_profile_service.get_all()
-#     investor_profile_json_list = list(map(lambda x: x.model_dump(), investor_profile_schema_list))
-#     return investor_profile_json_list
+@app.post("/investor-profiles/find-by-id/", response_model=InvestorProfileSchema,
+          description='Find by ID, You need to submit ID')
+async def get_investor_profile(request: InvestorProfileRequestSchema, db: Session = Depends(get_db)):
+    id = request.id
+
+    if id is None:
+        raise ValueError("ID is required")
+
+    try:
+        investor_profile_service = InvestorProfileService(db)
+        investor_profile_schema = investor_profile_service.get_by_id(id)
+
+        return investor_profile_schema
+
+    except Exception as e:
+        raise
 
 
 @app.post("/investor-profiles/", response_model=InvestorProfileSchema)
@@ -182,6 +179,15 @@ async def get_mortgages(db: Session = Depends(get_db)):
     mortgage_schema_list = mortgage_service.get_all()
     mortgage_json_list = list(map(lambda x: x.model_dump(), mortgage_schema_list))
     return mortgage_json_list
+
+
+@app.get("/underwritings/", response_model=List[UnderwritingSchema])
+async def get_underwritings(db: Session = Depends(get_db)):
+    underwriting_service = UnderwritingService(db)
+    underwriting_schema_list = underwriting_service.get_all()
+    underwriting_json_list = list(map(lambda x: x.model_dump(), underwriting_schema_list))
+    return underwriting_json_list
+
 
 # Include the routes if external
 # app.include_router(users.router, prefix="/users", tags=["Users"])
