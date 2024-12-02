@@ -11,7 +11,7 @@ from app.domain.RealEstateProperty import RealEstateProperty
 from app.schemas.AddressSchema import AddressSchema
 from app.schemas.ExpenseSchema import ExpenseSchema
 from app.schemas.FinancingSchema import FinancingSchema
-from app.schemas.InvestorProfileSchema import InvestorProfileSchema
+from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileRequestSchema
 from app.schemas.ListingSchema import ListingSchema
 from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
@@ -128,6 +128,29 @@ async def get_investor_profiles(db: Session = Depends(get_db)):
     investor_profile_schema_list = investor_profile_service.get_all()
     investor_profile_json_list = list(map(lambda x: x.model_dump(), investor_profile_schema_list))
     return investor_profile_json_list
+
+
+# @app.post("/investor-profiles/", response_model=List[InvestorProfileSchema])
+# async def get_investor_profile( request: InvestorProfileRequestSchema, db: Session = Depends(get_db)):
+#
+#     id = request.id
+#
+#     if id is None:
+#         raise ValueError("ID is required")
+#
+#
+#     investor_profile_service = InvestorProfileService(db)
+#     # Filter the investor profile based on the ID
+#     for profile in investor_profiles:
+#         if profile["id"] == id:
+#             return profile
+#
+#     # Raise an error if not found
+#     raise ValueError("Investor profile not found")
+#
+#     investor_profile_schema_list = investor_profile_service.get_all()
+#     investor_profile_json_list = list(map(lambda x: x.model_dump(), investor_profile_schema_list))
+#     return investor_profile_json_list
 
 
 @app.post("/investor-profiles/", response_model=InvestorProfileSchema)

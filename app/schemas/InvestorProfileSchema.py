@@ -21,8 +21,8 @@ class InvestorProfileSchema(BaseModel):
     bedrooms_min: int
     bathrooms_max: int
     bathrooms_min: int
-    budget_max: int
-    budget_min: int
+    budget_max: float
+    budget_min: float
     years_built_min: int
     years_built_max: int
     investment_purpose: str
@@ -31,6 +31,14 @@ class InvestorProfileSchema(BaseModel):
     dishwasher_required: bool
     balcony_required: bool
     financing_sources: Optional[List[FinancingSchema]] = None
+
+    class Config:
+        orm_mode = True
+        from_attributes = True
+
+
+class InvestorProfileRequestSchema(BaseModel):
+    id: int
 
     class Config:
         orm_mode = True

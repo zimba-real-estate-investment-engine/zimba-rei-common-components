@@ -294,7 +294,8 @@ class InvestorProfileModel(Base):
         self.financing_sources = financing_sources if financing_sources else []
 
     def __repr__(self):
-        return f"<InvestorProfile(id={self.id}, budget_range=${self.budget_min:,.2f}-${self.budget_max:,.2f})>"
+        return f"<InvestorProfile(id={self.id})>"
+        # return f"<InvestorProfile(id={self.id}, budget_range=${self.budget_min:,.2f}-${self.budget_max:,.2f})>"
 
 
 
@@ -352,6 +353,31 @@ class MortgageModel(Base):
 
     def __repr__(self):
         return f"<Mortgage(id={self.id}, principal=${self.principal:,.2f}, term={self.term}mo)>"
+
+
+class UnderwritingModel(Base):
+    __tablename__ = 'underwriting'
+
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    investor_profile_id = Column(Integer, ForeignKey('investor_profile.id'))
+    real_estate_property_id = Column(Integer, ForeignKey('real_estate_property.id'))
+
+    investor_profile = relationship("InvestorProfileModel")
+    real_estate_property = relationship("RealEstatePropertyModel")
+
+    def __init__(
+        self,
+        investor_profile: Annotated[Optional[InvestorProfileModel], 'could be yet to be filled'] = None,
+        real_estate_property: Annotated[Optional[RealEstatePropertyModel], 'could be yet to be filled'] = None,
+        id: int | None = None,     # Allow none so the database creates it for new objects.
+    ):
+        self.id = id
+        self.investor_profile = investor_profile
+        self.real_estate_property = real_estate_property
+
+    def __repr__(self):
+        return f"<UnderwritingProcess(id={self.id})>"
+
 #
 #
 # class FinancingModel(Base):

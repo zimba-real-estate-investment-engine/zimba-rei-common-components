@@ -12,7 +12,7 @@ from urllib.parse import quote_plus
 from fastapi.testclient import TestClient
 from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
-    FinancingModel, MortgageModel, SubscriptionModel
+    FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel
 from app.database.models import RealEstatePropertyModel
 from datetime import datetime, timezone, timedelta
 
@@ -156,14 +156,10 @@ def get_test_deal_schema() -> DealSchema:
 
 @pytest.fixture
 def get_test_underwriting_schema() -> UnderwritingSchema:
-    current_time_string = __get_time_string()
-    underwriting_date = datetime.now() + relativedelta(months=2)
+    # current_time_string = __get_time_string()
+    # underwriting_date = datetime.now() + relativedelta(months=2)
 
-    underwriting_schema = UnderwritingSchema(
-        underwriting_id=current_time_string, appraisal_value=320000, loan_amount=240000,
-        loan_to_value=0.8, interest_rate=5, underwriting_date=underwriting_date,
-        approval_status="approved", risk_assessment="low",
-    )
+    underwriting_schema = UnderwritingSchema()
 
     return underwriting_schema
 
@@ -342,6 +338,18 @@ def get_test_address_model() -> AddressModel:
         city=city, postal_code=postal_code, state=state, country=country, long_lat_location=long_lat_location,
     )
     return address_model
+
+
+@pytest.fixture
+def get_test_underwriting_model_min() -> UnderwritingModel:
+    underwriting_model = UnderwritingModel()
+    return underwriting_model
+
+
+# @pytest.fixture
+# def get_test_underwriting_sche_min() -> UnderwritingModel:
+#     underwriting_model = UnderwritingModel()
+#     return underwriting_model
 
 
 @pytest.fixture

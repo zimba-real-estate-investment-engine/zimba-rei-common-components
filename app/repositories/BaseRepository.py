@@ -61,11 +61,6 @@ class BaseRepository(Generic[T]):
         return result.rowcount > 0
 
     @staticmethod
-    # def sqlalchemy_to_pydantic(sqlalchemy_obj: SQLAlchemyModelType, pydantic_schema: Type[PydanticSchemaType])\
-    #         -> PydanticSchemaType:
-    #     PydanticSchemaClass = sqlalchemy_to_pydantic(PydanticSchemaType)
-    #     pydantic_instance = PydanticSchemaClass.from_orm(sqlalchemy_obj)
-    #     return pydantic_instance
     def sqlalchemy_to_pydantic(sqlalchemy_obj: SQLAlchemyModelType, pydantic_schema: Type[PydanticSchemaType])\
             -> PydanticSchemaType:
         # PydanticSchema = sqlalchemy_to_pydantic(PydanticSchemaType)

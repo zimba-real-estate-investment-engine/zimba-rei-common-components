@@ -1,16 +1,14 @@
+from typing import Optional
+
 from pydantic import BaseModel
-from datetime import datetime
+from app.schemas.InvestorProfileSchema import InvestorProfileSchema
+from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
 
 
 class UnderwritingSchema(BaseModel):
-    underwriting_id: str
-    appraisal_value: int
-    loan_amount: int
-    loan_to_value: float
-    interest_rate: float
-    underwriting_date: datetime
-    approval_status: str
-    risk_assessment: str
+    id: Optional[int] = None
+    real_estate_property: Optional[RealEstatePropertySchema] = None
+    investor_profile: Optional[InvestorProfileSchema] = None
     #TODO more to be added from data dictionary as necessary
 
     class Config:
