@@ -3,6 +3,9 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
+from app.schemas.AddressSchema import AddressSchema
+
+
 # from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
 
 
@@ -21,6 +24,10 @@ class ListingSchema(BaseModel):
     basement: Optional[str] = None
     dishwasher: Optional[bool] = None
     hardwood_floor: Optional[str] = None
+    address: Optional[AddressSchema] = None
     # real_estate_property: Optional[RealEstatePropertySchema] = None
     #TODO more to be added from data dictionary
 
+    class Config:
+        orm_mode = True
+        from_attributes = True

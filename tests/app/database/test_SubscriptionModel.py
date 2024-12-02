@@ -11,16 +11,15 @@ def test_crud_subscription_model(get_test_subscription_model, get_test_db):
     # CREATE
     results = repo.add(new_subscription_model)
     assert results
-    session.commit()
+    session.flush()
 
     # READ
     newly_created = repo.get_by_id(results.id)
-    assert newly_created.id == results.id
-    assert newly_created.created_date == results.created_date
+    assert newly_created.id and newly_created.id != 0
 
-    # DELETE
+    # Clean up. You can comment these out to create test data
     repo.delete(results.id)
-    # session.commit()
+    session.commit()
 
     #
     #

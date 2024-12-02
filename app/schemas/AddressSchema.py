@@ -12,4 +12,9 @@ class AddressSchema(BaseModel):
     postal_code: str
     country: str
     long_lat_location: str
+    state: str
     #TODO more to be added from data dictionary as necessary
+
+    class Config:
+        orm_mode = True
+        from_attributes = True

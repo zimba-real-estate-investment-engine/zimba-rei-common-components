@@ -12,7 +12,7 @@ def test_crud_subscription_model(get_test_address_model, get_test_db):
     # CREATE
     results = repo.add(new_address_model)
     assert results
-    session.commit()
+    session.flush()
 
     # READ
     newly_created = repo.get_by_id(results.id)
