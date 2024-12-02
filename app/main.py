@@ -24,6 +24,7 @@ from app.services.ExpenseService import ExpenseService
 from app.services.FinancingService import FinancingService
 from app.services.InvestorProfileService import InvestorProfileService
 from app.services.ListingService import ListingService
+from app.services.MortgageService import MortgageService
 from app.services.RealEstatePropertyService import RealEstatePropertyService
 from app.services.SubscriptionService import SubscriptionService
 
@@ -150,6 +151,14 @@ async def get_financing(db: Session = Depends(get_db)):
     financing_schema_list = financing_service.get_all()
     financing_json_list = list(map(lambda x: x.model_dump(), financing_schema_list))
     return financing_json_list
+
+
+@app.get("/mortgages/", response_model=List[FinancingSchema])
+async def get_mortgages(db: Session = Depends(get_db)):
+    mortgage_service = MortgageService(db)
+    mortgage_schema_list = mortgage_service.get_all()
+    mortgage_json_list = list(map(lambda x: x.model_dump(), mortgage_schema_list))
+    return mortgage_json_list
 
 # Include the routes if external
 # app.include_router(users.router, prefix="/users", tags=["Users"])

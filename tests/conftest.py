@@ -183,6 +183,18 @@ def get_test_mortgage_schema() -> MortgageSchema:
 
 
 @pytest.fixture
+def get_test_mortgage_model() -> MortgageModel:
+    issued_date = datetime.now()
+
+    mortgage_model = MortgageModel(appraisal_value=345555, principal=234343.00, pre_qualified=True,
+                                   pre_approved=False, loan_to_value=80.00, term=5, interest_rate=5.0,
+                                   amortization_period=30, monthly_payment=2343.55,
+                                   owner_occupied=True, insurance=200.00, issued_date=issued_date)
+
+    return mortgage_model
+
+
+@pytest.fixture
 def get_test_address_schema() -> AddressSchema:
     current_time_string = __get_time_string()
     street_address = current_time_string + '_street_address'
@@ -221,18 +233,6 @@ def get_test_expense_model() -> ExpenseModel:
                                  )
 
     return expense_model
-
-
-@pytest.fixture
-def get_test_mortgage_model() -> MortgageModel:
-    current_time_string = __get_time_string()
-
-    mortgage_model = MortgageModel(appraisal_value=345555, principal=234343.00, pre_qualified=True,
-                                   pre_approved=False, loan_to_value=80.00, term=5, interest_rate=5.0,
-                                   amortization_period=30, monthly_payment=2343.55,
-                                   owner_occupied=True, insurance=200.00, )
-
-    return mortgage_model
 
 
 @pytest.fixture
