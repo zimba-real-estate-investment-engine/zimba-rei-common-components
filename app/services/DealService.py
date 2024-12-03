@@ -47,3 +47,8 @@ class DealService:
         deal_schema_list = \
             [BaseRepository.sqlalchemy_to_pydantic(x, DealSchema) for x in deal_model_list]
         return deal_schema_list
+
+    def get_by_id(self, id: int) -> DealSchema:
+        deal_model = self.repository.get_by_id(id)
+        deal_schema = BaseRepository.sqlalchemy_to_pydantic(deal_model, DealSchema)
+        return deal_schema

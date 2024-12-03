@@ -29,65 +29,9 @@ def test_save_deal_min(get_test_db, get_test_deal_schema, get_test_underwriting_
     db.flush()
     assert newly_saved_deal.id and newly_saved_deal.id != 0
 
-    db.commit() # Only commit if you want to actually save in db.
+    # db.commit()  # Only commit if you want to actually save in db.
 
-#
-# def test_save_deal_with_investor_profile(get_test_db, get_test_deal_schema,
-#                                                  get_test_investor_profile_schema):
-#     db = get_test_db
-#     test_investor_profile = get_test_investor_profile_schema
-#
-#     investor_profile_service = InvestorProfileService(db)
-#
-#     newly_saved_investor_profile = investor_profile_service.save_investor_profile(test_investor_profile)
-#
-#     db.flush()
-#     # db.commit() Only commit if you want to actually save in db.
-#     assert newly_saved_investor_profile.id and newly_saved_investor_profile.id != 0
-#
-#     # Now create the deal
-#     test_deal = get_test_deal_schema
-#     # test_deal.investor_profile = existing_investor_profile
-#     test_deal.investor_profile = newly_saved_investor_profile
-#
-#     deal_service = DealService(db)
-#
-#     newly_saved_deal = deal_service.save_deal(test_deal)
-#
-#     assert newly_saved_deal.id and newly_saved_deal.id != 0
-#     assert newly_saved_deal.investor_profile.id and newly_saved_deal.investor_profile.id != 0
-#
-#
-# def test_save_deal_with_real_estate_property(get_test_db, get_test_deal_schema,
-#                                                      get_test_real_state_property_schema_unpopulated,
-#                                                      get_test_address_schema,
-#                                                      get_test_listing_schema):
-#     db = get_test_db
-#     test_real_estate_property = get_test_real_state_property_schema_unpopulated
-#     test_real_estate_property.address = get_test_address_schema
-#     test_real_estate_property.listing = get_test_listing_schema
-#
-#     real_estate_service = RealEstatePropertyService(db)
-#
-#     newly_saved_real_estate_property = real_estate_service.save_real_estate_property(test_real_estate_property)
-#
-#     db.flush()
-#     # db.commit() Only commit if you want to actually save in db.
-#     assert newly_saved_real_estate_property.id and newly_saved_real_estate_property.id != 0
-#
-#     # Now create the deal
-#     test_deal = get_test_deal_schema
-#     test_deal.real_estate_property = newly_saved_real_estate_property
-#
-#     deal_service = DealService(db)
-#
-#     newly_saved_deal = deal_service.save_deal(test_deal)
-#
-#     db.flush()
-#     assert newly_saved_deal.id and newly_saved_deal.id != 0
-#     assert newly_saved_deal.real_estate_property.id and newly_saved_deal.real_estate_property.id != 0
-#
-#
+
 # def test_get_all(get_test_db, get_test_investor_profile_schema, get_test_real_state_property_schema_unpopulated,
 #                  get_test_address_schema, get_test_listing_schema, get_test_deal_schema):
 #     db = get_test_db

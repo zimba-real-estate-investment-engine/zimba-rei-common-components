@@ -26,4 +26,5 @@ class DealSchema(BaseModel):
         from_attributes = True
 
 
-
+class DealSearchSchema(BaseModel):
+    id: int

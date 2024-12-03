@@ -9,6 +9,7 @@ from app.core import database
 from app.database.models import SubscriptionModel
 from app.domain.RealEstateProperty import RealEstateProperty
 from app.schemas.AddressSchema import AddressSchema
+from app.schemas.DealSchema import DealSchema, DealSearchSchema
 from app.schemas.ExpenseSchema import ExpenseSchema
 from app.schemas.FinancingSchema import FinancingSchema
 from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileSearchSchema
@@ -21,6 +22,7 @@ from urllib.parse import quote_plus
 
 from app.schemas.UnderwritingSchema import UnderwritingSchema
 from app.services.AddressService import AddressService
+from app.services.DealService import DealService
 from app.services.ExpenseService import ExpenseService
 from app.services.FinancingService import FinancingService
 from app.services.InvestorProfileService import InvestorProfileService
@@ -122,6 +124,30 @@ async def get_real_estate_properties(db: Session = Depends(get_db)):
     real_estate_property_schema_list = real_estate_property_service.get_all()
     real_estate_property_json_list = list(map(lambda x: x.model_dump(), real_estate_property_schema_list))
     return real_estate_property_json_list
+
+
+@app.get("/deals/", response_model=List[DealSchema])
+async def get_deals(db: Session = Depends(get_db)):
+    deal_service = DealService(db)
+    deal_schema_list = deal_service.get_all()
+    deal_json_list = list(map(lambda x: x.model_dump(), deal_schema_list))
+    return deal_json_list
+
+
+@app.post("/deals/find-by-id/", response_model=DealSchema, description='Find by ID, You need to submit ID')
+async def get_deal(request: DealSearchSchema, db: Session = Depends(get_db)):
+    id = request.id
+
+    if id is None:
+        raise ValueError("ID is required")
+
+    try:
+        deal_service = DealService(db)
+        deal_schema: DealSchema = deal_service.get_by_id(id)
+
+        return deal_schema
+    except Exception as e:
+        raise
 
 
 @app.get("/investor-profiles/", response_model=List[InvestorProfileSchema])
