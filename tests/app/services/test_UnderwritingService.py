@@ -1,12 +1,7 @@
 import copy
-from datetime import datetime
 
-from app.database.models import InvestorProfileModel
-from app.repositories.BaseRepository import BaseRepository
 from app.services.InvestorProfileService import InvestorProfileService
-from app.services.ListingService import ListingService
 from app.services.RealEstatePropertyService import RealEstatePropertyService
-from app.services.SubscriptionService import SubscriptionService
 from app.services.UnderwritingService import UnderwritingService
 
 

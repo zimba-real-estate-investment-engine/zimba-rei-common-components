@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from app.domain.Subscription import Subscription
-# from app.database.user import User
+# from app.migrations.user import User
 # from app.schemas.user import UserCreate, UserRead
 # from app.crud.user import get_user_by_email, create_user
 # from typing import Optional

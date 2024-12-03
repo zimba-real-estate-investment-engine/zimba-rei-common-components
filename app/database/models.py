@@ -63,7 +63,7 @@ class AddressModel(Base):
             postal_code: str,
             country: str,
             long_lat_location: str,
-            id: int | None = None,     # Allow none so the database creates it for new objects.
+            id: int | None = None,     # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.street_address = street_address
@@ -118,7 +118,7 @@ class ListingModel(Base):
             square_feet: float,
             listing_date: datetime,
             address: Annotated[Optional[AddressModel], "could be missing"] = None,
-            id: int | None = None,     # Allow none so the database creates it for new objects.
+            id: int | None = None,     # Allow none so the migrations creates it for new objects.
     ):
         self.address = address
         self.id = id
@@ -176,7 +176,7 @@ class RealEstatePropertyModel(Base):
             listing: Annotated[Optional[ListingModel], 'could be missing'] = None,
             address: Annotated[Optional[AddressModel], 'could be yet to be filled'] = None,
             expenses: Annotated[Optional[List[ExpenseModel]], 'could be yet to be filled'] = None,
-            id: int | None = None,     # Allow none so the database creates it for new objects.
+            id: int | None = None,     # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.listing = listing
@@ -199,7 +199,7 @@ class FinancingModel(Base):
     def __init__(
             self,
             mortgages: Annotated[Optional[List[MortgageModel]], 'could be yet to be filled'] = None,
-            id: int | None = None,     # Allow none so the database creates it for new objects.
+            id: int | None = None,     # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.mortgages = mortgages if mortgages else []
@@ -267,7 +267,7 @@ class InvestorProfileModel(Base):
             dishwasher_required: bool = False,
             balcony_required: bool = False,
             financing_sources: Annotated[Optional[List[FinancingModel]], 'could be yet to be filled'] = None,
-            id: int | None = None,     # Allow none so the database creates it for new objects.
+            id: int | None = None,     # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.price = price
@@ -334,7 +334,7 @@ class MortgageModel(Base):
             owner_occupied: bool,
             insurance: float,
             financing: Annotated[Optional[FinancingModel], 'could be yet to be filled'] = None,
-            id: int | None = None,     # Allow none so the database creates it for new objects.
+            id: int | None = None,     # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.appraisal_value = appraisal_value
@@ -370,13 +370,13 @@ class UnderwritingModel(Base):
         self,
         investor_profile: Annotated[Optional[InvestorProfileModel], 'could be yet to be filled'] = None,
         real_estate_property: Annotated[Optional[RealEstatePropertyModel], 'could be yet to be filled'] = None,
-        deals: Annotated[Optional[DealModel], 'could be yet to be filled'] = [],
-        id: int | None = None,     # Allow none so the database creates it for new objects.
+        deals: Annotated[Optional[DealModel], 'could be yet to be filled'] = None,
+        id: int | None = None,     # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.investor_profile = investor_profile
         self.real_estate_property = real_estate_property
-        self.deals = deals
+        self.deals = deals if deals else []
 
     def __repr__(self):
         return f"<UnderwritingProcess(id={self.id})>"
@@ -414,7 +414,7 @@ class DealModel(Base):
         underwriting: Annotated[Optional[UnderwritingModel], 'should be populated before saving to db'] = None,
         thumbnail: str = '',
         risk_assessment: str ='',
-        id: int | None = None,     # Allow none so the database creates it for new objects.
+        id: int | None = None,     # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.down_payment = down_payment

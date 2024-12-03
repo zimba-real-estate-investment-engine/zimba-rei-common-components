@@ -11,7 +11,7 @@ from app.domain.RealEstateProperty import RealEstateProperty
 from app.schemas.AddressSchema import AddressSchema
 from app.schemas.ExpenseSchema import ExpenseSchema
 from app.schemas.FinancingSchema import FinancingSchema
-from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileRequestSchema
+from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileSearchSchema
 from app.schemas.ListingSchema import ListingSchema
 from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
@@ -35,7 +35,7 @@ app = FastAPI()
 
 
 def get_db():
-    # db = database.get_db()
+    # db = migrations.get_db()
     # return db
     load_dotenv()
 
@@ -47,7 +47,7 @@ def get_db():
     DB_NAME = os.getenv('DB_NAME')
     DB_ECHO_SQL_COMMANDS = os.getenv('DB_ECHO_SQL_COMMANDS', 'false').lower() == 'true'
 
-    # Create the SQLAlchemy database URL
+    # Create the SQLAlchemy migrations URL
     # We use quote_plus to properly encode the password
     DATABASE_URL = f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
@@ -60,7 +60,7 @@ def get_db():
         echo=DB_ECHO_SQL_COMMANDS
     )
 
-    # SessionLocal class will be used to create database sessions
+    # SessionLocal class will be used to create migrations sessions
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
     db = SessionLocal()
@@ -70,7 +70,7 @@ def get_db():
         db.close()
 
 
-# Initialize database tables
+# Initialize migrations tables
 # Base.metadata.create_all(bind=engine)
 
 
@@ -134,7 +134,7 @@ async def get_investor_profiles(db: Session = Depends(get_db)):
 
 @app.post("/investor-profiles/find-by-id/", response_model=InvestorProfileSchema,
           description='Find by ID, You need to submit ID')
-async def get_investor_profile(request: InvestorProfileRequestSchema, db: Session = Depends(get_db)):
+async def get_investor_profile(request: InvestorProfileSearchSchema, db: Session = Depends(get_db)):
     id = request.id
 
     if id is None:

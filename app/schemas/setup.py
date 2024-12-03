@@ -10,6 +10,6 @@ setup(
     ],
     author="Zimba Developers",
     author_email="rei-api-dev@zimbasolutions.io",
-    description="This module contains the Pydantic database that will be reused by other modules.",
+    description="This module contains the Pydantic migrations that will be reused by other modules.",
     python_requires=">=3.11",
 )

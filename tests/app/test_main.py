@@ -2,7 +2,7 @@ import time
 
 from app.database.models import SubscriptionModel
 from app.repositories.BaseRepository import BaseRepository
-from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileRequestSchema
+from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileSearchSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 
 
@@ -17,7 +17,7 @@ def test_create_subscription(get_test_subscription_schema, test_fastapi_client, 
     # Confirms that the returned value can be instantiated from the pydantic schema
     newly_created_subscription = SubscriptionSchema(**response.json())
 
-    # Clean up to avoid bloated database. Using BaseRepository which uses SqlAlchemy database ¯\_(ツ)_/¯
+    # Clean up to avoid bloated migrations. Using BaseRepository which uses SqlAlchemy migrations ¯\_(ツ)_/¯
     subscription_model = SubscriptionModel(**newly_created_subscription.model_dump())
     base_repo = BaseRepository(test_db, SubscriptionModel)
     base_repo.delete(subscription_model.id)
@@ -39,7 +39,7 @@ def test_get_investor_profiles(test_fastapi_client, request):
 def test_get_investor_profile(test_fastapi_client, request):
     client = test_fastapi_client
 
-    request_payload = InvestorProfileRequestSchema(id=70)
+    request_payload = InvestorProfileSearchSchema(id=70)
     request_json = request_payload.json()
 
     response = client.post("/investor-profiles/find-by-id", data=request_json)

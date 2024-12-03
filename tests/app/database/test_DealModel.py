@@ -3,7 +3,7 @@ from app.repositories.BaseRepository import BaseRepository
 from app.database.models import SubscriptionModel
 
 
-def test_crud_deal_model(get_test_deal_model, get_test_underwriting_model_min,get_test_db):
+def test_crud_deal_model_after_underwriting(get_test_deal_model, get_test_underwriting_model_min,get_test_db):
     session = get_test_db
     test_deal = get_test_deal_model
     test_underwriting = get_test_underwriting_model_min
@@ -26,24 +26,5 @@ def test_crud_deal_model(get_test_deal_model, get_test_underwriting_model_min,ge
 
     assert newly_created_deal.id and newly_created_deal.id != 0
 
-    session.commit()  # To save
+    # session.commit()  # To save,if we need some test data
 
-    # # READ
-    # newly_created = repo.get_by_id(results.id)
-    # assert newly_created.id == results.id
-    # assert newly_created.state == results.state
-    #
-    # # DELETE and commit, we'll need to clean up test data
-    # repo.delete(results.id)
-    # session.commit()
-
-    #
-    #
-    # repository.
-    #
-    # repository.add(test_subscription)
-    #
-    # id = test_subscription.id
-    #
-    # returned_instance = repository.get(id)
-    # assert returned_instance

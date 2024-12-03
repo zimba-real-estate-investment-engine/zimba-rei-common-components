@@ -37,7 +37,7 @@ class InvestorProfileSchema(BaseModel):
         from_attributes = True
 
 
-class InvestorProfileRequestSchema(BaseModel):
+class InvestorProfileSearchSchema(BaseModel):
     id: int
 
     class Config:
