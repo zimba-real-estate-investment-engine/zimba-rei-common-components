@@ -12,7 +12,7 @@ from urllib.parse import quote_plus
 from fastapi.testclient import TestClient
 from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
-    FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel
+    FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel
 from app.database.models import RealEstatePropertyModel
 from datetime import datetime, timezone, timedelta
 
@@ -346,10 +346,13 @@ def get_test_underwriting_model_min() -> UnderwritingModel:
     return underwriting_model
 
 
-# @pytest.fixture
-# def get_test_underwriting_sche_min() -> UnderwritingModel:
-#     underwriting_model = UnderwritingModel()
-#     return underwriting_model
+@pytest.fixture
+def get_test_deal_model() -> DealModel:
+    deal_model = DealModel(
+        down_payment=34343.33, term=5, interest_rate=5.73, monthly_cost=2333.00, after_repair_value=32424.33,
+        time_horizon=23, roi=35.00, capital_invested=234343.00, real_estate_property_value=2343.22, risk_assessment=''
+    )
+    return deal_model
 
 
 @pytest.fixture

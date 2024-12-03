@@ -364,44 +364,71 @@ class UnderwritingModel(Base):
 
     investor_profile = relationship("InvestorProfileModel")
     real_estate_property = relationship("RealEstatePropertyModel")
+    deals = relationship("DealModel", back_populates="underwriting")
 
     def __init__(
         self,
         investor_profile: Annotated[Optional[InvestorProfileModel], 'could be yet to be filled'] = None,
         real_estate_property: Annotated[Optional[RealEstatePropertyModel], 'could be yet to be filled'] = None,
+        deals: Annotated[Optional[DealModel], 'could be yet to be filled'] = [],
         id: int | None = None,     # Allow none so the database creates it for new objects.
     ):
         self.id = id
         self.investor_profile = investor_profile
         self.real_estate_property = real_estate_property
+        self.deals = deals
 
     def __repr__(self):
         return f"<UnderwritingProcess(id={self.id})>"
 
-#
-#
-# class FinancingModel(Base):
-#     __tablename__ = 'financing'
-#
-#     id = Column(Integer, primary_key=True, nullable=False)
-#     investor_profile_id = Column(Integer, ForeignKey('investor_profile.id'))
-#     mortgages = relationship("MortgageModel", back_populates="financing")
-#
-#     investor_profile = relationship("InvestorProfileModel", back_populates='financing_sources')
-#
-#     def __init__(
-#             self,
-#             id: int,
-#             investor_profile: Annotated[Optional[InvestorProfileModel], 'could be yet to be filled'] = None,
-#             mortgages: Annotated[Optional[List[MortgageModel]], 'could be yet to be filled'] = None,
-#     ):
-#         self.id = id
-#         self.investor_profile = investor_profile
-#         self.mortgages = mortgages if mortgages else []
-#
-#     # def get_total_available(self) -> float:
-#     #     return sum(mortgage.appraisal_value for mortgage in self.mortgages)
-#
-#     def __repr__(self):
-#         return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
-#         # return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
+class DealModel(Base):
+    __tablename__ = 'deal'
+
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    underwriting_id = Column(Integer, ForeignKey('underwriting.id'))
+    down_payment = Column(Float)
+    term = Column(Integer)
+    interest_rate = Column(Float)
+    monthly_cost = Column(Float)
+    after_repair_value = Column(Float)
+    time_horizon = Column(Integer)
+    roi = Column(Float)
+    capital_invested = Column(Float)
+    real_estate_property_value = Column(Float)
+    thumbnail = Column(String(255))
+    risk_assessment = Column(String(255))
+
+    underwriting = relationship("UnderwritingModel")
+
+    def __init__(
+        self,
+        down_payment: float,
+        term: int,
+        interest_rate: float,
+        monthly_cost: float,
+        after_repair_value: float,
+        time_horizon: int,
+        roi: float,
+        capital_invested: float,
+        real_estate_property_value: float,
+        underwriting: Annotated[Optional[UnderwritingModel], 'should be populated before saving to db'] = None,
+        thumbnail: str = '',
+        risk_assessment: str ='',
+        id: int | None = None,     # Allow none so the database creates it for new objects.
+    ):
+        self.id = id
+        self.down_payment = down_payment
+        self.term = term
+        self.interest_rate = interest_rate
+        self.monthly_cost = monthly_cost
+        self.after_repair_value = after_repair_value
+        self.time_horizon = time_horizon
+        self.roi = roi
+        self.capital_invested = capital_invested
+        self.real_estate_property_value = real_estate_property_value
+        self.underwriting = underwriting
+        self.thumbnail = thumbnail
+        self.risk_assessment = risk_assessment
+
+    def __repr__(self):
+        return f"<Deal(id={self.id}, property_value=${self.property_value:,.2f}, roi={self.roi}%)>"
