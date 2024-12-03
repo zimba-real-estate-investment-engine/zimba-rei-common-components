@@ -9,9 +9,10 @@ from app.core import database
 from app.database.models import SubscriptionModel
 from app.domain.RealEstateProperty import RealEstateProperty
 from app.schemas.AddressSchema import AddressSchema
+from app.schemas.DealSchema import DealSchema, DealSearchSchema
 from app.schemas.ExpenseSchema import ExpenseSchema
 from app.schemas.FinancingSchema import FinancingSchema
-from app.schemas.InvestorProfileSchema import InvestorProfileSchema
+from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileSearchSchema
 from app.schemas.ListingSchema import ListingSchema
 from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
@@ -19,7 +20,9 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from urllib.parse import quote_plus
 
+from app.schemas.UnderwritingSchema import UnderwritingSchema
 from app.services.AddressService import AddressService
+from app.services.DealService import DealService
 from app.services.ExpenseService import ExpenseService
 from app.services.FinancingService import FinancingService
 from app.services.InvestorProfileService import InvestorProfileService
@@ -27,13 +30,14 @@ from app.services.ListingService import ListingService
 from app.services.MortgageService import MortgageService
 from app.services.RealEstatePropertyService import RealEstatePropertyService
 from app.services.SubscriptionService import SubscriptionService
+from app.services.UnderwritingService import UnderwritingService
 
 # Create the FastAPI app
 app = FastAPI()
 
 
 def get_db():
-    # db = database.get_db()
+    # db = migrations.get_db()
     # return db
     load_dotenv()
 
@@ -43,9 +47,9 @@ def get_db():
     DB_HOST = os.getenv('DB_HOST')
     DB_PORT = os.getenv('DB_PORT')
     DB_NAME = os.getenv('DB_NAME')
-    DB_ECHO_SQL_COMMANDS = os.getenv('DB_ECHO_SQL_COMMANDS', 'false').lower()=='true'
+    DB_ECHO_SQL_COMMANDS = os.getenv('DB_ECHO_SQL_COMMANDS', 'false').lower() == 'true'
 
-    # Create the SQLAlchemy database URL
+    # Create the SQLAlchemy migrations URL
     # We use quote_plus to properly encode the password
     DATABASE_URL = f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
@@ -58,7 +62,7 @@ def get_db():
         echo=DB_ECHO_SQL_COMMANDS
     )
 
-    # SessionLocal class will be used to create database sessions
+    # SessionLocal class will be used to create migrations sessions
     SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
     db = SessionLocal()
@@ -68,7 +72,7 @@ def get_db():
         db.close()
 
 
-# Initialize database tables
+# Initialize migrations tables
 # Base.metadata.create_all(bind=engine)
 
 
@@ -122,12 +126,54 @@ async def get_real_estate_properties(db: Session = Depends(get_db)):
     return real_estate_property_json_list
 
 
+@app.get("/deals/", response_model=List[DealSchema])
+async def get_deals(db: Session = Depends(get_db)):
+    deal_service = DealService(db)
+    deal_schema_list = deal_service.get_all()
+    deal_json_list = list(map(lambda x: x.model_dump(), deal_schema_list))
+    return deal_json_list
+
+
+@app.post("/deals/find-by-id/", response_model=DealSchema, description='Find by ID, You need to submit ID')
+async def get_deal(request: DealSearchSchema, db: Session = Depends(get_db)):
+    id = request.id
+
+    if id is None:
+        raise ValueError("ID is required")
+
+    try:
+        deal_service = DealService(db)
+        deal_schema: DealSchema = deal_service.get_by_id(id)
+
+        return deal_schema
+    except Exception as e:
+        raise
+
+
 @app.get("/investor-profiles/", response_model=List[InvestorProfileSchema])
 async def get_investor_profiles(db: Session = Depends(get_db)):
     investor_profile_service = InvestorProfileService(db)
     investor_profile_schema_list = investor_profile_service.get_all()
     investor_profile_json_list = list(map(lambda x: x.model_dump(), investor_profile_schema_list))
     return investor_profile_json_list
+
+
+@app.post("/investor-profiles/find-by-id/", response_model=InvestorProfileSchema,
+          description='Find by ID, You need to submit ID')
+async def get_investor_profile(request: InvestorProfileSearchSchema, db: Session = Depends(get_db)):
+    id = request.id
+
+    if id is None:
+        raise ValueError("ID is required")
+
+    try:
+        investor_profile_service = InvestorProfileService(db)
+        investor_profile_schema = investor_profile_service.get_by_id(id)
+
+        return investor_profile_schema
+
+    except Exception as e:
+        raise
 
 
 @app.post("/investor-profiles/", response_model=InvestorProfileSchema)
@@ -159,6 +205,15 @@ async def get_mortgages(db: Session = Depends(get_db)):
     mortgage_schema_list = mortgage_service.get_all()
     mortgage_json_list = list(map(lambda x: x.model_dump(), mortgage_schema_list))
     return mortgage_json_list
+
+
+@app.get("/underwritings/", response_model=List[UnderwritingSchema])
+async def get_underwritings(db: Session = Depends(get_db)):
+    underwriting_service = UnderwritingService(db)
+    underwriting_schema_list = underwriting_service.get_all()
+    underwriting_json_list = list(map(lambda x: x.model_dump(), underwriting_schema_list))
+    return underwriting_json_list
+
 
 # Include the routes if external
 # app.include_router(users.router, prefix="/users", tags=["Users"])

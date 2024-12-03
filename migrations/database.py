@@ -11,7 +11,7 @@ DB_HOST = os.getenv('DB_HOST', 'zimba-rei-micro.cz2qemaeifj0.us-east-2.rds.amazo
 DB_PORT = os.getenv('DB_PORT', '3306')
 DB_NAME = os.getenv('DB_NAME', 'zimba_rei_micro')
 
-# Create the SQLAlchemy database URL
+# Create the SQLAlchemy migrations URL
 # We use quote_plus to properly encode the password
 DATABASE_URL = f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
@@ -23,10 +23,10 @@ engine = create_engine(
     max_overflow=10      # Maximum number of connections that can be created beyond pool_size
 )
 
-# SessionLocal class will be used to create database sessions
+# SessionLocal class will be used to create migrations sessions
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Base class for declarative database
+# Base class for declarative migrations
 Base = declarative_base()
 
 # Dependency to get DB session
@@ -42,10 +42,10 @@ def test_connection():
     try:
         db = SessionLocal()
         db.execute("SELECT 1")
-        print("Successfully connected to the database!")
+        print("Successfully connected to the migrations!")
         return True
     except Exception as e:
-        print(f"Error connecting to the database: {e}")
+        print(f"Error connecting to the migrations: {e}")
         return False
     finally:
         db.close()

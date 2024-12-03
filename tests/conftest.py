@@ -12,7 +12,7 @@ from urllib.parse import quote_plus
 from fastapi.testclient import TestClient
 from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
-    FinancingModel, MortgageModel, SubscriptionModel
+    FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel
 from app.database.models import RealEstatePropertyModel
 from datetime import datetime, timezone, timedelta
 
@@ -139,38 +139,15 @@ def get_test_financing_schema_minimum() -> FinancingSchema:
 
 
 @pytest.fixture
-def get_test_deal_schema() -> DealSchema:
-    current_time_string = __get_time_string()
-    deal_date = datetime.now()
-    closing_date = datetime.now() + relativedelta(months=3)
-    underwriting_date = datetime.now() + relativedelta(months=2)
-
-    deal_schema = DealSchema(
-        deal_date=deal_date, deal_status="open", offer_price=300000, sale_price=350000,
-        closing_date=closing_date, underwriting_id=current_time_string,
-        appraisal_value=320000, loan_amount=240000, loan_to_value=0.8,
-        underwriting_date=underwriting_date, approval_status="approved", risk_assessment="low", thumbnail="example.com",
-    )
-    return deal_schema
-
-
-@pytest.fixture
 def get_test_underwriting_schema() -> UnderwritingSchema:
-    current_time_string = __get_time_string()
-    underwriting_date = datetime.now() + relativedelta(months=2)
 
-    underwriting_schema = UnderwritingSchema(
-        underwriting_id=current_time_string, appraisal_value=320000, loan_amount=240000,
-        loan_to_value=0.8, interest_rate=5, underwriting_date=underwriting_date,
-        approval_status="approved", risk_assessment="low",
-    )
+    underwriting_schema = UnderwritingSchema()
 
     return underwriting_schema
 
 
 @pytest.fixture
 def get_test_mortgage_schema() -> MortgageSchema:
-    current_time_string = __get_time_string()
     issued_date = datetime.now()
 
     mortgage_schema = MortgageSchema(
@@ -345,8 +322,35 @@ def get_test_address_model() -> AddressModel:
 
 
 @pytest.fixture
+def get_test_underwriting_model_min() -> UnderwritingModel:
+    underwriting_model = UnderwritingModel()
+    return underwriting_model
+
+
+@pytest.fixture
+def get_test_deal_model() -> DealModel:
+    deal_model = DealModel(
+        down_payment=34343.33, term=5, interest_rate=5.73, monthly_cost=2333.00, after_repair_value=32424.33,
+        time_horizon=23, roi=35.00, capital_invested=234343.00, real_estate_property_value=2343.22, risk_assessment='',
+        thumbnail=''
+    )
+    return deal_model
+
+
+@pytest.fixture
+def get_test_deal_schema() -> DealSchema:
+
+    deal_schema = DealSchema(
+        down_payment=34343.33, term=5, interest_rate=5.73, monthly_cost=2333.00, after_repair_value=32424.33,
+        time_horizon=23, roi=35.00, capital_invested=234343.00, real_estate_property_value=2343.22, risk_assessment='',
+        thumbnail=''
+    )
+    return deal_schema
+
+
+@pytest.fixture
 def test_fastapi_client():
-    app.dependency_overrides[get_db] = __test_db  # Make sure we use test database
+    app.dependency_overrides[get_db] = __test_db  # Make sure we use test migrations
     client = TestClient(app)
     yield client
 

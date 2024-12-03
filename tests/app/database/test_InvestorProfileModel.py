@@ -95,6 +95,7 @@ def test_crud_investor_profile_cascade_to_mortgage(get_test_investor_profile_mod
     results = repository.add(test_investor_profile_model)
     assert results
     session.flush()
+    session.commit()
 
     # READ
     newly_created = repository.get_by_id(results.id)

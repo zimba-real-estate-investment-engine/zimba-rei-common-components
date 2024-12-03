@@ -101,4 +101,4 @@ class LLMService:
         if response.status_code == 200:
             return response
         else:
-            raise Exception("Error getting database data")
+            raise Exception("Error getting migrations data")
