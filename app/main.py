@@ -5,6 +5,8 @@ from typing import List
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends
+from starlette.middleware.cors import CORSMiddleware
+
 from app.core import database
 from app.database.models import SubscriptionModel
 from app.domain.RealEstateProperty import RealEstateProperty
@@ -35,6 +37,24 @@ from app.services.UnderwritingService import UnderwritingService
 # Create the FastAPI app
 app = FastAPI()
 
+
+# Configure CORS
+# origins = [
+#     # List of allowed origins (domains)
+#     "http://localhost:3000",  # Example: React development server
+#     "https://yourdomain.com",
+#     "https://www.yourdomain.com",
+#     # Add more origins as needed
+# ]
+
+app.add_middleware(
+    CORSMiddleware,
+    # allow_origins=origins,  # Allows specified origins
+    allow_origins=["*"],  # Allows specified origins
+    allow_credentials=True,  # Allows cookies to be included in CORS requests
+    allow_methods=["*"],     # Allows all methods (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],     # Allows all headers
+)
 
 def get_db():
     # db = migrations.get_db()
