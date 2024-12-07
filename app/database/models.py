@@ -365,6 +365,7 @@ class UnderwritingModel(Base):
     investor_profile = relationship("InvestorProfileModel")
     real_estate_property = relationship("RealEstatePropertyModel")
     deals = relationship("DealModel", back_populates="underwriting")
+    projection_entries = relationship("ProjectionEntryModel", back_populates="underwriting")
 
     def __init__(
         self,
@@ -432,3 +433,31 @@ class DealModel(Base):
 
     def __repr__(self):
         return f"<Deal(id={self.id}, property_value=${self.property_value:,.2f}, roi={self.roi}%)>"
+
+class ProjectionEntryModel(Base):
+    __tablename__ = 'projection_entry'
+
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    underwriting_id = Column(Integer, ForeignKey('underwriting.id'))
+    projection_type = Column(String(255))
+    projection_value = Column(Float)
+    projection_position_in_list = Column(Integer)
+
+    underwriting = relationship("UnderwritingModel")
+
+    def __init__(
+            self,
+            projection_type: str,
+            projection_value: float,
+            projection_position_in_list: int,
+            underwriting: Annotated[Optional[UnderwritingModel], 'should be populated before saving to db'] = None,
+            id: int | None = None,  # Allow none so the migrations creates it for new objects.
+    ):
+        self.id = id
+        self.projection_type = projection_type
+        self.projection_value = projection_value
+        self.projection_position_in_list = projection_position_in_list
+        self.underwriting = underwriting
+
+    def __repr__(self):
+        return f"<Projection(id={self.id})>"

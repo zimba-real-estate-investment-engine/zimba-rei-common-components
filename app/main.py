@@ -16,6 +16,7 @@ from app.schemas.ExpenseSchema import ExpenseSchema
 from app.schemas.FinancingSchema import FinancingSchema
 from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileSearchSchema
 from app.schemas.ListingSchema import ListingSchema
+from app.schemas.ProjectionEntrySchema import ProjectionEntrySchema, ProjectionEntrySearchSchema
 from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 from sqlalchemy import create_engine
@@ -30,13 +31,13 @@ from app.services.FinancingService import FinancingService
 from app.services.InvestorProfileService import InvestorProfileService
 from app.services.ListingService import ListingService
 from app.services.MortgageService import MortgageService
+from app.services.ProjectionEntryService import ProjectionEntryService
 from app.services.RealEstatePropertyService import RealEstatePropertyService
 from app.services.SubscriptionService import SubscriptionService
 from app.services.UnderwritingService import UnderwritingService
 
 # Create the FastAPI app
 app = FastAPI()
-
 
 # Configure CORS
 # origins = [
@@ -52,9 +53,10 @@ app.add_middleware(
     # allow_origins=origins,  # Allows specified origins
     allow_origins=["*"],  # Allows specified origins
     allow_credentials=True,  # Allows cookies to be included in CORS requests
-    allow_methods=["*"],     # Allows all methods (GET, POST, PUT, DELETE, etc.)
-    allow_headers=["*"],     # Allows all headers
+    allow_methods=["*"],  # Allows all methods (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],  # Allows all headers
 )
+
 
 def get_db():
     # db = migrations.get_db()
@@ -201,6 +203,39 @@ async def create_investor_profiles(investor_profile: InvestorProfileSchema, db: 
     investor_profile_service = InvestorProfileService(db)
     newly_saved_investor_profile = investor_profile_service.save_investor_profile(investor_profile)
     return newly_saved_investor_profile
+
+
+@app.get("/projection-entries/", response_model=List[ProjectionEntrySchema])
+async def get_investor_profiles(db: Session = Depends(get_db)):
+    projection_entry_service = ProjectionEntryService(db)
+    projection_entry_schema_list = projection_entry_service.get_all()
+    projection_entry_json_list = list(map(lambda x: x.model_dump(), projection_entry_schema_list))
+    return projection_entry_json_list
+
+
+@app.post("/projection-entries/find-by-id/", response_model=ProjectionEntrySchema,
+          description='Find by ID, You need to submit ID')
+async def get_projection_entry(request: ProjectionEntrySearchSchema, db: Session = Depends(get_db)):
+    id = request.id
+
+    if id is None:
+        raise ValueError("ID is required")
+
+    try:
+        projection_entry_service = ProjectionEntryService(db)
+        projection_entry_schema = projection_entry_service.get_by_id(id)
+
+        return projection_entry_schema
+
+    except Exception as e:
+        raise
+
+
+@app.post("/projection-entries", response_model=ProjectionEntrySchema)
+async def create_projection_entry(projection_entry: ProjectionEntrySchema, db: Session = Depends(get_db)):
+    projection_entry_service = ProjectionEntryService(db)
+    newly_saved_projection_entry = projection_entry_service.save_projection_entry(projection_entry)
+    return newly_saved_projection_entry
 
 
 @app.get("/expenses/", response_model=List[ExpenseSchema])

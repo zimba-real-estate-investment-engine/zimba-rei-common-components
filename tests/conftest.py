@@ -12,7 +12,7 @@ from urllib.parse import quote_plus
 from fastapi.testclient import TestClient
 from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
-    FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel
+    FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel, ProjectionEntryModel
 from app.database.models import RealEstatePropertyModel
 from datetime import datetime, timezone, timedelta
 
@@ -22,6 +22,7 @@ from app.schemas.ListingSchema import ListingSchema
 from app.schemas.DealSchema import DealSchema
 from app.schemas.FinancingSchema import FinancingSchema
 from app.schemas.InvestorProfileSchema import InvestorProfileSchema
+from app.schemas.ProjectionEntrySchema import ProjectionEntrySchema
 from app.schemas.UnderwritingSchema import UnderwritingSchema
 from app.schemas.MortgageSchema import MortgageSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
@@ -336,6 +337,23 @@ def get_test_deal_model() -> DealModel:
     )
     return deal_model
 
+
+@pytest.fixture
+def get_test_projection_entry_model() -> ProjectionEntryModel:
+    current_time_string = __get_time_string()
+    project_entry_model = ProjectionEntryModel(
+        projection_type=current_time_string + "_type", projection_value=53434.73, projection_position_in_list=0,
+    )
+    return project_entry_model
+
+
+@pytest.fixture
+def get_test_projection_entry_schema() -> ProjectionEntrySchema:
+    current_time_string = __get_time_string()
+    project_entry_schema = ProjectionEntrySchema(
+        projection_type=current_time_string + "_type", projection_value=53434.73, projection_position_in_list=0,
+    )
+    return project_entry_schema
 
 @pytest.fixture
 def get_test_deal_schema() -> DealSchema:
