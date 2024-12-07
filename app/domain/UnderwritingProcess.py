@@ -16,8 +16,11 @@ class UnderwritingProcess():
         pass
 
     def extract_listing(self, uri: str) -> Listing:
+
         pass
 
+    def _raw_text_from_url(self, uri: str) -> str:
+        pass
     # def generate_underwriting(self, deal: Deal, investor: InvestorProfile,
     #                           real_estate_property: RealEstateProperty) -> Underwriting:
     #     pass
