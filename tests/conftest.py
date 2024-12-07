@@ -383,9 +383,27 @@ def test_sample_html() -> str:
 
 
 @pytest.fixture
+def test_sample_realtor_ca_html() -> str:
+    data_file_path = Path(__file__).parent/ "test_data" / "sample_realtor_ca_listing.html"
+
+    with data_file_path.open() as file:
+        html_content = file.read()
+        yield html_content
+
+
+@pytest.fixture
 def test_sample_raw_text() -> str:
     data_file_path = Path(__file__).parent/ "test_data" / "sample_raw_text.txt"
 
     with data_file_path.open() as file:
         raw_text = file.read()
         yield raw_text
+
+
+@pytest.fixture
+def test_sample_listing_openai_response_json_string() -> str:
+    data_file_path = Path(__file__).parent/ "test_data" / "sample_listing_openai_response.json"
+
+    with data_file_path.open() as file:
+        json_string = file.read()
+        yield json_string
