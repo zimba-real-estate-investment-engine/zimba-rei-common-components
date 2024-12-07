@@ -9,7 +9,7 @@ def test_extract_listing_details_from_html(test_sample_html):
     print(results)
 
 
-@pytest.mark.skip(reason="Will be reviewed after adding mock")
+# @pytest.mark.skip(reason="Will be reviewed after adding mock")
 def test_is_inference_up():
     results = LLMService.is_inference_up()
     assert results

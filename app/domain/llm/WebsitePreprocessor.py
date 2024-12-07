@@ -71,3 +71,15 @@ class WebsitePreprocessor(DataPreprocessor):
         }
         self.headers = headers
         return headers
+
+    # @staticmethod
+    # def get_text_from_url(url: str) -> str:-> str:
+    #     if self.url is None:
+    #         raise ValueError("Set the URL where the HMTL is located")
+    #
+    #     try:
+    #         response = requests.get(url=self.url, headers=self._get_random_headers(), timeout=10)
+    #         response.raise_for_status()
+    #         return response.text
+    #     except Exception as e:
+    #         raise Exception(f"Error fetching {self.url}: {str(e)}")
