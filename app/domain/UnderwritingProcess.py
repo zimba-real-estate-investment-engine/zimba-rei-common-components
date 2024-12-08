@@ -43,7 +43,7 @@ class UnderwritingProcess:
         try:
             parsed_address = Listing.parse_address(address_data)
             listing = Listing(**filtered_data)
-            listing.address = parsed_address
+            listing.address = parsed_address[0]
             return listing
         except ValidationError as e:
             UnderwritingProcess.logger.error("Validation Error in Listing JSON Data:")
