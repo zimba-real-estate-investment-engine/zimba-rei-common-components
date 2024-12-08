@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
@@ -12,15 +12,17 @@ from app.schemas.AddressSchema import AddressSchema
 class ListingSchema(BaseModel):
     id: Optional[int] = None
     price: float
-    email: Optional[EmailStr]
+    email: Optional[EmailStr] = None
     year_built: datetime
-    baths: float
-    beds: float
+    baths: Optional[float] = None
+    bathrooms: Optional[float] = None
+    beds:  Optional[float] = None
+    bedrooms: Optional[float] = None
     listing_date: Optional[datetime] = None
-    square_feet: float
-    parking_spaces: Optional[str] = None
-    air_conditioning: bool
-    balcony: Optional[bool]
+    square_feet: Optional[float] = None
+    parking_spaces: Optional[Union[int, str]] = None
+    air_conditioning: Optional[str] = None
+    balcony: Optional[bool] = None
     basement: Optional[str] = None
     dishwasher: Optional[bool] = None
     hardwood_floor: Optional[str] = None

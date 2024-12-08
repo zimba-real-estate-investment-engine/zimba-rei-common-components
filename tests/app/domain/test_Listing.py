@@ -25,7 +25,7 @@ def test_parse_canadian_address():
     addresses = Listing.parse_address(address_text, country="CA")
 
     address = addresses[0]
-    assert address.full_street == "1215 KLONDIKE ROAD"
+    assert address.street_address == "1215 KLONDIKE ROAD"
     assert address.city == "Ottawa"
     assert address.postal_code == "K2W1E1"
 
@@ -35,15 +35,16 @@ def test_parse_us_address():
     addresses = Listing.parse_address(address_text, country="US")
 
     address = addresses[0]
-    assert address.full_street == "375 Shawmut Avenue"
+    assert address.street_address == "375 Shawmut Avenue"
     assert address.city == "Boston"
     assert address.postal_code == "02118"
+
 
 def test_parse_no_country():
     address_text = "375 Shawmut Avenue Boston, MA 02118"
     addresses = Listing.parse_address(address_text)
 
     address = addresses[0]
-    assert address.full_street == "375 Shawmut Avenue"
+    assert address.street_address == "375 Shawmut Avenue"
     assert address.city == "Boston"
     assert address.postal_code == "02118"

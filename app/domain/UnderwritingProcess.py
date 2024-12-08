@@ -10,7 +10,6 @@ from app.domain.InvestorProfile import InvestorProfile
 from app.domain.Listing import Listing
 from app.domain.RealEstateProperty import RealEstateProperty
 from app.domain.llm.WebsitePreprocessor import WebsitePreprocessor
-from app.services.LLMService import LLMService
 from app.services.OpenAIService import OpenAIService
 
 
@@ -35,19 +34,21 @@ class UnderwritingProcess:
     @staticmethod
     def extract_listing_from_json(json_string: str) -> Listing:
         listing_data = json.loads(json_string)
+        address_data = listing_data['address']  # may need parsing
+
+        fields_to_exclude = ["address"]  #
+
+        filtered_data = {key: value for key, value in listing_data.items() if key not in fields_to_exclude}
 
         try:
-            listing = Listing(**listing_data)
+            parsed_address = Listing.parse_address(address_data)
+            listing = Listing(**filtered_data)
+            listing.address = parsed_address
             return listing
         except ValidationError as e:
             UnderwritingProcess.logger.error("Validation Error in Listing JSON Data:")
             for err in e.errors():
                 UnderwritingProcess.logger.error(f"Field: {err['loc']}, Error: {err['msg']}")
-        print()
-
-        # llm_json_response = OpenAIService.extract_listing_details(raw_text)
-        # listing = Listing()
-        # return listing
 
     @staticmethod
     def raw_text_from_url(uri: str) -> str:
