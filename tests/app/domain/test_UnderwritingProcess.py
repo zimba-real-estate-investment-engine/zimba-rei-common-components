@@ -13,6 +13,17 @@ def test_extract_listing_from_json(test_sample_listing_openai_response_json_stri
     assert listing.price == 799900
     assert listing.year_built.year == 1970 # there is a problem converting this from 1960 TBD
 
+def test_extract_listing_from_json_redfin(test_sample_listing_openai_response_redfin_ca_json_string):
+    json_string = test_sample_listing_openai_response_redfin_ca_json_string
+    listing = UnderwritingProcess.extract_listing_from_json(json_string)
+
+    assert listing.address.street_address == '1215 KLONDIKE ROAD'
+    assert listing.address.city == 'Ottawa'
+    assert listing.address.postal_code == 'K2W1E1'
+
+    assert listing.price == 799900
+    assert listing.year_built.year == 1970 # there is a problem converting this from 1960 TBD
+
 
 def test_extract_listing_from_url():
     # url = 'https://www.realtor.com/realestateandhomes-detail/2551-Princeton-Dr_San-Bruno_CA_94066_M21198-61175'

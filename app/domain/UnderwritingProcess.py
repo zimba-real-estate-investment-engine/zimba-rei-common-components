@@ -1,3 +1,4 @@
+import ast
 import json
 import logging
 from typing import List
@@ -32,11 +33,13 @@ class UnderwritingProcess:
 
     @staticmethod
     def extract_listing_from_json(json_string: str) -> Listing:
-        listing_data = json.loads(json_string)
-        address_data = listing_data['address']  # may need parsing
+        # preprocessed_json = json.loads(json_string)
 
+        # Ensure both single quote and double quote json are processed
+        listing_data = ast.literal_eval(json_string)
+
+        address_data = listing_data['address']  # this is a string that needs parsing to create Address object
         fields_to_exclude = ["address"]  #
-
         filtered_data = {key: value for key, value in listing_data.items() if key not in fields_to_exclude}
 
         try:

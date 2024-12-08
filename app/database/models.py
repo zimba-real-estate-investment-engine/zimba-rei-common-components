@@ -53,6 +53,7 @@ class AddressModel(Base):
     postal_code = Column(String(255))
     country = Column(String(255))
     long_lat_location = Column(String(255))
+    full_address = Column(String(255))
 
     def __init__(
             self,
@@ -63,6 +64,7 @@ class AddressModel(Base):
             postal_code: str,
             country: str,
             long_lat_location: str,
+            full_address: str,
             id: int | None = None,     # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
@@ -73,6 +75,7 @@ class AddressModel(Base):
         self.postal_code = postal_code
         self.country = country
         self.long_lat_location = long_lat_location
+        self.full_address = full_address
 
     def __repr__(self):
         return f"<Address(id={self.id}, city={self.city}, state={self.state})>"

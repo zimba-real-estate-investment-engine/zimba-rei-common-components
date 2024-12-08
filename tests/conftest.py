@@ -182,10 +182,12 @@ def get_test_address_schema() -> AddressSchema:
     postal_code = current_time_string + '_postal_code'
     country = current_time_string + '_country'
     long_lat_location = current_time_string + '_long_lat_location'
+    full_address = current_time_string + '_full_address'
 
     address_schema = AddressSchema(
         street_address=street_address, street_address_two=street_address_two,
         city=city, postal_code=postal_code, country=country, long_lat_location=long_lat_location, state="ON",
+        full_address=full_address,
     )
 
     return address_schema
@@ -315,10 +317,12 @@ def get_test_address_model() -> AddressModel:
     state = 'ON'
     country = current_time_string + '_country'
     long_lat_location = current_time_string + '_long_lat_location'
+    full_address = current_time_string + '_long_lat_location'
 
     address_model = AddressModel(
         street_address=street_address, street_address_two=street_address_two,
         city=city, postal_code=postal_code, state=state, country=country, long_lat_location=long_lat_location,
+        full_address=full_address
     )
     return address_model
 
@@ -404,6 +408,15 @@ def test_sample_raw_text() -> str:
 @pytest.fixture
 def test_sample_listing_openai_response_json_string() -> str:
     data_file_path = Path(__file__).parent / "test_data" / "sample_listing_openai_response.json"
+
+    with data_file_path.open() as file:
+        json_string = file.read()
+        yield json_string
+
+
+@pytest.fixture
+def test_sample_listing_openai_response_redfin_ca_json_string() -> str:
+    data_file_path = Path(__file__).parent / "test_data" / "sample_listing_openai_redfin_ca_response_151024056.json"
 
     with data_file_path.open() as file:
         json_string = file.read()
