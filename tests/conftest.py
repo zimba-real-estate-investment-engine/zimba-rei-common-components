@@ -60,7 +60,8 @@ def get_test_listing_schema() -> ListingSchema:
                                    year_built=datetime(2000, 1, 1), baths=3, beds=5,
                                    listing_date=datetime(2024, 4, 1),
                                    square_feet=2500, parking_spaces="4", air_conditioning=False, balcony=False,
-                                   basement='crawl space only', dishwasher=True, hardwood_floor='ground floor')
+                                   basement='crawl space only', dishwasher=True, hardwood_floor='ground floor',
+                                   listing_source='http://default.com/' + current_time_string)
     return listing_schema
 
 
@@ -71,7 +72,8 @@ def get_test_listing_model() -> ListingModel:
                                  year_built=datetime(2000, 1, 1), baths=3, beds=5,
                                  listing_date=datetime(2024, 4, 1),
                                  square_feet=2500, parking_spaces="4", air_conditioning=False, balcony=False,
-                                 basement='crawl space only', dishwasher=True, hardwood_floor='ground floor')
+                                 basement='crawl space only', dishwasher=True, hardwood_floor='ground floor',
+                                 listing_source='http://default.com/' + current_time_string)
     return listing_model
 
 
@@ -141,7 +143,6 @@ def get_test_financing_schema_minimum() -> FinancingSchema:
 
 @pytest.fixture
 def get_test_underwriting_schema() -> UnderwritingSchema:
-
     underwriting_schema = UnderwritingSchema()
 
     return underwriting_schema
@@ -355,9 +356,9 @@ def get_test_projection_entry_schema() -> ProjectionEntrySchema:
     )
     return project_entry_schema
 
+
 @pytest.fixture
 def get_test_deal_schema() -> DealSchema:
-
     deal_schema = DealSchema(
         down_payment=34343.33, term=5, interest_rate=5.73, monthly_cost=2333.00, after_repair_value=32424.33,
         time_horizon=23, roi=35.00, capital_invested=234343.00, real_estate_property_value=2343.22, risk_assessment='',
@@ -375,7 +376,7 @@ def test_fastapi_client():
 
 @pytest.fixture
 def test_sample_html() -> str:
-    data_file_path = Path(__file__).parent/ "test_data" / "sample_html_text.html"
+    data_file_path = Path(__file__).parent / "test_data" / "sample_html_text.html"
 
     with data_file_path.open() as file:
         html_content = file.read()
@@ -384,7 +385,7 @@ def test_sample_html() -> str:
 
 @pytest.fixture
 def test_sample_realtor_ca_html() -> str:
-    data_file_path = Path(__file__).parent/ "test_data" / "sample_realtor_ca_listing.html"
+    data_file_path = Path(__file__).parent / "test_data" / "sample_realtor_ca_listing.html"
 
     with data_file_path.open() as file:
         html_content = file.read()
@@ -393,7 +394,7 @@ def test_sample_realtor_ca_html() -> str:
 
 @pytest.fixture
 def test_sample_raw_text() -> str:
-    data_file_path = Path(__file__).parent/ "test_data" / "sample_raw_text.txt"
+    data_file_path = Path(__file__).parent / "test_data" / "sample_raw_text.txt"
 
     with data_file_path.open() as file:
         raw_text = file.read()
@@ -402,7 +403,7 @@ def test_sample_raw_text() -> str:
 
 @pytest.fixture
 def test_sample_listing_openai_response_json_string() -> str:
-    data_file_path = Path(__file__).parent/ "test_data" / "sample_listing_openai_response.json"
+    data_file_path = Path(__file__).parent / "test_data" / "sample_listing_openai_response.json"
 
     with data_file_path.open() as file:
         json_string = file.read()

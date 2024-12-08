@@ -77,7 +77,9 @@ class WebsitePreprocessor(DataPreprocessor):
         try:
             response = requests.get(url=url, headers=WebsitePreprocessor.get_random_headers(), timeout=10)
             response.raise_for_status()
-            return response.text
+            html = response.text
+            raw_text = WebsitePreprocessor.get_raw_text_from_html(html)
+            return raw_text
         except Exception as e:
             raise Exception(f"Error fetching {url}: {str(e)}")
 

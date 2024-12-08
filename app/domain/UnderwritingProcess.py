@@ -27,9 +27,8 @@ class UnderwritingProcess:
     def extract_listing_from_url(uri: str) -> Listing:
         raw_text = UnderwritingProcess.raw_text_from_url(uri=uri)
         llm_json_response = OpenAIService.extract_listing_details(raw_text)
-        assert llm_json_response
-        # listing = Listing()
-        # return listing
+        listing = UnderwritingProcess.extract_listing_from_json(llm_json_response)
+        return listing
 
     @staticmethod
     def extract_listing_from_json(json_string: str) -> Listing:

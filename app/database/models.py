@@ -96,6 +96,7 @@ class ListingModel(Base):
     basement = Column(String(255))
     square_feet = Column(Float)
     listing_date = Column(TIMESTAMP)
+    listing_source = Column(String(255))
 
     address = relationship("AddressModel", uselist=False)
 
@@ -117,6 +118,7 @@ class ListingModel(Base):
             basement: str,
             square_feet: float,
             listing_date: datetime,
+            listing_source: str,
             address: Annotated[Optional[AddressModel], "could be missing"] = None,
             id: int | None = None,     # Allow none so the migrations creates it for new objects.
     ):
@@ -135,6 +137,7 @@ class ListingModel(Base):
         self.basement = basement
         self.square_feet = square_feet
         self.listing_date = listing_date
+        self.listing_source = listing_source
         self.address = address
 
     def __repr__(self):

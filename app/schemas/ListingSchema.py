@@ -19,6 +19,7 @@ class ListingSchema(BaseModel):
     beds:  Optional[float] = None
     bedrooms: Optional[float] = None
     listing_date: Optional[datetime] = None
+    listing_source: Optional[str] = None
     square_feet: Optional[float] = None
     parking_spaces: Optional[Union[int, str]] = None
     air_conditioning: Optional[str] = None

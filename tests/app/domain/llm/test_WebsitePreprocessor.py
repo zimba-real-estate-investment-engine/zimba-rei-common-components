@@ -53,7 +53,8 @@ def test_load_user_agents():
     assert loaded_agents_list
 
 
-def test_get_text_from_url():
-    website_processor = WebsitePreprocessor(url='http://cnn.com')
-    html = WebsitePreprocessor.get_text_from_url(url='http://cnn.com')
-    assert 'cnn.com' in html
+def test_static_get_text_from_url():
+    raw_text = WebsitePreprocessor.get_text_from_url(url='http://cnn.com')
+
+    assert "DOCTYPE html".lower() not in raw_text.lower()
+    assert "<HEAD>".lower() not in raw_text.lower()
