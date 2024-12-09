@@ -33,10 +33,17 @@ class UnderwritingProcess:
 
     @staticmethod
     def extract_listing_from_json(json_string: str) -> Listing:
-        # preprocessed_json = json.loads(json_string)
 
         # Ensure both single quote and double quote json are processed
         listing_data = ast.literal_eval(json_string)
+
+        # Parse pricing
+        pre_parsed_price = listing_data["price"]
+        parsed_price = Listing.parse_price_and_iso_currency(pre_parsed_price)
+        if parsed_price:
+            listing_data['price_amount'] = parsed_price.amount
+            listing_data['price_currency_symbol'] = parsed_price.currency_symbol
+            listing_data['price_currency_iso_code'] = parsed_price.currency_iso_code
 
         address_data = listing_data['address']  # this is a string that needs parsing to create Address object
         fields_to_exclude = ["address"]  #

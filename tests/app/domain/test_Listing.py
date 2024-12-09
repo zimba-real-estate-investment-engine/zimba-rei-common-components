@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app.domain.Listing import Listing
+from app.domain.REIPrice import REIPrice
 
 
 def test_init_from_schema_minimum(get_test_listing_schema):
@@ -48,3 +49,28 @@ def test_parse_no_country():
     assert address.street_address == "375 Shawmut Avenue"
     assert address.city == "Boston"
     assert address.postal_code == "02118"
+
+
+def test_parse_price_and_iso_currency():
+    test_prices = [
+        '$19.99',
+        'USD$19.99',
+        'US$19.99',
+        '€50.00',
+        '£30.50',
+        '1000 ¥',
+        '¥ 1000',
+        'CAD$ 25.75',
+        'CA$ 25.75',
+        'CAD 25.75',
+        'A$ 45.60',
+    ]
+
+    for price_string in test_prices:
+        parsed_price = Listing.parse_price_and_iso_currency(price_string)
+
+        assert isinstance(parsed_price, REIPrice)
+        assert parsed_price.amount
+        assert parsed_price.currency_symbol
+        assert parsed_price.currency_iso_code
+        assert parsed_price.original
