@@ -153,7 +153,7 @@ def get_test_mortgage_schema() -> MortgageSchema:
     issued_date = datetime.now()
 
     mortgage_schema = MortgageSchema(
-        appraisal_value=300000.00, principal=240000.03, issued_date=issued_date,
+        appraisal_value=300000.00, principal=240000.03, down_payment=27665, issued_date=issued_date,
         pre_qualified=True, pre_approved=True, loan_to_value=80.0, interest_rate=3.75,
         term=3, amortization_period=30, monthly_payment=3565.25,
         owner_occupied=True, insurance=3500.75,
@@ -165,7 +165,7 @@ def get_test_mortgage_schema() -> MortgageSchema:
 def get_test_mortgage_model() -> MortgageModel:
     issued_date = datetime.now()
 
-    mortgage_model = MortgageModel(appraisal_value=345555, principal=234343.00, pre_qualified=True,
+    mortgage_model = MortgageModel(appraisal_value=345555, principal=234343.00, down_payment=27665, pre_qualified=True,
                                    pre_approved=False, loan_to_value=80.00, term=5, interest_rate=5.0,
                                    amortization_period=30, monthly_payment=2343.55,
                                    owner_occupied=True, insurance=200.00, issued_date=issued_date)

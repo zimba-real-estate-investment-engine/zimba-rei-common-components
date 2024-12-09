@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 class MortgageSchema(BaseModel):
     id: Optional[int] = None
     appraisal_value: float
+    down_payment: float
     principal: float
     issued_date: datetime
     pre_qualified: bool
