@@ -24,6 +24,23 @@ class UnderwritingProcess:
     def extract_real_estate_property(self, listing: Listing, expenses: List[Expense]) -> RealEstateProperty:
         pass
 
+
+    def create_deal_from_json(self, investor_profile: InvestorProfile, real_estate_property: RealEstateProperty,
+                              json_source: str) -> Deal:
+        listing = UnderwritingProcess.extract_listing_from_json(json_source)
+        real_estate_property = real_estate_property
+        investor_profile = investor_profile
+
+        deal = Deal()
+    @staticmethod
+    def extract_real_estate_property(listing: Listing, expenses: List[Expense]) -> RealEstateProperty:
+        listing = listing
+        expenses = expenses
+
+        real_estate_property = RealEstateProperty(listing=listing, expenses=expenses, address=listing.address)
+        return real_estate_property
+
+
     @staticmethod
     def extract_listing_from_url(uri: str) -> Listing:
         raw_text = UnderwritingProcess.raw_text_from_url(uri=uri)
