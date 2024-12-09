@@ -33,9 +33,18 @@ class UnderwritingProcess:
 
     @staticmethod
     def extract_listing_from_json(json_string: str) -> Listing:
-
+        listing_data = json_string
         # Ensure both single quote and double quote json are processed
-        listing_data = ast.literal_eval(json_string)
+        try:
+            listing_data = json.loads(json_string)
+        except json.JSONDecodeError:
+            listing_data = ast.literal_eval(json_string)
+            # try:
+            #     json.loads(ast_parsed)
+            #     listing_data = ast_parsed
+            # except Exception as e:
+            #     logging.error(f'Invalid JSON {json_string}:  {e}')
+            #     raise
 
         # Parse pricing
         pre_parsed_price = listing_data["price"]

@@ -46,6 +46,7 @@ class Listing(ListingSchema):
                 "region1": "state",
                 "country_id": "country",
                 "postal_code": "postal_code",
+                "full_address": "full_address"
             }
             for new_address in addresses:
                 temp_address = {}

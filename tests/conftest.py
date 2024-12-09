@@ -406,8 +406,8 @@ def test_sample_raw_text() -> str:
 
 
 @pytest.fixture
-def test_sample_listing_openai_response_json_string() -> str:
-    data_file_path = Path(__file__).parent / "test_data" / "sample_listing_openai_response.json"
+def test_sample_listing_openai_response_realtor_ca_json_string() -> str:
+    data_file_path = Path(__file__).parent / "test_data" / "sample_listing_openai_realtor_ca_response.json"
 
     with data_file_path.open() as file:
         json_string = file.read()
