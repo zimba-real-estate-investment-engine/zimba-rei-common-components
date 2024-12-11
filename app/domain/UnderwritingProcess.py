@@ -18,11 +18,44 @@ class UnderwritingProcess:
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.INFO)  # Set the logging level
 
-    def create_deal(self, investor_profile: InvestorProfile, real_estate_property: RealEstateProperty) -> Deal:
-        pass
+    @staticmethod
+    def create_deal(investor_profile: InvestorProfile, real_estate_property: RealEstateProperty, url: str = None,
+                    json_string: str = None) -> Deal:
 
-    def extract_real_estate_property(self, listing: Listing, expenses: List[Expense]) -> RealEstateProperty:
-        pass
+        if url:
+            listing = UnderwritingProcess.extract_listing_from_url(url)
+            real_estate_property.listing = listing
+            deal = Deal.from_real_estate_and_investor_profile(real_estate_property=real_estate_property,
+                                                              investor_profile=investor_profile)
+            return deal
+
+        elif json_string:
+            deal = UnderwritingProcess.create_deal_from_json(investor_profile=investor_profile,
+                                                             real_estate_property=real_estate_property,
+                                                             json_source=json_string)
+            return deal
+        else:
+            raise ValueError(f"url or json_string need to be specified. Both can't be None")
+
+    @staticmethod
+    def create_deal_from_json(investor_profile: InvestorProfile, real_estate_property: RealEstateProperty,
+                              json_source: str) -> Deal:
+        listing = UnderwritingProcess.extract_listing_from_json(json_source)
+        real_estate_property = real_estate_property
+        real_estate_property.listings.append(listing)
+        investor_profile = investor_profile
+
+        deal = Deal.from_real_estate_and_investor_profile(real_estate_property=real_estate_property,
+                                                          investor_profile=investor_profile)
+        return deal
+
+    @staticmethod
+    def extract_real_estate_property(listing: Listing, expenses: List[Expense]) -> RealEstateProperty:
+        listing = listing
+        expenses = expenses
+
+        real_estate_property = RealEstateProperty(listing=listing, expenses=expenses, address=listing.address)
+        return real_estate_property
 
     @staticmethod
     def extract_listing_from_url(uri: str) -> Listing:
@@ -39,12 +72,6 @@ class UnderwritingProcess:
             listing_data = json.loads(json_string)
         except json.JSONDecodeError:
             listing_data = ast.literal_eval(json_string)
-            # try:
-            #     json.loads(ast_parsed)
-            #     listing_data = ast_parsed
-            # except Exception as e:
-            #     logging.error(f'Invalid JSON {json_string}:  {e}')
-            #     raise
 
         # Parse pricing
         pre_parsed_price = listing_data["price"]

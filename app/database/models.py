@@ -150,14 +150,16 @@ class ListingModel(Base):
 class ExpenseModel(Base):
     __tablename__ = 'expense'
 
-    id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     real_estate_property_id = Column(Integer, ForeignKey('real_estate_property.id'))
     expense_type = Column(String(255))
     monthly_cost = Column(Float)
 
     real_estate_property = relationship("RealEstatePropertyModel", back_populates="expenses")
 
-    def __init__(self, id: int, expense_type: str, monthly_cost: float):
+    def __init__(self, expense_type: str, monthly_cost: float,
+                 id: int | None = None,     # Allow none so the migrations creates it for new objects.
+    ):
         self.id = id
         self.expense_type = expense_type
         self.monthly_cost = monthly_cost
@@ -312,6 +314,7 @@ class MortgageModel(Base):
     financing_id = Column(String(255), ForeignKey('financing.id'))
     appraisal_value = Column(Float)
     principal = Column(Float)
+    down_payment = Column(Float)
     issued_date = Column(TIMESTAMP)
     pre_qualified = Column(Boolean)
     pre_approved = Column(Boolean)
@@ -329,6 +332,7 @@ class MortgageModel(Base):
             self,
             appraisal_value: float,
             principal: float,
+            down_payment: float,
             issued_date: datetime,
             pre_qualified: bool,
             pre_approved: bool,
@@ -345,6 +349,7 @@ class MortgageModel(Base):
         self.id = id
         self.appraisal_value = appraisal_value
         self.principal = principal
+        self.down_payment = down_payment
         self.issued_date = issued_date
         self.pre_qualified = pre_qualified
         self.pre_approved = pre_approved
