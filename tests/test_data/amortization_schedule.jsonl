@@ -1,0 +1,37 @@
+[
+    {
+        "payment_number": 1,
+        "monthly_payment": 536.82,
+        "interest_payment": 416.67,
+        "principal_recapture": 120.15,
+        "remaining_balance": 99879.85
+    },
+    {
+        "payment_number": 2,
+        "monthly_payment": 536.82,
+        "interest_payment": 416.16,
+        "principal_recapture": 120.66,
+        "remaining_balance": 99759.19
+    },
+    {
+        "payment_number": 3,
+        "monthly_payment": 536.82,
+        "interest_payment": 415.66,
+        "principal_recapture": 121.16,
+        "remaining_balance": 99638.03
+    },
+    {
+        "payment_number": 4,
+        "monthly_payment": 536.82,
+        "interest_payment": 415.16,
+        "principal_recapture": 121.66,
+        "remaining_balance": 99516.37
+    },
+    {
+        "payment_number": 5,
+        "monthly_payment": 536.82,
+        "interest_payment": 414.65,
+        "principal_recapture": 122.17,
+        "remaining_balance": 99394.20
+    }
+]

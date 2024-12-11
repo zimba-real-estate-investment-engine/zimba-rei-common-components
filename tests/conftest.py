@@ -1,5 +1,6 @@
 from __future__ import annotations
 import os
+import random
 import time
 from typing import List
 from pathlib import Path
@@ -14,7 +15,8 @@ from fastapi.testclient import TestClient
 from app.domain.Expense import Expense
 from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
-    FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel, ProjectionEntryModel
+    FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel, ProjectionEntryModel, \
+    AmortizationScheduleModel
 from app.database.models import RealEstatePropertyModel
 from datetime import datetime, timezone, timedelta
 
@@ -432,3 +434,28 @@ def test_expenses_schema_list() -> List[ExpenseSchema]:
                                           ExpenseSchema(expense_type='Cleaning', monthly_cost=200.0)]
 
     return expenses_list
+
+
+@pytest.fixture
+def test_amortization_json() -> str:
+    data_file_path = Path(__file__).parent / "test_data" / "amortization_schedule.jsonl"
+
+    with data_file_path.open() as file:
+        json_string = file.read()
+        yield json_string
+
+
+@pytest.fixture
+def test_amortization_schedule_model_without_json () -> AmortizationScheduleModel:
+
+    principal = round(random.uniform(130000, 150000000), 2)
+    annual_interest_rate = 7.5
+    amortization_period = 30
+    caching_code = f'{principal}:{annual_interest_rate}:{amortization_period}'
+
+    amortization_schedule_model = AmortizationScheduleModel(
+        amortization_schedule_json='', created_date=datetime.now(), caching_code=caching_code,
+        principal=principal, amortization_period=amortization_period, annual_interest_rate=annual_interest_rate
+    )
+
+    return amortization_schedule_model
