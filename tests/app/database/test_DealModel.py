@@ -3,7 +3,7 @@ from app.repositories.BaseRepository import BaseRepository
 from app.database.models import SubscriptionModel
 
 
-def test_crud_deal_model_after_underwriting(get_test_deal_model, get_test_underwriting_model_min,get_test_db):
+def test_crud_deal_model_after_underwriting(get_test_deal_model, get_test_underwriting_model_min, get_test_db):
     session = get_test_db
     test_deal = get_test_deal_model
     test_underwriting = get_test_underwriting_model_min

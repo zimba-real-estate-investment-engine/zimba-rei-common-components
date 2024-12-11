@@ -150,14 +150,16 @@ class ListingModel(Base):
 class ExpenseModel(Base):
     __tablename__ = 'expense'
 
-    id = Column(Integer, primary_key=True, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     real_estate_property_id = Column(Integer, ForeignKey('real_estate_property.id'))
     expense_type = Column(String(255))
     monthly_cost = Column(Float)
 
     real_estate_property = relationship("RealEstatePropertyModel", back_populates="expenses")
 
-    def __init__(self, id: int, expense_type: str, monthly_cost: float):
+    def __init__(self, expense_type: str, monthly_cost: float,
+                 id: int | None = None,     # Allow none so the migrations creates it for new objects.
+    ):
         self.id = id
         self.expense_type = expense_type
         self.monthly_cost = monthly_cost

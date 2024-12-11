@@ -1,5 +1,9 @@
 from datetime import datetime
 
+from app.domain.Expense import Expense
+from app.domain.InvestorProfile import InvestorProfile
+from app.domain.Mortgage import Mortgage
+from app.domain.RealEstateProperty import RealEstateProperty
 from app.domain.UnderwritingProcess import UnderwritingProcess
 
 
@@ -35,3 +39,27 @@ def test_extract_listing_from_url():
     url = 'https://www.redfin.ca/on/ottawa/9-Camwood-Cres-K2H-7X1/home/151024056'
     listing = UnderwritingProcess.extract_listing_from_url(url)
     assert listing
+
+
+def test_create_deal_from_json(test_sample_listing_openai_response_redfin_ca_json_string, test_expenses_schema_list,
+                               get_test_investor_profile_schema, get_test_mortgage_schema):
+
+    json_string = test_sample_listing_openai_response_redfin_ca_json_string
+    expense_schema_list = test_expenses_schema_list
+    investor_profile_schema = get_test_investor_profile_schema
+    mortgage_schema = get_test_mortgage_schema
+    mortgage = Mortgage(**mortgage_schema.dict())
+    # financing_sources = [mortgage]
+
+    listing = UnderwritingProcess.extract_listing_from_json(json_string)
+    listings = [listing]
+    expenses = [Expense(**expense_schema.dict()) for expense_schema in expense_schema_list]
+    real_estate_property = RealEstateProperty(listings=listings, expenses=expenses)
+
+    investor_profile = InvestorProfile(**investor_profile_schema.dict())
+    investor_profile.financing_sources = [mortgage]
+
+    deal = UnderwritingProcess.create_deal(investor_profile=investor_profile, real_estate_property=real_estate_property,
+                                           json_string=json_string)
+
+    assert deal
