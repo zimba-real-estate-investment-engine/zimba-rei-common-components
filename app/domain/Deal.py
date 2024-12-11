@@ -14,8 +14,8 @@ class Deal(DealSchema):
         cls.real_estate_property = real_estate_property
         cls.investor_profile = investor_profile
 
-        if investor_profile.financing_sources and investor_profile.financing_sources[0]:
-            mortgage: Mortgage = investor_profile.financing_sources[0] # Initially only one mortgage per investor
+        if investor_profile.get_mortgages():
+            mortgage: Mortgage = investor_profile.get_mortgages()[0]  # Initially only one mortgage per investor
             cls.down_payment = mortgage.down_payment
             cls.monthly_cost = mortgage.monthly_payment
             cls.interest_rate = mortgage.interest_rate

@@ -49,7 +49,6 @@ def test_create_deal_from_json(test_sample_listing_openai_response_redfin_ca_jso
     investor_profile_schema = get_test_investor_profile_schema
     mortgage_schema = get_test_mortgage_schema
     mortgage = Mortgage(**mortgage_schema.dict())
-    # financing_sources = [mortgage]
 
     listing = UnderwritingProcess.extract_listing_from_json(json_string)
     listings = [listing]
@@ -57,7 +56,7 @@ def test_create_deal_from_json(test_sample_listing_openai_response_redfin_ca_jso
     real_estate_property = RealEstateProperty(listings=listings, expenses=expenses)
 
     investor_profile = InvestorProfile(**investor_profile_schema.dict())
-    investor_profile.financing_sources = [mortgage]
+    investor_profile.add_mortgage(mortgage)
 
     deal = UnderwritingProcess.create_deal(investor_profile=investor_profile, real_estate_property=real_estate_property,
                                            json_string=json_string)

@@ -1,4 +1,5 @@
+from app.schemas.FinancingSchema import FinancingSchema
 
 
-class Financing():
+class Financing(FinancingSchema):
     pass
