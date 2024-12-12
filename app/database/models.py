@@ -18,6 +18,7 @@ class ModelMixin:
         cls.__table__ = Table(cls.__name__, cls.metadata,
                               Column('id', Integer, primary_key=True))
 
+
 class SubscriptionModel(Base):
     __tablename__ = 'subscription'
 
@@ -65,7 +66,7 @@ class AddressModel(Base):
             country: str,
             long_lat_location: str,
             full_address: str,
-            id: int | None = None,     # Allow none so the migrations creates it for new objects.
+            id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.street_address = street_address
@@ -123,7 +124,7 @@ class ListingModel(Base):
             listing_date: datetime,
             listing_source: str,
             address: Annotated[Optional[AddressModel], "could be missing"] = None,
-            id: int | None = None,     # Allow none so the migrations creates it for new objects.
+            id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
         self.address = address
         self.id = id
@@ -158,8 +159,8 @@ class ExpenseModel(Base):
     real_estate_property = relationship("RealEstatePropertyModel", back_populates="expenses")
 
     def __init__(self, expense_type: str, monthly_cost: float,
-                 id: int | None = None,     # Allow none so the migrations creates it for new objects.
-    ):
+                 id: int | None = None,  # Allow none so the migrations creates it for new objects.
+                 ):
         self.id = id
         self.expense_type = expense_type
         self.monthly_cost = monthly_cost
@@ -184,7 +185,7 @@ class RealEstatePropertyModel(Base):
             listing: Annotated[Optional[ListingModel], 'could be missing'] = None,
             address: Annotated[Optional[AddressModel], 'could be yet to be filled'] = None,
             expenses: Annotated[Optional[List[ExpenseModel]], 'could be yet to be filled'] = None,
-            id: int | None = None,     # Allow none so the migrations creates it for new objects.
+            id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.listing = listing
@@ -207,7 +208,7 @@ class FinancingModel(Base):
     def __init__(
             self,
             mortgages: Annotated[Optional[List[MortgageModel]], 'could be yet to be filled'] = None,
-            id: int | None = None,     # Allow none so the migrations creates it for new objects.
+            id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.mortgages = mortgages if mortgages else []
@@ -218,7 +219,6 @@ class FinancingModel(Base):
     def __repr__(self):
         return f"<Financing(id={self.id})>"
         # return f"<Financing(id={self.id}, total_available=${self.get_total_available():,.2f})>"
-
 
 
 class InvestorProfileModel(Base):
@@ -275,7 +275,7 @@ class InvestorProfileModel(Base):
             dishwasher_required: bool = False,
             balcony_required: bool = False,
             financing_sources: Annotated[Optional[List[FinancingModel]], 'could be yet to be filled'] = None,
-            id: int | None = None,     # Allow none so the migrations creates it for new objects.
+            id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.price = price
@@ -304,7 +304,6 @@ class InvestorProfileModel(Base):
     def __repr__(self):
         return f"<InvestorProfile(id={self.id})>"
         # return f"<InvestorProfile(id={self.id}, budget_range=${self.budget_min:,.2f}-${self.budget_max:,.2f})>"
-
 
 
 class MortgageModel(Base):
@@ -344,7 +343,7 @@ class MortgageModel(Base):
             owner_occupied: bool,
             insurance: float,
             financing: Annotated[Optional[FinancingModel], 'could be yet to be filled'] = None,
-            id: int | None = None,     # Allow none so the migrations creates it for new objects.
+            id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.appraisal_value = appraisal_value
@@ -379,11 +378,11 @@ class UnderwritingModel(Base):
     projection_entries = relationship("ProjectionEntryModel", back_populates="underwriting")
 
     def __init__(
-        self,
-        investor_profile: Annotated[Optional[InvestorProfileModel], 'could be yet to be filled'] = None,
-        real_estate_property: Annotated[Optional[RealEstatePropertyModel], 'could be yet to be filled'] = None,
-        deals: Annotated[Optional[DealModel], 'could be yet to be filled'] = None,
-        id: int | None = None,     # Allow none so the migrations creates it for new objects.
+            self,
+            investor_profile: Annotated[Optional[InvestorProfileModel], 'could be yet to be filled'] = None,
+            real_estate_property: Annotated[Optional[RealEstatePropertyModel], 'could be yet to be filled'] = None,
+            deals: Annotated[Optional[DealModel], 'could be yet to be filled'] = None,
+            id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.investor_profile = investor_profile
@@ -392,6 +391,7 @@ class UnderwritingModel(Base):
 
     def __repr__(self):
         return f"<UnderwritingProcess(id={self.id})>"
+
 
 class DealModel(Base):
     __tablename__ = 'deal'
@@ -413,20 +413,20 @@ class DealModel(Base):
     underwriting = relationship("UnderwritingModel")
 
     def __init__(
-        self,
-        down_payment: float,
-        term: int,
-        interest_rate: float,
-        monthly_cost: float,
-        after_repair_value: float,
-        time_horizon: int,
-        roi: float,
-        capital_invested: float,
-        real_estate_property_value: float,
-        underwriting: Annotated[Optional[UnderwritingModel], 'should be populated before saving to db'] = None,
-        thumbnail: str = '',
-        risk_assessment: str ='',
-        id: int | None = None,     # Allow none so the migrations creates it for new objects.
+            self,
+            down_payment: float,
+            term: int,
+            interest_rate: float,
+            monthly_cost: float,
+            after_repair_value: float,
+            time_horizon: int,
+            roi: float,
+            capital_invested: float,
+            real_estate_property_value: float,
+            underwriting: Annotated[Optional[UnderwritingModel], 'should be populated before saving to db'] = None,
+            thumbnail: str = '',
+            risk_assessment: str = '',
+            id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.down_payment = down_payment
@@ -444,6 +444,7 @@ class DealModel(Base):
 
     def __repr__(self):
         return f"<Deal(id={self.id}, property_value=${self.property_value:,.2f}, roi={self.roi}%)>"
+
 
 class ProjectionEntryModel(Base):
     __tablename__ = 'projection_entry'
@@ -472,3 +473,36 @@ class ProjectionEntryModel(Base):
 
     def __repr__(self):
         return f"<Projection(id={self.id})>"
+
+
+class AmortizationScheduleModel(Base):
+    __tablename__ = 'amortization_schedule'
+
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    amortization_schedule_json = Column(String(255))
+    caching_code = Column(String(255))
+    principal = Column(Float)
+    annual_interest_rate = Column(Float)
+    amortization_period = Column(Integer)
+    created_date = Column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP'))
+
+    def __init__(
+            self,
+            amortization_schedule_json: str,
+            created_date: datetime,
+            caching_code: str,
+            principal: float,
+            annual_interest_rate: float,
+            amortization_period: int,
+            id: int | None = None,  # Allow none so the migrations creates it for new objects.
+    ):
+        self.id = id
+        self.amortization_schedule_json = amortization_schedule_json
+        self.created_date = created_date
+        self.caching_code = caching_code
+        self.principal = principal
+        self.annual_interest_rate = annual_interest_rate
+        self.amortization_period = amortization_period
+
+    def __repr__(self):
+        return f"<AmortizationSchedule(id={self.id} caching_code={self.caching_code})>"
