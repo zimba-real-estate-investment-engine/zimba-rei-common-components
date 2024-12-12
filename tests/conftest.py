@@ -16,7 +16,7 @@ from app.domain.Expense import Expense
 from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
     FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel, ProjectionEntryModel, \
-    AmortizationScheduleModel
+    AmortizationScheduleModel, CashflowModel
 from app.database.models import RealEstatePropertyModel
 from datetime import datetime, timezone, timedelta
 
@@ -217,6 +217,21 @@ def get_test_expense_model() -> ExpenseModel:
     expense_model = ExpenseModel(expense_type=expense_type, monthly_cost=3343.23)
 
     return expense_model
+
+
+def CashflowModelModel(cashflow_type, monthly_cost):
+    pass
+
+
+@pytest.fixture
+def get_test_cashflow_model() -> CashflowModel:
+    current_time_string = __get_time_string()
+    cashflow_type = current_time_string + '_cashflow_type'
+    monthly_cashflow = round(random.uniform(50000, 130000), 2)
+
+    cashflow_model = CashflowModel(cashflow_type=cashflow_type, monthly_cashflow=monthly_cashflow)
+
+    return cashflow_model
 
 
 @pytest.fixture
