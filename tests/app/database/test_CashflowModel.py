@@ -30,20 +30,9 @@ def test_crud_cashflow_with_real_estate_property(get_test_real_estate_property_m
     # Make sure new ids were assigned to the cashflows when saved
     for cashflow in newly_created.cashflow_sources:
         assert cashflow.id != 0
-    # assert newly_created.id == results.id
-    # assert newly_created.state == results.state
 
     # DELETE and commit, we'll need to clean up test data
     # repo.delete(results.id)
-    session.commit()
+    # session.commit()
 
-    #
-    #
-    # repository.
-    #
-    # repository.add(test_subscription)
-    #
-    # id = test_subscription.id
-    #
-    # returned_instance = repository.get(id)
-    # assert returned_instance
+

@@ -190,26 +190,27 @@ class CashflowModel(Base):
         return f"<Cashflow(id={self.id}, type={self.cashflow_type}, monthly_cashflow=${self.monthly_cashflow:,.2f})>"
 
 
-# class CapitalInvestedModel(Base):
-#     __tablename__ = 'capital_invested'
-#
-#     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-#     real_estate_property_id = Column(Integer, ForeignKey('real_estate_property.id'))
-#     investment_type = Column(String(255))
-#     investment_amount = Column(Float)
-#
-#     real_estate_property = relationship("RealEstatePropertyModel", back_populates="capital_invested")
-#
-#     def __init__(self, investment_type: str, investment_amount: float,
-#                  id: int | None = None,  # Allow none so the migrations creates it for new objects.
-#     ):
-#         self.id = id
-#         self.investment_type = investment_type
-#         self.investment_amount = investment_amount
-#
-#     def __repr__(self):
-#         return f"<CapitalInvestment(id={self.id}, type={self.investment_type}, investment_amount=${self.investment_amount:,.2f})>"
-#
+class CapitalInvestmentModel(Base):
+    __tablename__ = 'capital_investment'
+
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    real_estate_property_id = Column(Integer, ForeignKey('real_estate_property.id'))
+    capital_investment_type = Column(String(255))
+    capital_investment_amount = Column(Float)
+
+    real_estate_property = relationship("RealEstatePropertyModel", back_populates="capital_investments")
+
+    def __init__(self, capital_investment_type: str, capital_investment_amount: float,
+                 id: int | None = None,  # Allow none so the migrations creates it for new objects.
+    ):
+        self.id = id
+        self.capital_investment_type = capital_investment_type
+        self.capital_investment_amount = capital_investment_amount
+
+    def __repr__(self):
+        return (f"<CapitalInvestment(id={self.id}, type={self.capital_investment_type}, "
+                f"investment_amount=${self.capital_investment_amount:,.2f})>")
+
 
 class RealEstatePropertyModel(Base):
     __tablename__ = 'real_estate_property'
@@ -222,7 +223,7 @@ class RealEstatePropertyModel(Base):
     listing = relationship("ListingModel", uselist=False)
     expenses = relationship("ExpenseModel", back_populates="real_estate_property")
     cashflow_sources = relationship("CashflowModel", back_populates="real_estate_property")
-    # capital_investments = relationship("CapitalInvestmentModel", back_populates="real_estate_property")
+    capital_investments = relationship("CapitalInvestmentModel", back_populates="real_estate_property")
 
     def __init__(
             self,
@@ -230,7 +231,7 @@ class RealEstatePropertyModel(Base):
             address: Annotated[Optional[AddressModel], 'could be yet to be filled'] = None,
             expenses: Annotated[Optional[List[ExpenseModel]], 'could be yet to be filled'] = None,
             cashflow_sources: Annotated[Optional[List[CashflowModel]], 'could be yet to be filled'] = None,
-            # capital_investments: Annotated[Optional[List[CapitalInvestedModel]], 'could be yet to be filled'] = None,
+            capital_investments: Annotated[Optional[List[CapitalInvestmentModel]], 'could be yet to be filled'] = None,
             id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
@@ -238,7 +239,7 @@ class RealEstatePropertyModel(Base):
         self.address = address
         self.expenses = expenses if expenses else []
         self.cashflow_sources = cashflow_sources if cashflow_sources else []
-        # self.capital_investments = capital_investments if capital_investments else []
+        self.capital_investments = capital_investments if capital_investments else []
 
     def __repr__(self):
         return f"<RealEstateProperty(id={self.id})>"
