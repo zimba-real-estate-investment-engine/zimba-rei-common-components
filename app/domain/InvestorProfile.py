@@ -3,7 +3,6 @@ from typing import List
 from app.domain.Financing import Financing
 from app.domain.Mortgage import Mortgage
 from app.schemas.InvestorProfileSchema import InvestorProfileSchema
-from app.schemas.MortgageSchema import MortgageSchema
 
 
 class InvestorProfile(InvestorProfileSchema):

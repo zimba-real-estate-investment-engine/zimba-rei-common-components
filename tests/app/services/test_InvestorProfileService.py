@@ -52,8 +52,8 @@ def test_save_investor_profile_cascade_to_financing(get_test_db, get_test_invest
     newly_saved_investor_profile = investor_profile_service.save_investor_profile(test_investor_profile)
 
     assert newly_saved_investor_profile.id and newly_saved_investor_profile.id != 0
-    assert newly_saved_investor_profile.financing_sources[0].id and newly_saved_investor_profile.financing_sources[
-        0].id != 0
+    assert (newly_saved_investor_profile.financing_sources[0].id and
+            newly_saved_investor_profile.financing_sources[0].id != 0)
 
 
 def test_save_investor_profile_cascade_to_mortgage(get_test_db, get_test_investor_profile_schema,
@@ -77,7 +77,8 @@ def test_save_investor_profile_cascade_to_mortgage(get_test_db, get_test_investo
            newly_saved_investor_profile.financing_sources[0].mortgages[0].id != 0
 
 
-def test_get_all(get_test_db, get_test_investor_profile_schema, get_test_financing_schema_minimum, get_test_mortgage_schema):
+def test_get_all(get_test_db, get_test_investor_profile_schema, get_test_financing_schema_minimum,
+                 get_test_mortgage_schema):
     db = get_test_db
     test_investor_profile_1 = get_test_investor_profile_schema
     test_investor_profile_2 = copy.deepcopy(test_investor_profile_1)

@@ -3,7 +3,6 @@ from typing import Optional, List, Any
 from app.domain.Address import Address
 from app.domain.Expense import Expense
 from app.domain.Listing import Listing
-from app.schemas.AddressSchema import AddressSchema
 from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
 
 

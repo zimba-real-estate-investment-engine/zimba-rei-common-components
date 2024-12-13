@@ -11,6 +11,8 @@ from app.core import database
 from app.database.models import SubscriptionModel
 from app.domain.RealEstateProperty import RealEstateProperty
 from app.schemas.AddressSchema import AddressSchema
+from app.schemas.CapitalInvestmentSchema import CapitalInvestmentSchema
+from app.schemas.CashflowSchema import CashflowSchema
 from app.schemas.DealSchema import DealSchema, DealSearchSchema
 from app.schemas.ExpenseSchema import ExpenseSchema
 from app.schemas.FinancingSchema import FinancingSchema
@@ -25,6 +27,8 @@ from urllib.parse import quote_plus
 
 from app.schemas.UnderwritingSchema import UnderwritingSchema
 from app.services.AddressService import AddressService
+from app.services.CapitalInvestmentService import CapitalInvestmentService
+from app.services.CashflowService import CashflowService
 from app.services.DealService import DealService
 from app.services.ExpenseService import ExpenseService
 from app.services.FinancingService import FinancingService
@@ -245,6 +249,21 @@ async def get_expenses(db: Session = Depends(get_db)):
     expense_json_list = list(map(lambda x: x.model_dump(), expense_schema_list))
     return expense_json_list
 
+
+@app.get("/cashflow/", response_model=List[CashflowSchema])
+async def get_cashflow_items(db: Session = Depends(get_db)):
+    cashflow_service = CashflowService(db)
+    cashflow_schema_list = cashflow_service.get_all()
+    cashflow_json_list = list(map(lambda x: x.model_dump(), cashflow_schema_list))
+    return cashflow_json_list
+
+
+@app.get("/capital_investments/", response_model=List[CapitalInvestmentSchema])
+async def get_capital_investments(db: Session = Depends(get_db)):
+    capital_investment_service = CapitalInvestmentService(db)
+    capital_investment_schema_list = capital_investment_service.get_all()
+    capital_investment_json_list = list(map(lambda x: x.model_dump(), capital_investment_schema_list))
+    return capital_investment_json_list
 
 @app.get("/financing/", response_model=List[FinancingSchema])
 async def get_financing(db: Session = Depends(get_db)):

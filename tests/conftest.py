@@ -16,12 +16,14 @@ from app.domain.Expense import Expense
 from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
     FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel, ProjectionEntryModel, \
-    AmortizationScheduleModel
+    AmortizationScheduleModel, CashflowModel, CapitalInvestmentModel
 from app.database.models import RealEstatePropertyModel
 from datetime import datetime, timezone, timedelta
 
 from dateutil.relativedelta import relativedelta
 
+from app.schemas.CapitalInvestmentSchema import CapitalInvestmentSchema
+from app.schemas.CashflowSchema import CashflowSchema
 from app.schemas.ListingSchema import ListingSchema
 from app.schemas.DealSchema import DealSchema
 from app.schemas.FinancingSchema import FinancingSchema
@@ -218,6 +220,55 @@ def get_test_expense_model() -> ExpenseModel:
 
     return expense_model
 
+
+def CashflowModelModel(cashflow_type, monthly_cost):
+    pass
+
+
+@pytest.fixture
+def get_test_cashflow_model() -> CashflowModel:
+    current_time_string = __get_time_string()
+    cashflow_type = current_time_string + '_cashflow_type'
+    monthly_cashflow = round(random.uniform(50000, 130000), 2)
+
+    cashflow_model = CashflowModel(cashflow_type=cashflow_type, monthly_cashflow=monthly_cashflow)
+
+    return cashflow_model
+
+
+@pytest.fixture
+def get_test_cashflow_schema() -> CashflowSchema:
+    current_time_string = __get_time_string()
+    cashflow_type = current_time_string + '_cashflow_type'
+    monthly_cashflow = round(random.uniform(50000, 130000), 2)
+
+    cashflow_schema = CashflowSchema(cashflow_type=cashflow_type, monthly_cashflow=monthly_cashflow)
+
+    return cashflow_schema
+
+
+@pytest.fixture
+def get_test_capital_investment_model() -> CapitalInvestmentModel:
+    current_time_string = __get_time_string()
+    capital_investment_type = current_time_string + '_cashflow_type'
+    capital_investment_amount = round(random.uniform(50000, 130000), 2)
+
+    capital_investment_model = CapitalInvestmentModel(capital_investment_type=capital_investment_type,
+                                                      capital_investment_amount=capital_investment_amount)
+
+    return capital_investment_model
+
+
+@pytest.fixture
+def get_test_capital_investment_schema() -> CapitalInvestmentSchema:
+    current_time_string = __get_time_string()
+    capital_investment_type = current_time_string + '_cashflow_type'
+    capital_investment_amount = round(random.uniform(50000, 130000), 2)
+
+    capital_investment_schema = CapitalInvestmentSchema(capital_investment_type=capital_investment_type,
+                                                        capital_investment_amount=capital_investment_amount)
+
+    return capital_investment_schema
 
 @pytest.fixture
 def get_test_email_schema() -> EmailSchema:
@@ -446,8 +497,7 @@ def test_amortization_json() -> str:
 
 
 @pytest.fixture
-def test_amortization_schedule_model_without_json () -> AmortizationScheduleModel:
-
+def test_amortization_schedule_model_without_json() -> AmortizationScheduleModel:
     principal = round(random.uniform(130000, 150000000), 2)
     annual_interest_rate = 7.5
     amortization_period = 30
