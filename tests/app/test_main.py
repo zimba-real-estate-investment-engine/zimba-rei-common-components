@@ -36,6 +36,12 @@ def test_get_investor_profiles(test_fastapi_client, request):
     assert response.status_code == 200
 
 
+def test_get_real_estate_properties(test_fastapi_client, request):
+    client = test_fastapi_client
+    response = client.get("/real-estate-properties/")
+    assert response.status_code == 200
+
+
 def test_get_investor_profile(test_fastapi_client, request):
     client = test_fastapi_client
 
