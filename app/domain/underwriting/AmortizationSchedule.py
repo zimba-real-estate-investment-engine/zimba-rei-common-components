@@ -25,6 +25,17 @@ class AmortizationSchedule(AmortizationScheduleSchema):
         if amortization_schedule_rows[0]:
             return amortization_schedule_rows[0]
 
+    def get_schedule_entries_for_payment_number_range(self, range_start: int = 0, range_end: int = 0) \
+            -> List[AmortizationScheduleRow]:
+
+        self.amortization_schedule_json = AmortizationSchedule.generate_amortization_json(self.principal,
+                                                                                          self.annual_interest_rate,
+                                                                                          self.amortization_period)
+        amortization_schedule_rows = AmortizationSchedule.amortization_rows_for_payment_range(
+            self.amortization_schedule_json,start=range_start, end=range_end)
+
+        return amortization_schedule_rows
+
     @staticmethod
     def generate_amortization_json(principal: float, annual_interest_rate: float,
                                    amortization_period: int) -> str:

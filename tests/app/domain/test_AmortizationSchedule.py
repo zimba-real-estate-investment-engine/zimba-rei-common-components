@@ -42,3 +42,14 @@ def test_get_schedule_entry_for_payment_number():
     assert amortization_schedule_row
     assert isinstance(amortization_schedule_row, AmortizationScheduleRow)
     assert amortization_schedule_row.principal_recapture
+
+
+def test_get_schedule_entries_for_payment_number_range():
+
+    amortization_schedule = AmortizationSchedule(principal=343434, annual_interest_rate=5.75, amortization_period=30)
+
+    amortization_schedule_rows = amortization_schedule.get_schedule_entries_for_payment_number_range(
+        10, 20)
+
+    assert amortization_schedule_rows
+    assert len(amortization_schedule_rows) == 10
