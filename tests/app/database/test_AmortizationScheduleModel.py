@@ -1,4 +1,5 @@
 from app.database.models import AddressModel, AmortizationScheduleModel
+from app.domain.underwriting.AmortizationCachingCode import AmortizationCachingCode
 from app.repositories.BaseRepository import BaseRepository
 from app.database.models import SubscriptionModel
 

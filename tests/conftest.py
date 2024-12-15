@@ -16,12 +16,14 @@ from app.domain.Expense import Expense
 from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
     FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel, ProjectionEntryModel, \
-    AmortizationScheduleModel, CashflowModel, CapitalInvestmentModel
+    AmortizationScheduleModel, CashflowModel, CapitalInvestmentModel, AmortizationCachingCodeModel, \
+    AmortizationScheduleRowModel
 from app.database.models import RealEstatePropertyModel
 from datetime import datetime, timezone, timedelta
 
 from dateutil.relativedelta import relativedelta
 
+from app.schemas.AmortizationCachingCodeSchema import AmortizationCachingCodeSchema
 from app.schemas.CapitalInvestmentSchema import CapitalInvestmentSchema
 from app.schemas.CashflowSchema import CashflowSchema
 from app.schemas.ListingSchema import ListingSchema
@@ -499,9 +501,11 @@ def test_amortization_json() -> str:
 @pytest.fixture
 def test_amortization_schedule_model_without_json() -> AmortizationScheduleModel:
     principal = round(random.uniform(130000, 150000000), 2)
-    annual_interest_rate = 7.5
-    amortization_period = 30
+    annual_interest_rate = round(random.uniform(2, 50), 2)
+    amortization_period = random.randint(1, 50)
     caching_code = f'{principal}:{annual_interest_rate}:{amortization_period}'
+    caching_code = AmortizationCachingCodeModel(principal=principal, annual_interest_rate=annual_interest_rate,
+                                                amortization_period=amortization_period)
 
     amortization_schedule_model = AmortizationScheduleModel(
         amortization_schedule_json='', created_date=datetime.now(), caching_code=caching_code,
@@ -509,3 +513,45 @@ def test_amortization_schedule_model_without_json() -> AmortizationScheduleModel
     )
 
     return amortization_schedule_model
+
+
+@pytest.fixture
+def test_amortization_caching_code_model() -> AmortizationCachingCodeModel:
+    principal = round(random.uniform(130000, 150000000), 2)
+    annual_interest_rate = round(random.uniform(2, 50), 2)
+    amortization_period = random.randint(1, 50)
+    caching_code = AmortizationCachingCodeModel(principal=principal, annual_interest_rate=annual_interest_rate,
+                                                amortization_period=amortization_period)
+    return caching_code
+
+
+@pytest.fixture
+def test_amortization_caching_code_schema() -> AmortizationCachingCodeSchema:
+    principal = round(random.uniform(130000, 150000000), 2)
+    annual_interest_rate = round(random.uniform(2, 50), 2)
+    amortization_period = random.randint(1, 50)
+    caching_code = AmortizationCachingCodeSchema(principal=principal, annual_interest_rate=annual_interest_rate,
+                                                 amortization_period=amortization_period)
+    return caching_code
+
+@pytest.fixture
+def test_amortization_schedule_row_model() -> AmortizationScheduleRowModel:
+
+    principal = round(random.uniform(130000, 150000000), 2)
+    annual_interest_rate = round(random.uniform(2, 50), 2)
+    amortization_period = random.randint(1, 50)
+    caching_code = AmortizationCachingCodeModel(principal=principal, annual_interest_rate=annual_interest_rate,
+                                                amortization_period=amortization_period)
+
+    payment_number = random.randint(1, 30)
+    monthly_payment = round(random.uniform(5000, 25000), 2)
+    interest_payment = round(random.uniform(1000, 250), 2)
+    principal_recapture = round(random.uniform(0, 5000), 2)
+    remaining_balance = round(random.uniform(0, 250000), 2)
+    amortization_schedule_row = AmortizationScheduleRowModel(
+        payment_number=payment_number, monthly_payment=monthly_payment, interest_payment=interest_payment,
+        principal_recapture=principal_recapture, remaining_balance=remaining_balance,
+        caching_code=caching_code
+    )
+
+    return amortization_schedule_row

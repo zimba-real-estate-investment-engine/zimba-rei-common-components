@@ -1,12 +1,12 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Any
 
 from pydantic import BaseModel
 
 
 class AmortizationScheduleSchema(BaseModel):
     id: Optional[int] = None
-    amortization_schedule_json: str = ''
+    amortization_schedule_json: Optional[str] = ''
     created_date: Optional[datetime] = None
     caching_code: Optional[str] = None
     principal: float
