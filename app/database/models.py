@@ -581,43 +581,6 @@ class AmortizationScheduleModel(Base):
     amortization_period = Column(Integer)
     created_date = Column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP'))
 
-    # def set_caching_code(self, caching_code_instance):
-    #
-    #     def json_serializer(obj):
-    #         try:
-    #             return obj.__dict__
-    #         except AttributeError:
-    #             return str(obj)
-    #
-    #     try:
-    #         self.caching_code = json.loads(json.dumps(caching_code_instance.__dict__, default=json_serializer))
-    #     except Exception as e:
-    #         self.caching_code = {
-    #             attr: getattr(caching_code_instance, attr)
-    #             for attr in dir(caching_code_instance)
-    #             if not attr.startswith("__") and not callable(getattr(caching_code_instance, attr))
-    #         }
-    # def get_caching_code(self):
-    #     if self.caching_code is None:
-    #         return None
-    #
-    #     return AmortizationCachingCodeModel(**self.caching_code)
-    # @property
-    # def set_caching_code(self) -> AmortizationCachingCodeModel | None:
-    #     if self._caching_code:
-    #         return AmortizationCachingCodeModel.from_dict(self._caching_code)
-    #     return None
-    #
-    # @caching_code.setter
-    # def caching_code(self, value):
-    #     if isinstance(value, AmortizationCachingCodeModel):
-    #         self._caching_code = value.to_dict()
-    #     elif isinstance(value, dict):
-    #         self._caching_code = value
-    #     else:
-    #         raise ValueError("Invalid valude for AmortizationCachingCodeModel")
-    #
-
     def set_caching_code(self, caching_code_instance):
         self.caching_code = caching_code_instance.to_dict()
 
@@ -642,3 +605,36 @@ class AmortizationScheduleModel(Base):
 
     def __repr__(self):
         return f"<AmortizationSchedule(id={self.id} amortization_caching_code={self.amortization_caching_code})>"
+
+
+class LLMResponseModel(Base):
+    __tablename__ = 'llm_response'
+
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    listing_url = Column(String(255))
+    listing_raw_text = Column(String(20000))
+    llm_service_api_url = Column(String(255))
+    llm_service_prompt = Column(String(20000))
+    llm_response_json = Column(String(20000))
+    created_date = Column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP'))
+
+    def __init__(
+            self,
+            listing_url: str,
+            listing_raw_text: str,
+            llm_service_api_url: str,
+            llm_service_prompt: str,
+            llm_response_json: str,
+            created_date: datetime,
+            id: int | None = None,  # Allow none so the migrations creates it for new objects.
+    ):
+        self.id = id
+        self.listing_url = listing_url
+        self.listing_raw_text = listing_raw_text
+        self.llm_service_api_url = llm_service_api_url
+        self.llm_service_prompt = llm_service_prompt
+        self.llm_response_json = llm_response_json
+        self.created_date = created_date
+
+    def __repr__(self):
+        return f"<LLMResponse(id={self.id} listing_url={self.listing_url})>"

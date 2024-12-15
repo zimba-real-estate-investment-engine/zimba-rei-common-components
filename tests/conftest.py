@@ -17,7 +17,7 @@ from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
     FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel, ProjectionEntryModel, \
     AmortizationScheduleModel, CashflowModel, CapitalInvestmentModel, AmortizationCachingCodeModel, \
-    AmortizationScheduleRowModel
+    AmortizationScheduleRowModel, LLMResponseModel
 from app.database.models import RealEstatePropertyModel
 from datetime import datetime, timezone, timedelta
 
@@ -26,6 +26,7 @@ from dateutil.relativedelta import relativedelta
 from app.schemas.AmortizationCachingCodeSchema import AmortizationCachingCodeSchema
 from app.schemas.CapitalInvestmentSchema import CapitalInvestmentSchema
 from app.schemas.CashflowSchema import CashflowSchema
+from app.schemas.LLMResponseSchema import LLMResponseSchema
 from app.schemas.ListingSchema import ListingSchema
 from app.schemas.DealSchema import DealSchema
 from app.schemas.FinancingSchema import FinancingSchema
@@ -271,6 +272,7 @@ def get_test_capital_investment_schema() -> CapitalInvestmentSchema:
                                                         capital_investment_amount=capital_investment_amount)
 
     return capital_investment_schema
+
 
 @pytest.fixture
 def get_test_email_schema() -> EmailSchema:
@@ -534,9 +536,9 @@ def test_amortization_caching_code_schema() -> AmortizationCachingCodeSchema:
                                                  amortization_period=amortization_period)
     return caching_code
 
+
 @pytest.fixture
 def test_amortization_schedule_row_model() -> AmortizationScheduleRowModel:
-
     principal = round(random.uniform(130000, 150000000), 2)
     annual_interest_rate = round(random.uniform(2, 50), 2)
     amortization_period = random.randint(1, 50)
@@ -555,3 +557,37 @@ def test_amortization_schedule_row_model() -> AmortizationScheduleRowModel:
     )
 
     return amortization_schedule_row
+
+
+@pytest.fixture
+def test_llm_response_model_no_listing_json() -> LLMResponseModel:
+    created_date = datetime.now()
+    current_time_string = __get_time_string()
+
+    test_llm_response = LLMResponseModel(
+        listing_url='https://example.com/listing',
+        listing_raw_text=current_time_string + '_test_sample_raw_text',
+        llm_service_api_url='https://sample_llms_server.example.com/_' + current_time_string,
+        llm_service_prompt=current_time_string + '_example_sample_response',
+        llm_response_json=current_time_string + '_test_sample_listing_openai_response_redfin_ca_json_string',
+        created_date=created_date
+    )
+
+    yield test_llm_response
+
+
+@pytest.fixture
+def test_llm_response_schema_no_listing_json() -> LLMResponseSchema:
+    created_date = datetime.now()
+    current_time_string = __get_time_string()
+
+    test_llm_response = LLMResponseSchema(
+        listing_url='https://example.com/listing',
+        listing_raw_text=current_time_string + '_test_sample_raw_text',
+        llm_service_api_url='https://sample_llms_server.example.com/_' + current_time_string,
+        llm_service_prompt=current_time_string + '_example_sample_response',
+        llm_response_json=current_time_string + '_test_sample_listing_openai_response_redfin_ca_json_string',
+        created_date=created_date
+    )
+
+    yield test_llm_response
