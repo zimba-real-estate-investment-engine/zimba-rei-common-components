@@ -1,7 +1,16 @@
+import json
 from typing import Optional
 
 from pydantic import BaseModel
-from datetime import datetime
+
+class GlobalPydanticEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, BaseModel):
+            return obj.model_dump()
+        return super().default(obj)
+
+# Set this as the default encoder globally
+json.JSONEncoder = GlobalPydanticEncoder
 
 
 class AddressSchema(BaseModel):
@@ -16,9 +25,20 @@ class AddressSchema(BaseModel):
     full_address: str
     #TODO more to be added from data dictionary as necessary
 
+
+    def __repr__(self):
+        return str(self.model_dump())
+
     class Config:
         orm_mode = True
         from_attributes = True
+
+    def default(self):
+        return json.dumps(self.dict())
+
+
+    def __str__(self):
+        return json.dumps(self.dict())
 
 class AddressStrictSchema(BaseModel):
     id: Optional[int] = None

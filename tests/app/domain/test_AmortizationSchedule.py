@@ -1,6 +1,7 @@
 import json
 
 from app.domain.underwriting.AmortizationSchedule import AmortizationSchedule
+from app.domain.underwriting.AmortizationScheduleRow import AmortizationScheduleRow
 
 
 def test_generate_amortization_json():
@@ -19,3 +20,25 @@ def test_generate_amortization_json():
     interest_payment = round(first_row['interest_payment'], 2)
 
     assert principal_recapture == round((monthly_payment - interest_payment), 2)
+
+
+def test_amortization_rows_for_payment_range(test_amortization_json):
+    start = 5
+    end = 10
+    filtered_json_list = AmortizationSchedule.amortization_rows_for_payment_range(test_amortization_json,
+                                                                                  start=start, end=end)
+    assert len(filtered_json_list) == end - start
+
+    single_result = AmortizationSchedule.amortization_rows_for_payment_range(test_amortization_json, start=10)
+    assert len(single_result) == 1
+    assert  isinstance(single_result[0], AmortizationScheduleRow)
+
+
+def test_get_schedule_entry_for_payment_number():
+
+    amortization_schedule = AmortizationSchedule(principal=343434, annual_interest_rate=5.75, amortization_period=30)
+
+    amortization_schedule_row = amortization_schedule.get_schedule_entry_for_payment_number(10)
+    assert amortization_schedule_row
+    assert isinstance(amortization_schedule_row, AmortizationScheduleRow)
+    assert amortization_schedule_row.principal_recapture

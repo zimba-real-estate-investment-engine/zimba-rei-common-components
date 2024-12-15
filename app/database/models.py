@@ -1,8 +1,11 @@
 from __future__ import annotations  # Ensures cyclical references are handled correctly
+
+import json
 from datetime import datetime
 from typing import List, Annotated, Optional
 
-from sqlalchemy import Boolean, Column, String, TIMESTAMP, text, Integer, ForeignKey, Float, Table
+from sqlalchemy import Boolean, Column, String, TIMESTAMP, text, Integer, ForeignKey, Float, Table, TypeDecorator, TEXT, \
+    JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, declarative_mixin
 
@@ -17,6 +20,48 @@ class ModelMixin:
     def __declare_first__(cls):
         cls.__table__ = Table(cls.__name__, cls.metadata,
                               Column('id', Integer, primary_key=True))
+
+
+class JSONType(TypeDecorator):
+    """
+    This will be handling objects that we want saved as JSON in the database
+    """
+    impl = TEXT
+
+    cache_ok = True
+
+    def process_bind_param(self, value, dialect):
+        if value is not None:
+            value = json.dumps(value)
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            value = json.loads(value)
+        return value
+
+
+class AmortizationScheduleRowModel(dict):
+    def __init__(self, payment_number: int, monthly_payment: float, interest_payment: float, principal_recapture: float,
+                 remaining_balance: float, caching_code: AmortizationCachingCodeModel):
+        self.payment_number = payment_number
+        self.monthly_payment = monthly_payment
+        self.interest_payment = interest_payment
+        self.principal_recapture = principal_recapture
+        self.remaining_balance = remaining_balance
+        self.caching_code = caching_code
+        dict.__init__(self, payment_number=payment_number, monthly_payment=monthly_payment, interest_payment=interest_payment,
+                      principal_recapture=principal_recapture, remaining_balance=remaining_balance,
+                      caching_code=caching_code)
+
+
+class AmortizationCachingCodeModel(dict):
+    def __init__(self, principal: float, annual_interest_rate: float, amortization_period: int):
+        self.principal = principal
+        self.annual_interest_rate = annual_interest_rate
+        self.amortization_period = amortization_period
+        dict.__init__(self, principal=principal, annual_interest_rate=annual_interest_rate,
+                      amortization_period=amortization_period)
 
 
 class SubscriptionModel(Base):
@@ -529,17 +574,59 @@ class AmortizationScheduleModel(Base):
 
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     amortization_schedule_json = Column(String(255))
-    caching_code = Column(String(255))
+    caching_code: AmortizationCachingCodeModel = Column(JSON)
+    # caching_code = Column(JSON)
     principal = Column(Float)
     annual_interest_rate = Column(Float)
     amortization_period = Column(Integer)
     created_date = Column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP'))
 
+    # def set_caching_code(self, caching_code_instance):
+    #
+    #     def json_serializer(obj):
+    #         try:
+    #             return obj.__dict__
+    #         except AttributeError:
+    #             return str(obj)
+    #
+    #     try:
+    #         self.caching_code = json.loads(json.dumps(caching_code_instance.__dict__, default=json_serializer))
+    #     except Exception as e:
+    #         self.caching_code = {
+    #             attr: getattr(caching_code_instance, attr)
+    #             for attr in dir(caching_code_instance)
+    #             if not attr.startswith("__") and not callable(getattr(caching_code_instance, attr))
+    #         }
+    # def get_caching_code(self):
+    #     if self.caching_code is None:
+    #         return None
+    #
+    #     return AmortizationCachingCodeModel(**self.caching_code)
+    # @property
+    # def set_caching_code(self) -> AmortizationCachingCodeModel | None:
+    #     if self._caching_code:
+    #         return AmortizationCachingCodeModel.from_dict(self._caching_code)
+    #     return None
+    #
+    # @caching_code.setter
+    # def caching_code(self, value):
+    #     if isinstance(value, AmortizationCachingCodeModel):
+    #         self._caching_code = value.to_dict()
+    #     elif isinstance(value, dict):
+    #         self._caching_code = value
+    #     else:
+    #         raise ValueError("Invalid valude for AmortizationCachingCodeModel")
+    #
+
+    def set_caching_code(self, caching_code_instance):
+        self.caching_code = caching_code_instance.to_dict()
+
+
     def __init__(
             self,
+            caching_code: AmortizationCachingCodeModel,
             amortization_schedule_json: str,
             created_date: datetime,
-            caching_code: str,
             principal: float,
             annual_interest_rate: float,
             amortization_period: int,
@@ -554,4 +641,4 @@ class AmortizationScheduleModel(Base):
         self.amortization_period = amortization_period
 
     def __repr__(self):
-        return f"<AmortizationSchedule(id={self.id} caching_code={self.caching_code})>"
+        return f"<AmortizationSchedule(id={self.id} amortization_caching_code={self.amortization_caching_code})>"
