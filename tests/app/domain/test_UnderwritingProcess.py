@@ -36,7 +36,8 @@ def test_extract_listing_from_json_redfin(test_sample_listing_openai_response_re
 def test_extract_listing_from_url():
     # url = 'https://www.realtor.com/realestateandhomes-detail/2551-Princeton-Dr_San-Bruno_CA_94066_M21198-61175'
     # url = "https://www.compass.com/listing/380-harrison-avenue-unit-1108-boston-ma-02118/1725626025069056057/"
-    url = 'https://www.redfin.ca/on/ottawa/9-Camwood-Cres-K2H-7X1/home/151024056'
+    # url = 'https://www.redfin.ca/on/ottawa/9-Camwood-Cres-K2H-7X1/home/151024056'
+    url = 'https://www.realtor.com/realestateandhomes-detail/67-New-York-Ave-NW_Washington_DC_20001_M52254-63513'
     listing = UnderwritingProcess.extract_listing_from_url(url)
     assert listing
 

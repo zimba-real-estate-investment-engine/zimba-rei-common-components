@@ -12,7 +12,7 @@ def test_save_llm_response(get_test_db, test_llm_response_schema_no_listing_json
     db = get_test_db
     test_llm_response = test_llm_response_schema_no_listing_json
 
-    llm_response_service = LLMResponseCacheService(db)
+    llm_response_service = LLMResponseCacheService()
     newly_saved_llm_response = llm_response_service.save_llm_response(test_llm_response)
 
     db.flush()
@@ -25,7 +25,7 @@ def test_find_by_listing_url_and_llm_service(get_test_db, test_llm_response_sche
     db = get_test_db
     test_llm_response = test_llm_response_schema_no_listing_json
 
-    llm_response_service = LLMResponseCacheService(db)
+    llm_response_service = LLMResponseCacheService()
     newly_saved_llm_response = llm_response_service.save_llm_response(test_llm_response)
 
     db.flush()
