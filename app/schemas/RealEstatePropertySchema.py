@@ -9,9 +9,10 @@ from app.schemas.ListingSchema import ListingSchema
 
 class RealEstatePropertySchema(BaseModel):
     id: Optional[int] = None
-    listings: Optional[List[ListingSchema]] = None  # many listing sites might have the same property
+    # listings: Optional[List[ListingSchema]] = None  # many listing sites might have the same property
     expenses: Optional[List[ExpenseSchema]] = None
     address: Optional[AddressSchema] = None
+    listing: Optional[ListingSchema] = None
     #TODO more to be added from data dictionary as necessary
 
     class Config:

@@ -16,14 +16,15 @@ class RealEstatePropertyService:
         self.db = db
         self.repository = BaseRepository[RealEstatePropertyModel](self.db, RealEstatePropertyModel)
 
-    def save_real_estate_property(self, real_estate_property_data: RealEstatePropertySchema) -> RealEstatePropertySchema:
+    def save_real_estate_property(self,
+                                  real_estate_property_data: RealEstatePropertySchema) -> RealEstatePropertySchema:
 
         try:
             real_estate_property_model = BaseRepository.pydantic_to_sqlalchemy(real_estate_property_data,
                                                                                RealEstatePropertyModel)
 
             new_real_estate_property_model = self.repository.add(real_estate_property_model)
-            self.db.flush()   # Makes sure the id is auto-incremented
+            self.db.flush()  # Makes sure the id is auto-incremented
 
             new_real_estate_property_schema = BaseRepository.sqlalchemy_to_pydantic(new_real_estate_property_model,
                                                                                     RealEstatePropertySchema)
@@ -39,5 +40,12 @@ class RealEstatePropertyService:
         real_estate_property_model_list = self.repository.get_all()
 
         real_estate_property_schema_list = \
-            [BaseRepository.sqlalchemy_to_pydantic(x, RealEstatePropertySchema) for x in real_estate_property_model_list]
+            [BaseRepository.sqlalchemy_to_pydantic(x, RealEstatePropertySchema) for x in
+             real_estate_property_model_list]
         return real_estate_property_schema_list
+
+    def get_by_id(self, id: int) -> RealEstatePropertySchema:
+        real_estate_property_model = self.repository.get_by_id(id)
+        real_estate_property_schema = BaseRepository.sqlalchemy_to_pydantic(real_estate_property_model,
+                                                                            RealEstatePropertySchema)
+        return real_estate_property_schema

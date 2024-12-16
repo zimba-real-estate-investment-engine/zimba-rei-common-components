@@ -7,10 +7,10 @@ from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
 
 
 class RealEstateProperty(RealEstatePropertySchema):
-
-    def __init__(self, /, listings: Optional[List[Listing]] = None,
-                 expenses: Optional[List[Expense]] = None, address: Optional[Address] = None, **data: Any):
-        super().__init__(**data)
-        self.expenses = expenses
-        self.listings = listings
-        self.address = address
+    pass
+    # def __init__(self, /, listing: Optional[List[Listing]] = None,
+    #              expenses: Optional[List[Expense]] = None, address: Optional[Address] = None, **data: Any):
+    #     super().__init__(**data)
+    #     self.expenses = expenses
+    #     self.listings = listings
+    #     self.address = address

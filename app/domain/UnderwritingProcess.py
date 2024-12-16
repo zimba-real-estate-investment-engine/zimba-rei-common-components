@@ -13,6 +13,7 @@ from app.domain.Expense import Expense
 from app.domain.InvestorProfile import InvestorProfile
 from app.domain.LLMResponse import LLMResponse
 from app.domain.Listing import Listing
+from app.domain.Mortgage import Mortgage
 from app.domain.RealEstateProperty import RealEstateProperty
 from app.domain.llm.WebsitePreprocessor import WebsitePreprocessor
 from app.services.LLMResponseCacheService import LLMResponseCacheService
@@ -30,8 +31,17 @@ class UnderwritingProcess:
         if url:
             listing = UnderwritingProcess.extract_listing_from_url(url)
             real_estate_property.listing = listing
-            deal = Deal.from_real_estate_and_investor_profile(real_estate_property=real_estate_property,
-                                                              investor_profile=investor_profile)
+
+            deal = Deal(term=5)
+
+            if investor_profile.get_mortgages() and real_estate_property.listing.price_amount:
+                mortgage: Mortgage = investor_profile.get_mortgages()[0]
+                deal.down_payment = mortgage.down_payment
+                deal.monthly_cost = mortgage.monthly_payment
+                deal.interest_rate = mortgage.interest_rate
+                deal.time_horizon = mortgage.term
+                deal._real_estate_property_value = real_estate_property.listing.price_amount
+
             return deal
 
         elif json_string:
