@@ -1,5 +1,6 @@
 import logging
 from typing import List
+from app.core.database import get_db
 
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
@@ -12,9 +13,9 @@ logger = logging.getLogger(__name__)
 
 
 class LLMResponseCacheService:
-    def __init__(self, db: Session):
+    def __init__(self):
         self.logger = logger
-        self.db = db
+        self.db = next(get_db())
         self.repository = BaseRepository[LLMResponseModel](self.db, LLMResponseModel)
 
     def save_llm_response(self, llm_response_data: LLMResponseSchema) -> LLMResponseSchema:

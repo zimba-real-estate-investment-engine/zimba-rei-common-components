@@ -1,16 +1,21 @@
 import ast
 import json
 import logging
+import os
+from datetime import datetime
 from typing import List
 
+from dotenv import load_dotenv
 from pydantic import ValidationError
 
 from app.domain.Deal import Deal
 from app.domain.Expense import Expense
 from app.domain.InvestorProfile import InvestorProfile
+from app.domain.LLMResponse import LLMResponse
 from app.domain.Listing import Listing
 from app.domain.RealEstateProperty import RealEstateProperty
 from app.domain.llm.WebsitePreprocessor import WebsitePreprocessor
+from app.services.LLMResponseCacheService import LLMResponseCacheService
 from app.services.OpenAIService import OpenAIService
 
 
@@ -59,9 +64,37 @@ class UnderwritingProcess:
 
     @staticmethod
     def extract_listing_from_url(uri: str) -> Listing:
+        llm_json_response = None
+        load_dotenv()
+        llm_service_api_url = os.getenv('LLM_OPENAI_API_URL')
         raw_text = UnderwritingProcess.raw_text_from_url(uri=uri)
-        llm_json_response = OpenAIService.extract_listing_details(raw_text)
+
+        # Check if search was already run
+        llm_cache_service = LLMResponseCacheService()
+        result = llm_cache_service.find_by_listing_url_and_llm_service_api_url(
+            listing_url=uri,
+            llm_service_api_url=llm_service_api_url
+        )
+
+        if result and len(result) > 0:
+            pre_existing_response = result[0]
+            llm_response = LLMResponse(**pre_existing_response.dict())
+            llm_json_response = llm_response.llm_response_json
+        else:
+            llm_json_response = OpenAIService.extract_listing_details(raw_text)
+
+        llm_json_response_string = json.dumps(llm_json_response)
+
+        new_llm_response = LLMResponse(listing_url=uri,
+                                       listing_raw_text=raw_text,
+                                       llm_service_api_url=llm_service_api_url,
+                                       llm_service_prompt='',
+                                       llm_response_json=llm_json_response_string,
+                                       created_date=datetime.now())
+        llm_cache_service.save_llm_response(new_llm_response)
+
         listing = UnderwritingProcess.extract_listing_from_json(llm_json_response)
+
         return listing
 
     @staticmethod
