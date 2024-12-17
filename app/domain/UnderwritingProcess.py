@@ -34,13 +34,13 @@ class UnderwritingProcess:
 
             deal = Deal(term=5)
 
-            if investor_profile.get_mortgages() and real_estate_property.listing.price_amount:
+            if investor_profile.get_mortgages() and real_estate_property.listing.price:
                 mortgage: Mortgage = investor_profile.get_mortgages()[0]
                 deal.down_payment = mortgage.down_payment
                 deal.monthly_cost = mortgage.monthly_payment
                 deal.interest_rate = mortgage.interest_rate
                 deal.time_horizon = mortgage.term
-                deal._real_estate_property_value = real_estate_property.listing.price_amount
+                deal.real_estate_property_value = real_estate_property.listing.price
 
             return deal
 
@@ -93,15 +93,14 @@ class UnderwritingProcess:
         else:
             llm_json_response = OpenAIService.extract_listing_details(raw_text)
 
-        llm_json_response_string = json.dumps(llm_json_response)
-
-        new_llm_response = LLMResponse(listing_url=uri,
-                                       listing_raw_text=raw_text,
-                                       llm_service_api_url=llm_service_api_url,
-                                       llm_service_prompt='',
-                                       llm_response_json=llm_json_response_string,
-                                       created_date=datetime.now())
-        llm_cache_service.save_llm_response(new_llm_response)
+            llm_json_response_string = json.dumps(llm_json_response)
+            new_llm_response = LLMResponse(listing_url=uri,
+                                           listing_raw_text=raw_text,
+                                           llm_service_api_url=llm_service_api_url,
+                                           llm_service_prompt='',
+                                           llm_response_json=llm_json_response_string,
+                                           created_date=datetime.now())
+            llm_cache_service.save_llm_response(new_llm_response)
 
         listing = UnderwritingProcess.extract_listing_from_json(llm_json_response)
 
