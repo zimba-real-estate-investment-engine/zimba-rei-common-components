@@ -16,9 +16,9 @@ logging.basicConfig(level=logging.INFO)  # Set the logging level
 class Listing(ListingSchema):
     logger: ClassVar[logging.Logger] = logging.getLogger("app.domain.Listing")
 
-    def __init__(self, /, **data: Any):
-
-        super().__init__(**data)
+    # def __init__(self, /, **data: Any):
+    #
+    #     super().__init__(**data)
 
     @staticmethod
     def parse_address(address: str, country: str | None = None) -> List[Address]:

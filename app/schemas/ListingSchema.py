@@ -22,7 +22,7 @@ class ListingSchema(BaseModel):
     listing_source: Optional[str] = None
     square_feet: Optional[Union[float, str]] = None
     parking_spaces: Optional[Union[int, str]] = None
-    air_conditioning: Optional[str] = None
+    air_conditioning: Optional[bool] = None
     balcony: Optional[bool] = None
     basement: Optional[str] = None
     dishwasher: Optional[bool] = None

@@ -2,7 +2,7 @@ from __future__ import annotations  # Ensures cyclical references are handled co
 
 import json
 from datetime import datetime
-from typing import List, Annotated, Optional
+from typing import List, Annotated, Optional, Union
 
 from sqlalchemy import Boolean, Column, String, TIMESTAMP, text, Integer, ForeignKey, Float, Table, TypeDecorator, TEXT, \
     JSON
@@ -134,6 +134,9 @@ class ListingModel(Base):
     address_id = Column(Integer, ForeignKey('address.id'))
     email = Column(String(255))
     price = Column(Float)
+    price_amount = Column(Float)
+    price_currency_symbol = Column(String(255))
+    price_currency_iso_code = Column(String(255))
     beds = Column(Integer)
     baths = Column(Float)
     air_conditioning = Column(Boolean)
@@ -157,7 +160,9 @@ class ListingModel(Base):
             price: float,
             # property_id: str,
             beds: int,
+            bedrooms: int,
             baths: float,
+            bathrooms: float,
             air_conditioning: bool,
             parking_spaces: str,
             balcony: bool,
@@ -168,6 +173,9 @@ class ListingModel(Base):
             square_feet: float,
             listing_date: datetime,
             listing_source: str,
+            price_amount: float | None = None,
+            price_currency_symbol: str | None = None,
+            price_currency_iso_code: str | None = None,
             address: Annotated[Optional[AddressModel], "could be missing"] = None,
             id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
@@ -175,8 +183,10 @@ class ListingModel(Base):
         self.id = id
         self.email = email
         self.beds = beds
+        self.bedrooms = bedrooms
         self.price = price
         self.baths = baths
+        self.bathrooms = bathrooms
         self.air_conditioning = air_conditioning
         self.parking_spaces = parking_spaces
         self.balcony = balcony
@@ -187,6 +197,9 @@ class ListingModel(Base):
         self.square_feet = square_feet
         self.listing_date = listing_date
         self.listing_source = listing_source
+        self.price_amount = price_amount
+        self.price_currency_symbol = price_currency_symbol
+        self.price_currency_iso_code = price_currency_iso_code
         self.address = address
 
     def __repr__(self):
