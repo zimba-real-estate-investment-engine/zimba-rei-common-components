@@ -9,6 +9,7 @@ class UnderwritingSchema(BaseModel):
     id: Optional[int] = None
     real_estate_property: Optional[RealEstatePropertySchema] = None
     investor_profile: Optional[InvestorProfileSchema] = None
+
     #TODO more to be added from data dictionary as necessary
 
     class Config:
@@ -27,3 +28,8 @@ class UnderwritingCreateDealSchema(BaseModel):
         if not self.listing_url and not self.json_string:
             raise ValueError("At least one of 'url' or 'json_string' must be defined")
         return self
+
+
+class UnderwritingCreateDealFromURLSchema(BaseModel):
+    investor_profile_id: int
+    listing_url: str

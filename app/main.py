@@ -25,7 +25,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from urllib.parse import quote_plus
 
-from app.schemas.UnderwritingSchema import UnderwritingSchema, UnderwritingCreateDealSchema
+from app.schemas.UnderwritingSchema import UnderwritingSchema, UnderwritingCreateDealSchema, \
+    UnderwritingCreateDealFromURLSchema
 from app.services.AddressService import AddressService
 from app.services.CapitalInvestmentService import CapitalInvestmentService
 from app.services.CashflowService import CashflowService
@@ -290,34 +291,25 @@ async def get_underwritings(db: Session = Depends(get_db)):
 
 
 @app.post("/underwriting/create-deal-from-url", response_model=DealSchema)
-async def get_deal_from_url(create_deal_request: UnderwritingCreateDealSchema, db: Session = Depends(get_db)):
+async def get_deal_from_url(create_deal_request: UnderwritingCreateDealFromURLSchema, db: Session = Depends(get_db)):
 
     investor_profile_service = InvestorProfileService(db)
-    real_estate_property_service = RealEstatePropertyService(db)
-
     investor_profile_id = create_deal_request.investor_profile_id
-    real_estate_property_id = create_deal_request.real_estate_property_id
 
     investor_profile_schema = investor_profile_service.get_by_id(id=investor_profile_id)
     investor_profile = InvestorProfile(**investor_profile_schema.dict())
 
-    real_estate_property_schema = real_estate_property_service.get_by_id(id=real_estate_property_id)
-    real_estate_property = RealEstateProperty(**real_estate_property_schema.dict())
-
     listing_url = create_deal_request.listing_url
-    json_string = create_deal_request.json_string
 
-    deal = None
     if listing_url:
-        deal = UnderwritingProcess.create_deal(investor_profile=investor_profile,
-                                               real_estate_property=real_estate_property,
-                                               url=listing_url)
-    elif json_string:
-        deal = UnderwritingProcess.create_deal(investor_profile=investor_profile,
-                                               real_estate_property=real_estate_property,
-                                               json_string=json_string)
-
-    return deal
+        deal = UnderwritingProcess.create_deal_url_and_investor_profile(investor_profile=investor_profile,
+                                                                        url=listing_url)
+        return deal
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="listing_url ID must be specified"
+        )
 
 
 # Include the routes if external

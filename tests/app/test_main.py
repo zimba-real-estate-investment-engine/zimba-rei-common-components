@@ -5,7 +5,7 @@ from app.domain.UnderwritingProcess import UnderwritingProcess
 from app.repositories.BaseRepository import BaseRepository
 from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileSearchSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
-from app.schemas.UnderwritingSchema import UnderwritingCreateDealSchema
+from app.schemas.UnderwritingSchema import UnderwritingCreateDealSchema, UnderwritingCreateDealFromURLSchema
 from app.services.InvestorProfileService import InvestorProfileService
 from app.services.RealEstatePropertyService import RealEstatePropertyService
 
@@ -104,13 +104,11 @@ def test_get_deal_from_url(test_fastapi_client, request, get_test_investor_profi
     assert newly_created_real_estate_property.id
     assert newly_created_investor_profile.id
 
-    request_schema = UnderwritingCreateDealSchema(investor_profile_id=newly_created_investor_profile.id,
-                                                  real_estate_property_id=newly_created_real_estate_property.id,
-                                                  listing_url=url)
+    request_schema = UnderwritingCreateDealFromURLSchema(investor_profile_id=newly_created_investor_profile.id,
+                                                         listing_url=url)
 
     request_json = request_schema.json()
 
     client = test_fastapi_client
     response = client.post("/underwriting/create-deal-from-url/", data=request_json)
     assert response.status_code == 200
-
