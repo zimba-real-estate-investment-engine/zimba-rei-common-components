@@ -16,13 +16,13 @@ class InvestorProfile(InvestorProfileSchema):
         else:
             self.financing_sources.append(financing)
 
-
     def get_mortgages(self) -> List[Mortgage]:
         mortgages: List[Mortgage] = []
         if self.financing_sources is None:
             return mortgages
         else:
             for financing in self.financing_sources:
-                mortgages.append(financing.mortgages)
+                financing_mortgages = financing.mortgages
+                mortgages += financing_mortgages
 
             return mortgages

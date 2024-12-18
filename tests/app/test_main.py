@@ -79,7 +79,7 @@ def test_get_underwritings(test_fastapi_client, request):
     assert response.status_code == 200
 
 
-def test_get_deal_from_url(test_fastapi_client, request, get_test_investor_profile_schema,
+def test_get_deal_from_url(test_fastapi_client, get_test_investor_profile_schema,
                            get_test_real_state_property_schema_unpopulated, get_test_db,
                            get_test_listing_schema, get_test_expense_schema, get_test_mortgage_schema,
                            get_test_cashflow_schema, get_test_cashflow_model):
@@ -106,6 +106,19 @@ def test_get_deal_from_url(test_fastapi_client, request, get_test_investor_profi
 
     request_schema = UnderwritingCreateDealFromURLSchema(investor_profile_id=newly_created_investor_profile.id,
                                                          listing_url=url)
+
+    request_json = request_schema.json()
+
+    client = test_fastapi_client
+    response = client.post("/underwriting/create-deal-from-url/", data=request_json)
+    assert response.status_code == 200
+
+
+def test_get_deal_from_url_pre_existing(test_fastapi_client):
+    investor_profile_id = 75
+    listing_url = 'https://www.realtor.ca/real-estate/27608941/20-kanata-rockeries-ottawa-9007-kanata-kanata-lakesheritage-hills'
+    request_schema = UnderwritingCreateDealFromURLSchema(investor_profile_id=investor_profile_id,
+                                                         listing_url=listing_url)
 
     request_json = request_schema.json()
 

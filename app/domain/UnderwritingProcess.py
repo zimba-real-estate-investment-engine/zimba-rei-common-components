@@ -60,7 +60,7 @@ class UnderwritingProcess:
 
             deal = Deal(term=5)
 
-            if  listing.price:
+            if listing.price:
                 deal.real_estate_property_value = listing.price
 
             if investor_profile.get_mortgages():
