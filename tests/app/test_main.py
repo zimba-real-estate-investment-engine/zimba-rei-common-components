@@ -116,7 +116,10 @@ def test_get_deal_from_url(test_fastapi_client, get_test_investor_profile_schema
 
 def test_get_deal_from_url_pre_existing(test_fastapi_client):
     investor_profile_id = 75
-    listing_url = 'https://www.realtor.ca/real-estate/27608941/20-kanata-rockeries-ottawa-9007-kanata-kanata-lakesheritage-hills'
+    # listing_url = 'https://www.realtor.ca/real-estate/27608941/20-kanata-rockeries-ottawa-9007-kanata-kanata-lakesheritage-hills'
+    # listing_url = 'https://www.realtor.com/realestateandhomes-detail/26-Glen-Echo_Trabuco-Canyon_CA_92679_M23444-70469'
+    # listing_url = 'https://www.realtor.ca/real-estate/27628974/18-birch-avenue-ottawa-3202-rockcliffe'
+    listing_url = 'https://www.realtor.ca/real-estate/27553080/14-3466-keswick-bv-sw-edmonton-keswick-area'
     request_schema = UnderwritingCreateDealFromURLSchema(investor_profile_id=investor_profile_id,
                                                          listing_url=listing_url)
 

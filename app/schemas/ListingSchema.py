@@ -23,10 +23,10 @@ class ListingSchema(BaseModel):
     square_feet: Optional[Union[float, str]] = None
     parking_spaces: Optional[Union[int, str]] = None
     air_conditioning: Optional[Union[float, str, bool]] = None
-    balcony: Optional[bool] = None
-    basement: Optional[str] = None
-    dishwasher: Optional[bool] = None
-    hardwood_floor: Optional[str] = None
+    balcony: Optional[Union[float, str, bool]] = None
+    basement:Optional[Union[float, str, bool]] = None
+    dishwasher: Optional[Union[float, str, bool]] = None
+    hardwood_floor: Optional[Union[float, str, bool]] = None
     address: Optional[AddressSchema] = None
     # real_estate_property: Optional[RealEstatePropertySchema] = None
     #TODO more to be added from data dictionary
