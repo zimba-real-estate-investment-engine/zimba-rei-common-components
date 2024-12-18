@@ -14,19 +14,19 @@ class ListingSchema(BaseModel):
     price_currency_iso_code: Optional[str] = None
     email: Optional[EmailStr] = None
     year_built: Union[datetime, str]
-    baths: Optional[float] = None
-    bathrooms: Optional[float] = None
-    beds:  Optional[float] = None
-    bedrooms: Optional[float] = None
+    baths: Optional[Union[float, str]] = None
+    bathrooms: Optional[Union[float, str]] = None
+    beds:  Optional[Union[float, str]] = None
+    bedrooms: Optional[Union[float, str]] = None
     listing_date: Optional[datetime] = None
     listing_source: Optional[str] = None
     square_feet: Optional[Union[float, str]] = None
     parking_spaces: Optional[Union[int, str]] = None
-    air_conditioning: Optional[str] = None
-    balcony: Optional[bool] = None
-    basement: Optional[str] = None
-    dishwasher: Optional[bool] = None
-    hardwood_floor: Optional[str] = None
+    air_conditioning: Optional[Union[float, str, bool]] = None
+    balcony: Optional[Union[float, str, bool]] = None
+    basement:Optional[Union[float, str, bool]] = None
+    dishwasher: Optional[Union[float, str, bool]] = None
+    hardwood_floor: Optional[Union[float, str, bool]] = None
     address: Optional[AddressSchema] = None
     # real_estate_property: Optional[RealEstatePropertySchema] = None
     #TODO more to be added from data dictionary

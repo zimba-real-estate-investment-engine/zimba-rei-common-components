@@ -21,7 +21,7 @@ class Deal(DealSchema):
             cls.interest_rate = mortgage.interest_rate
             cls.time_horizon = mortgage.term
 
-        if real_estate_property.listings[0] and real_estate_property.listings[0].price_amount:
-            cls.real_estate_property_value = real_estate_property.listings[0].price_amount
+        if real_estate_property.listing and real_estate_property.listing.price_amount:
+            cls.real_estate_property_value = real_estate_property.listing.price_amount
 
         return cls

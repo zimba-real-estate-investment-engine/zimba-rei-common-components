@@ -7,6 +7,9 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends
 from starlette.middleware.cors import CORSMiddleware
 
+from app.domain.InvestorProfile import InvestorProfile
+from app.domain.RealEstateProperty import RealEstateProperty
+from app.domain.UnderwritingProcess import UnderwritingProcess
 from app.schemas.AddressSchema import AddressSchema
 from app.schemas.CapitalInvestmentSchema import CapitalInvestmentSchema
 from app.schemas.CashflowSchema import CashflowSchema
@@ -22,7 +25,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from urllib.parse import quote_plus
 
-from app.schemas.UnderwritingSchema import UnderwritingSchema
+from app.schemas.UnderwritingSchema import UnderwritingSchema, UnderwritingCreateDealSchema, \
+    UnderwritingCreateDealFromURLSchema
 from app.services.AddressService import AddressService
 from app.services.CapitalInvestmentService import CapitalInvestmentService
 from app.services.CashflowService import CashflowService
@@ -284,6 +288,28 @@ async def get_underwritings(db: Session = Depends(get_db)):
     underwriting_schema_list = underwriting_service.get_all()
     underwriting_json_list = list(map(lambda x: x.model_dump(), underwriting_schema_list))
     return underwriting_json_list
+
+
+@app.post("/underwriting/create-deal-from-url", response_model=DealSchema)
+async def get_deal_from_url(create_deal_request: UnderwritingCreateDealFromURLSchema, db: Session = Depends(get_db)):
+
+    investor_profile_service = InvestorProfileService(db)
+    investor_profile_id = create_deal_request.investor_profile_id
+
+    investor_profile_schema = investor_profile_service.get_by_id(id=investor_profile_id)
+    investor_profile = InvestorProfile(**investor_profile_schema.dict())
+
+    listing_url = create_deal_request.listing_url
+
+    if listing_url:
+        deal = UnderwritingProcess.create_deal_url_and_investor_profile(investor_profile=investor_profile,
+                                                                        url=listing_url)
+        return deal
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="listing_url ID must be specified"
+        )
 
 
 # Include the routes if external

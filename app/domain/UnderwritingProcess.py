@@ -13,6 +13,7 @@ from app.domain.Expense import Expense
 from app.domain.InvestorProfile import InvestorProfile
 from app.domain.LLMResponse import LLMResponse
 from app.domain.Listing import Listing
+from app.domain.Mortgage import Mortgage
 from app.domain.RealEstateProperty import RealEstateProperty
 from app.domain.llm.WebsitePreprocessor import WebsitePreprocessor
 from app.services.LLMResponseCacheService import LLMResponseCacheService
@@ -30,8 +31,17 @@ class UnderwritingProcess:
         if url:
             listing = UnderwritingProcess.extract_listing_from_url(url)
             real_estate_property.listing = listing
-            deal = Deal.from_real_estate_and_investor_profile(real_estate_property=real_estate_property,
-                                                              investor_profile=investor_profile)
+
+            deal = Deal(term=5)
+
+            if investor_profile.get_mortgages() and real_estate_property.listing.price:
+                mortgage: Mortgage = investor_profile.get_mortgages()[0]
+                deal.down_payment = mortgage.down_payment
+                deal.monthly_cost = mortgage.monthly_payment
+                deal.interest_rate = mortgage.interest_rate
+                deal.time_horizon = mortgage.term
+                deal.real_estate_property_value = real_estate_property.listing.price
+
             return deal
 
         elif json_string:
@@ -41,6 +51,28 @@ class UnderwritingProcess:
             return deal
         else:
             raise ValueError(f"url or json_string need to be specified. Both can't be None")
+
+    @staticmethod
+    def create_deal_url_and_investor_profile(investor_profile: InvestorProfile, url: str) -> Deal:
+
+        if url:
+            listing = UnderwritingProcess.extract_listing_from_url(url)
+
+            deal = Deal(term=5)
+
+            if listing.price:
+                deal.real_estate_property_value = listing.price
+
+            if investor_profile.get_mortgages():
+                mortgage: Mortgage = investor_profile.get_mortgages()[0]
+                deal.down_payment = mortgage.down_payment
+                deal.monthly_cost = mortgage.monthly_payment
+                deal.interest_rate = mortgage.interest_rate
+                deal.time_horizon = mortgage.term
+
+            return deal
+        else:
+            raise ValueError(f"url needs to be specified.")
 
     @staticmethod
     def create_deal_from_json(investor_profile: InvestorProfile, real_estate_property: RealEstateProperty,
@@ -83,15 +115,14 @@ class UnderwritingProcess:
         else:
             llm_json_response = OpenAIService.extract_listing_details(raw_text)
 
-        llm_json_response_string = json.dumps(llm_json_response)
-
-        new_llm_response = LLMResponse(listing_url=uri,
-                                       listing_raw_text=raw_text,
-                                       llm_service_api_url=llm_service_api_url,
-                                       llm_service_prompt='',
-                                       llm_response_json=llm_json_response_string,
-                                       created_date=datetime.now())
-        llm_cache_service.save_llm_response(new_llm_response)
+            llm_json_response_string = json.dumps(llm_json_response)
+            new_llm_response = LLMResponse(listing_url=uri,
+                                           listing_raw_text=raw_text,
+                                           llm_service_api_url=llm_service_api_url,
+                                           llm_service_prompt='',
+                                           llm_response_json=llm_json_response_string,
+                                           created_date=datetime.now())
+            llm_cache_service.save_llm_response(new_llm_response)
 
         listing = UnderwritingProcess.extract_listing_from_json(llm_json_response)
 

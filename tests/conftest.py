@@ -67,8 +67,8 @@ def get_test_listing_schema() -> ListingSchema:
     current_time_string = __get_time_string()
     listing_schema = ListingSchema(price=300000, email="email@example.com",
                                    year_built=datetime(2000, 1, 1), baths=3, beds=5,
-                                   listing_date=datetime(2024, 4, 1),
-                                   square_feet=2500, parking_spaces="4", air_conditioning='yes', balcony=False,
+                                   bathrooms=3, bedrooms=5, listing_date=datetime(2024, 4, 1),
+                                   square_feet=2500, parking_spaces="4", air_conditioning=True, balcony=False,
                                    basement='crawl space only', dishwasher=True, hardwood_floor='ground floor',
                                    listing_source='http://default.com/' + current_time_string)
     return listing_schema
@@ -78,8 +78,8 @@ def get_test_listing_schema() -> ListingSchema:
 def get_test_listing_model() -> ListingModel:
     current_time_string = __get_time_string()
     listing_model = ListingModel(price=300000, email="email@example.com",
-                                 year_built=datetime(2000, 1, 1), baths=3, beds=5,
-                                 listing_date=datetime(2024, 4, 1),
+                                 year_built=datetime(2000, 1, 1), baths=3, bathrooms=3, beds=5,
+                                 bedrooms=5, listing_date=datetime(2024, 4, 1),
                                  square_feet=2500, parking_spaces="4", air_conditioning=False, balcony=False,
                                  basement='crawl space only', dishwasher=True, hardwood_floor='ground floor',
                                  listing_source='http://default.com/' + current_time_string)

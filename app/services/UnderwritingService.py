@@ -51,3 +51,5 @@ class UnderwritingService:
         underwriting_schema_list = \
             [BaseRepository.sqlalchemy_to_pydantic(x, UnderwritingSchema) for x in underwriting_model_list]
         return underwriting_schema_list
+
+
