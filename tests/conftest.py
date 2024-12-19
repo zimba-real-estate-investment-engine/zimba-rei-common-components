@@ -34,6 +34,7 @@ from app.schemas.DealSchema import DealSchema
 from app.schemas.FinancingSchema import FinancingSchema
 from app.schemas.InvestorProfileSchema import InvestorProfileSchema
 from app.schemas.ProjectionEntrySchema import ProjectionEntrySchema
+from app.schemas.ProjectionSchema import ProjectionSchema
 from app.schemas.UnderwritingSchema import UnderwritingSchema
 from app.schemas.MortgageSchema import MortgageSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
@@ -553,6 +554,43 @@ def test_projection_model() -> ProjectionModel:
     projection_model = ProjectionModel(created_date=datetime.now(), projection_json=json_string)
 
     return projection_model
+
+
+@pytest.fixture
+def test_projection_schema() -> ProjectionSchema:
+
+    json_list = data = \
+        [
+            {
+                "projection_position": 0,
+                "monthly_value": 234556.00,
+                "mortgage_value": 232333.00,
+                "monthly_cashflow": 2534.95,
+                "principal_recapture": 504.34,
+                "passive_appreciation": 2230.22
+            },
+            {
+                "projection_position": 1,
+                "monthly_value": 234556.00,
+                "mortgage_value": 232333.00,
+                "monthly_cashflow": 2534.95,
+                "principal_recapture": 504.34,
+                "passive_appreciation": 2230.22
+            },
+            {
+                "projection_position": 2,
+                "monthly_value": 234556.00,
+                "mortgage_value": 232333.00,
+                "monthly_cashflow": 2534.95,
+                "principal_recapture": 504.34,
+                "passive_appreciation": 2230.22
+            }
+        ]
+    json_string = json.dumps(json_list)
+    projection_schema = ProjectionSchema(created_date=datetime.now(), projection_json=json_string)
+
+    return projection_schema
+
 
 @pytest.fixture
 def test_amortization_caching_code_model() -> AmortizationCachingCodeModel:

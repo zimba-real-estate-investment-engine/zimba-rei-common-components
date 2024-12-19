@@ -4,7 +4,7 @@ from app.database.models import SubscriptionModel
 
 
 def test_crud_projection_model_after_underwriting_and_deal(get_test_deal_model, get_test_underwriting_model_min,
-                                            test_projection_model,  get_test_db):
+                                                           test_projection_model, get_test_db):
     session = get_test_db
     test_deal = get_test_deal_model
     test_underwriting = get_test_underwriting_model_min
@@ -29,9 +29,11 @@ def test_crud_projection_model_after_underwriting_and_deal(get_test_deal_model, 
     assert newly_created_deal.id and newly_created_deal.id != 0
 
     # Finally create the projection
+    test_projection.deal = newly_created_deal
     projection_repo = BaseRepository[ProjectionModel](session, ProjectionModel)
     newly_created_projection = projection_repo.add(test_projection)
     session.flush()
 
-    # session.commit() Only if you want to actually save.
+    assert newly_created_projection.id and newly_created_projection.id != 0
 
+    # session.commit() # Only if you want to actually save.

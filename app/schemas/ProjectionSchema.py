@@ -10,9 +10,12 @@ class ProjectionSchema(BaseModel):
     id: Optional[int] = None
     projection_json: Optional[str] = ''
     created_date: Optional[datetime] = None
-    caching_code: Optional[str] = None
     deal: Optional[DealSchema] = None
 
     class Config:
         orm_mode = True
         from_attributes = True
+
+
+class ProjectionFindByDealSchema(BaseModel):
+    deal_id: int

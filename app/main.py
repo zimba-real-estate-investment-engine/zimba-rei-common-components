@@ -19,6 +19,7 @@ from app.schemas.FinancingSchema import FinancingSchema
 from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileSearchSchema
 from app.schemas.ListingSchema import ListingSchema
 from app.schemas.ProjectionEntrySchema import ProjectionEntrySchema, ProjectionEntrySearchSchema
+from app.schemas.ProjectionSchema import ProjectionSchema, ProjectionFindByDealSchema
 from app.schemas.RealEstatePropertySchema import RealEstatePropertySchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 from sqlalchemy import create_engine
@@ -37,6 +38,7 @@ from app.services.InvestorProfileService import InvestorProfileService
 from app.services.ListingService import ListingService
 from app.services.MortgageService import MortgageService
 from app.services.ProjectionEntryService import ProjectionEntryService
+from app.services.ProjectionService import ProjectionService
 from app.services.RealEstatePropertyService import RealEstatePropertyService
 from app.services.SubscriptionService import SubscriptionService
 from app.services.UnderwritingService import UnderwritingService
@@ -310,6 +312,30 @@ async def get_deal_from_url(create_deal_request: UnderwritingCreateDealFromURLSc
             status_code=400,
             detail="listing_url ID must be specified"
         )
+
+
+@app.get("/projections/", response_model=List[ProjectionSchema])
+async def get_projections(db: Session = Depends(get_db)):
+    projection_service = ProjectionService(db)
+    projection_schema_list = projection_service.get_all()
+    projection_json_list = list(map(lambda x: x.model_dump(), projection_schema_list))
+    return projection_json_list
+
+
+@app.post("/projections_by_deal_id/", response_model=List[ProjectionSchema])
+async def find_projections_by_deal_id(request: ProjectionFindByDealSchema, db: Session = Depends(get_db)):
+    deal_id = request.deal_id
+
+    if deal_id is None:
+        raise ValueError("Deal ID is required")
+    try:
+        projection_service = ProjectionService(db)
+        mathching_projections = projection_service.get_projections_by_deal_id(deal_id)
+
+        return mathching_projections
+    except Exception as e:
+        raise
+
 
 
 # Include the routes if external
