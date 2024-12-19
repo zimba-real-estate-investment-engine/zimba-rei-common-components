@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import json
 import os
 import random
 import time
@@ -17,7 +19,7 @@ from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
     FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel, ProjectionEntryModel, \
     AmortizationScheduleModel, CashflowModel, CapitalInvestmentModel, AmortizationCachingCodeModel, \
-    AmortizationScheduleRowModel, LLMResponseModel
+    AmortizationScheduleRowModel, LLMResponseModel, ProjectionModel
 from app.database.models import RealEstatePropertyModel
 from datetime import datetime, timezone, timedelta
 
@@ -516,6 +518,41 @@ def test_amortization_schedule_model_without_json() -> AmortizationScheduleModel
 
     return amortization_schedule_model
 
+
+@pytest.fixture
+def test_projection_model() -> ProjectionModel:
+
+    json_list = data = \
+        [
+            {
+                "projection_position": 0,
+                "monthly_value": 234556.00,
+                "mortgage_value": 232333.00,
+                "monthly_cashflow": 2534.95,
+                "principal_recapture": 504.34,
+                "passive_appreciation": 2230.22
+            },
+            {
+                "projection_position": 1,
+                "monthly_value": 234556.00,
+                "mortgage_value": 232333.00,
+                "monthly_cashflow": 2534.95,
+                "principal_recapture": 504.34,
+                "passive_appreciation": 2230.22
+            },
+            {
+                "projection_position": 2,
+                "monthly_value": 234556.00,
+                "mortgage_value": 232333.00,
+                "monthly_cashflow": 2534.95,
+                "principal_recapture": 504.34,
+                "passive_appreciation": 2230.22
+            }
+        ]
+    json_string = json.dumps(json_list)
+    projection_model = ProjectionModel(created_date=datetime.now(), projection_json=json_string)
+
+    return projection_model
 
 @pytest.fixture
 def test_amortization_caching_code_model() -> AmortizationCachingCodeModel:

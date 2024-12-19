@@ -653,3 +653,29 @@ class LLMResponseModel(Base):
 
     def __repr__(self):
         return f"<LLMResponse(id={self.id} listing_url={self.listing_url})>"
+
+
+class ProjectionModel(Base):
+    __tablename__ = 'projection'
+
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    deal_id = Column(Integer, ForeignKey('deal.id'))
+    projection_json = Column(String(255))
+    created_date = Column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP'))
+
+    deal = relationship("DealModel")
+
+    def __init__(
+            self,
+            projection_json: str,
+            created_date: datetime,
+            deal: Annotated[Optional[DealModel], 'should be populated before saving to db'] = None,
+            id: int | None = None,  # Allow none so the migrations creates it for new objects.
+    ):
+        self.id = id
+        self.deal = deal
+        self.projection_json = projection_json
+        self.created_date = created_date
+
+    def __repr__(self):
+        return f"<Projection(id={self.id} deal={self.deal.id})>"
