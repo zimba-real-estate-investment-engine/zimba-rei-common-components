@@ -14,3 +14,4 @@ class RealEstateProperty(RealEstatePropertySchema):
     #     self.expenses = expenses
     #     self.listings = listings
     #     self.address = address
+

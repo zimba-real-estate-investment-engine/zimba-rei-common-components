@@ -18,7 +18,7 @@ class Deal(DealSchema):
             mortgage: Mortgage = investor_profile.get_mortgages()[0]  # Initially only one mortgage per investor
             cls.down_payment = mortgage.down_payment
             cls.monthly_cost = mortgage.monthly_payment
-            cls.interest_rate = mortgage.interest_rate
+            cls.interest_rate = mortgage.annual_interest_rate
             cls.time_horizon = mortgage.term
 
         if real_estate_property.listing and real_estate_property.listing.price_amount:

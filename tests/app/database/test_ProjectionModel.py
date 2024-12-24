@@ -1,4 +1,4 @@
-from app.database.models import AddressModel, DealModel, UnderwritingModel, ProjectionModel
+from app.database.models import AddressModel, DealModel, UnderwritingModel, ProjectionModel, AmortizationScheduleModel
 from app.repositories.BaseRepository import BaseRepository
 from app.database.models import SubscriptionModel
 
@@ -37,3 +37,30 @@ def test_crud_projection_model_after_underwriting_and_deal(get_test_deal_model, 
     assert newly_created_projection.id and newly_created_projection.id != 0
 
     # session.commit() # Only if you want to actually save.
+
+
+def test_crud_projection_model_after_underwriting_and_amortization_schedule(
+        test_projection_model, test_amortization_schedule_model_without_json, get_test_db):
+    session = get_test_db
+    test_amortization_schedule = test_amortization_schedule_model_without_json
+    test_projection = test_projection_model
+
+    amortization_schedule_repo = BaseRepository[AmortizationScheduleModel](session, AmortizationScheduleModel)
+    newly_created_amortization_schedule = amortization_schedule_repo.add(test_amortization_schedule)
+
+    session.flush()
+    existing_id = newly_created_amortization_schedule.id
+
+    existing_amortization_schedule = session.query(AmortizationScheduleModel).filter_by(id=existing_id).first()
+
+    # Then create the projection
+    test_projection_model.amortization_schedule = existing_amortization_schedule
+
+    projection_repo = BaseRepository[ProjectionModel](session, ProjectionModel)
+
+    newly_created_projection = projection_repo.add(test_projection_model)
+    session.flush()
+
+    assert newly_created_projection.id and newly_created_projection.id != 0
+
+    session.commit()  # Only if you want to actually save.

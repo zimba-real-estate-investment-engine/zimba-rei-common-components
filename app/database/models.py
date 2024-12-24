@@ -428,7 +428,7 @@ class MortgageModel(Base):
     pre_qualified = Column(Boolean)
     pre_approved = Column(Boolean)
     loan_to_value = Column(Float)
-    interest_rate = Column(Float)
+    annual_interest_rate = Column(Float)
     term = Column(Integer)
     amortization_period = Column(Integer)
     monthly_payment = Column(Float)
@@ -448,7 +448,7 @@ class MortgageModel(Base):
             pre_approved: bool,
             loan_to_value: float,
             term: int,
-            interest_rate: float,
+            annual_interest_rate: float,
             amortization_period: int,
             monthly_payment: float,
             owner_occupied: bool,
@@ -466,7 +466,7 @@ class MortgageModel(Base):
         self.pre_approved = pre_approved
         self.loan_to_value = loan_to_value
         self.term = term
-        self.interest_rate = interest_rate
+        self.annual_interest_rate = annual_interest_rate
         self.amortization_period = amortization_period
         self.monthly_payment = monthly_payment
         self.owner_occupied = owner_occupied

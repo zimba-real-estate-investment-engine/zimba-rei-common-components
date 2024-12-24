@@ -330,9 +330,9 @@ async def find_projections_by_deal_id(request: ProjectionFindByDealSchema, db: S
         raise ValueError("Deal ID is required")
     try:
         projection_service = ProjectionService(db)
-        mathching_projections = projection_service.get_projections_by_deal_id(deal_id)
+        matching_projections = projection_service.get_projections_by_deal_id(deal_id)
 
-        return mathching_projections
+        return matching_projections
     except Exception as e:
         raise
 

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 class AmortizationScheduleSchema(BaseModel):
     id: Optional[int] = None
     amortization_schedule_json: Optional[str] = ''
-    created_date: Optional[datetime] = None
+    created_date: Optional[datetime] = datetime.now()
     caching_code: Optional[str] = None
     principal: float
     annual_interest_rate: float

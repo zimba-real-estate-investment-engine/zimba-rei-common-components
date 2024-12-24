@@ -15,6 +15,7 @@ from urllib.parse import quote_plus
 from fastapi.testclient import TestClient
 
 from app.domain.Expense import Expense
+from app.domain.Mortgage import Mortgage
 from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
     FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel, ProjectionEntryModel, \
@@ -166,7 +167,7 @@ def get_test_mortgage_schema() -> MortgageSchema:
 
     mortgage_schema = MortgageSchema(
         appraisal_value=300000.00, principal=240000.03, down_payment=27665, issued_date=issued_date,
-        pre_qualified=True, pre_approved=True, loan_to_value=80.0, interest_rate=3.75,
+        pre_qualified=True, pre_approved=True, loan_to_value=80.0, annual_interest_rate=3.75,
         term=3, amortization_period=30, monthly_payment=3565.25,
         owner_occupied=True, insurance=3500.75,
     )
@@ -183,6 +184,19 @@ def get_test_mortgage_model() -> MortgageModel:
                                    owner_occupied=True, insurance=200.00, issued_date=issued_date)
 
     return mortgage_model
+
+
+@pytest.fixture
+def get_test_mortgage() -> Mortgage:
+    issued_date = datetime.now()
+    principal = round(random.uniform(500000, 13000000), 2)
+    annual_interest_rate = round(random.uniform(1.75, 45.0), 2)
+    amortization_period = random.randint(1, 40)
+
+    mortgage = Mortgage(principal=principal, annual_interest_rate=annual_interest_rate,
+                        amortization_period=amortization_period)
+
+    yield mortgage
 
 
 @pytest.fixture

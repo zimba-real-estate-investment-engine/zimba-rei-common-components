@@ -8,6 +8,8 @@ from typing import List
 from dotenv import load_dotenv
 from pydantic import ValidationError
 
+from app.domain.CapitalInvestment import CapitalInvestment
+from app.domain.Cashflow import Cashflow
 from app.domain.Deal import Deal
 from app.domain.Expense import Expense
 from app.domain.InvestorProfile import InvestorProfile
@@ -38,7 +40,7 @@ class UnderwritingProcess:
                 mortgage: Mortgage = investor_profile.get_mortgages()[0]
                 deal.down_payment = mortgage.down_payment
                 deal.monthly_cost = mortgage.monthly_payment
-                deal.interest_rate = mortgage.interest_rate
+                deal.interest_rate = mortgage.annual_interest_rate
                 deal.time_horizon = mortgage.term
                 deal.real_estate_property_value = real_estate_property.listing.price
 
@@ -67,7 +69,7 @@ class UnderwritingProcess:
                 mortgage: Mortgage = investor_profile.get_mortgages()[0]
                 deal.down_payment = mortgage.down_payment
                 deal.monthly_cost = mortgage.monthly_payment
-                deal.interest_rate = mortgage.interest_rate
+                deal.interest_rate = mortgage.annual_interest_rate
                 deal.time_horizon = mortgage.term
 
             return deal
@@ -87,7 +89,9 @@ class UnderwritingProcess:
         return deal
 
     @staticmethod
-    def extract_real_estate_property(listing: Listing, expenses: List[Expense]) -> RealEstateProperty:
+    def extract_real_estate_property(listing: Listing, expenses: List[Expense],
+                                     cashflow_sources: List[Cashflow] = None,
+                                     capital_investments: List[CapitalInvestment] = None) -> RealEstateProperty:
         listing = listing
         expenses = expenses
 
