@@ -3,6 +3,8 @@ from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime, timedelta
 
+from app.schemas.AmortizationScheduleSchema import AmortizationScheduleSchema
+
 
 class MortgageSchema(BaseModel):
     id: Optional[int] = None
@@ -19,6 +21,7 @@ class MortgageSchema(BaseModel):
     monthly_payment: float
     owner_occupied: bool
     insurance: float
+    amortization_schedule: AmortizationScheduleSchema
     #TODO more to be added from data dictionary as necessary
 
     class Config:

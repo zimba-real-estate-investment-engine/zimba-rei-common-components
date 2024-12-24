@@ -420,6 +420,7 @@ class MortgageModel(Base):
 
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     financing_id = Column(String(255), ForeignKey('financing.id'))
+    amortization_schedule_id = Column(Integer, ForeignKey('amortization_schedule.id'))
     appraisal_value = Column(Float)
     principal = Column(Float)
     down_payment = Column(Float)
@@ -435,6 +436,7 @@ class MortgageModel(Base):
     insurance = Column(Float)
 
     financing = relationship("FinancingModel", back_populates="mortgages")
+    amortization_schedule = relationship("AmortizationScheduleModel")
 
     def __init__(
             self,
@@ -451,6 +453,7 @@ class MortgageModel(Base):
             monthly_payment: float,
             owner_occupied: bool,
             insurance: float,
+            amortization_schedule: Annotated[Optional[AmortizationScheduleModel], "populate before saving"] = None,
             financing: Annotated[Optional[FinancingModel], 'could be yet to be filled'] = None,
             id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
@@ -468,6 +471,7 @@ class MortgageModel(Base):
         self.monthly_payment = monthly_payment
         self.owner_occupied = owner_occupied
         self.insurance = insurance
+        self.amortization_schedule = amortization_schedule
         self.financing = financing
 
     def __repr__(self):
@@ -660,22 +664,34 @@ class ProjectionModel(Base):
 
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     deal_id = Column(Integer, ForeignKey('deal.id'))
+    amortization_schedule_id = Column(Integer, ForeignKey('amortization_schedule.id'))
     projection_json = Column(String(255))
     created_date = Column(TIMESTAMP, server_default=text('CURRENT_TIMESTAMP'))
-
+    property_value = Column(Float)
+    passive_appreciation_percentage = Column(Float)
+    active_appreciation_percentage = Column(Float)
     deal = relationship("DealModel")
+    amortization_schedule = relationship("AmortizationScheduleModel")
 
     def __init__(
             self,
             projection_json: str,
             created_date: datetime,
             deal: Annotated[Optional[DealModel], 'should be populated before saving to db'] = None,
+            amortization_schedule: Annotated[Optional[AmortizationScheduleModel], 'populate before saving'] = None,
+            property_value: Annotated[Optional[float], 'populate before saving'] = None,
+            passive_appreciation_percentage: Annotated[Optional[float], 'populate before saving'] = None,
+            active_appreciation: Annotated[Optional[float], 'populate before saving'] = None,
             id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
         self.deal = deal
         self.projection_json = projection_json
         self.created_date = created_date
+        self.amortization_schedule = amortization_schedule
+        self.property_value = property_value
+        self.passive_appreciation_percentage = passive_appreciation_percentage
+        self.active_appreciation = active_appreciation
 
     def __repr__(self):
         return f"<Projection(id={self.id} deal={self.deal.id})>"

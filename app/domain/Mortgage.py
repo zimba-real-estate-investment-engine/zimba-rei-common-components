@@ -2,4 +2,6 @@ from app.schemas.MortgageSchema import MortgageSchema
 
 
 class Mortgage(MortgageSchema):
-    pass
+
+    def calculate_amortization_schedule(self):
+        self.am

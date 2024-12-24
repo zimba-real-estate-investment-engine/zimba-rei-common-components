@@ -522,7 +522,6 @@ def test_amortization_schedule_model_without_json() -> AmortizationScheduleModel
 
 @pytest.fixture
 def test_projection_model() -> ProjectionModel:
-
     json_list = data = \
         [
             {
@@ -551,14 +550,18 @@ def test_projection_model() -> ProjectionModel:
             }
         ]
     json_string = json.dumps(json_list)
-    projection_model = ProjectionModel(created_date=datetime.now(), projection_json=json_string)
+
+    property_value = round(random.uniform(130000, 150000000), 2)
+    active_appreciation = round(random.uniform(5, property_value), 2)
+    projection_model = ProjectionModel(created_date=datetime.now(), projection_json=json_string,
+                                       property_value=property_value, passive_appreciation_percentage=3.0,
+                                       active_appreciation=active_appreciation)
 
     return projection_model
 
 
 @pytest.fixture
 def test_projection_schema() -> ProjectionSchema:
-
     json_list = data = \
         [
             {
@@ -587,7 +590,11 @@ def test_projection_schema() -> ProjectionSchema:
             }
         ]
     json_string = json.dumps(json_list)
-    projection_schema = ProjectionSchema(created_date=datetime.now(), projection_json=json_string)
+    property_value = round(random.uniform(130000, 150000000), 2)
+    active_appreciation = round(random.uniform(5, property_value), 2)
+    projection_schema = ProjectionSchema(created_date=datetime.now(), projection_json=json_string,
+                                         property_value=property_value, passive_appreciation_percentage=3.0,
+                                         active_appreciation=active_appreciation)
 
     return projection_schema
 
