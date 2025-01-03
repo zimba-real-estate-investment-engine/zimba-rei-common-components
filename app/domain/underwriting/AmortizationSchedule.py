@@ -4,6 +4,7 @@ from typing import Optional, List, Any
 
 import pandas as pd
 import numpy_financial as npf
+from pandas import DataFrame
 
 from app.domain.underwriting.AmortizationCachingCode import AmortizationCachingCode
 from app.domain.underwriting.AmortizationScheduleRow import AmortizationScheduleRow
@@ -35,6 +36,15 @@ class AmortizationSchedule(AmortizationScheduleSchema):
             self.amortization_schedule_json, start=range_start, end=range_end)
 
         return amortization_schedule_rows
+
+    def get_basic_dataframe(self) -> DataFrame:
+        self.amortization_schedule_json = AmortizationSchedule.generate_amortization_json(self.principal,
+                                                                                          self.annual_interest_rate,
+                                                                                          self.amortization_period)
+        parsed_json = json.loads(self.amortization_schedule_json)
+        dataframe: DataFrame = pd.DataFrame(parsed_json)
+
+        return dataframe
 
     @staticmethod
     def get_monthly_payment(principal: float, annual_interest_rate: float, amortization_period: int) -> float:
