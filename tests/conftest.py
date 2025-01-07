@@ -16,6 +16,8 @@ from fastapi.testclient import TestClient
 
 from app.domain.Expense import Expense
 from app.domain.Mortgage import Mortgage
+from app.domain.underwriting.AmortizationCachingCode import AmortizationCachingCode
+from app.domain.underwriting.AmortizationSchedule import AmortizationSchedule
 from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
     FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel, ProjectionEntryModel, \
@@ -438,10 +440,21 @@ def get_test_projection_entry_schema() -> ProjectionEntrySchema:
 
 @pytest.fixture
 def get_test_deal_schema() -> DealSchema:
+    down_payment = round(random.uniform(130000, 150000000), 2)
+    real_estate_property_value = round(random.uniform(130000, 150000000), 2)
+    after_repair_value = round(random.uniform(13000, 15000000), 2)
+    monthly_cost = round(random.uniform(1, 20000), 2)
+    capital_invested = round(random.uniform(1, 100000000), 2)
+    roi = round(random.uniform(1, 200), 2)
+    annual_interest_rate = round(random.uniform(2, 50), 2)
+    term = random.randint(1, 10)
+    time_horizon = random.randint(1, 120)
+
     deal_schema = DealSchema(
-        down_payment=34343.33, term=5, interest_rate=5.73, monthly_cost=2333.00, after_repair_value=32424.33,
-        time_horizon=23, roi=35.00, capital_invested=234343.00, real_estate_property_value=2343.22, risk_assessment='',
-        thumbnail=''
+        down_payment=down_payment, term=term, interest_rate=annual_interest_rate, monthly_cost=monthly_cost,
+        after_repair_value=after_repair_value, time_horizon=time_horizon, roi=roi, capital_invested=capital_invested,
+        real_estate_property_value=real_estate_property_value, risk_assessment='',
+        thumbnail='', underwriting=None
     )
     return deal_schema
 
@@ -532,6 +545,23 @@ def test_amortization_schedule_model_without_json() -> AmortizationScheduleModel
     )
 
     return amortization_schedule_model
+
+
+@pytest.fixture
+def test_amortization_schedule_without_json() -> AmortizationSchedule:
+    principal = round(random.uniform(130000, 150000000), 2)
+    annual_interest_rate = round(random.uniform(2, 50), 2)
+    amortization_period = random.randint(1, 50)
+    caching_code = f'{principal}:{annual_interest_rate}:{amortization_period}'
+    caching_code = AmortizationCachingCode(principal=principal, annual_interest_rate=annual_interest_rate,
+                                           amortization_period=amortization_period)
+
+    amortization_schedule = AmortizationSchedule(
+        amortization_schedule_json='', created_date=datetime.now(), caching_code=caching_code,
+        principal=principal, amortization_period=amortization_period, annual_interest_rate=annual_interest_rate
+    )
+
+    return amortization_schedule
 
 
 @pytest.fixture

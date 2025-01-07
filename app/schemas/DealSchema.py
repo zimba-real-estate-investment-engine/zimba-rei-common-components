@@ -2,6 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from app.domain.RealEstateProperty import RealEstateProperty
 from app.schemas.UnderwritingSchema import UnderwritingSchema
 
 
@@ -25,6 +26,7 @@ class DealSchema(BaseModel):
     roi: Optional[float] = 0
     capital_invested: Optional[float] = 0
     real_estate_property_value: Optional[float] = 0
+    real_estate_property: Optional[RealEstateProperty] = None
     underwriting: Optional[UnderwritingSchema] = None,
     thumbnail: str = '',
     risk_assessment: str = '',

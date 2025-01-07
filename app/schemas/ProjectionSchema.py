@@ -24,3 +24,4 @@ class ProjectionSchema(BaseModel):
 
 class ProjectionFindByDealSchema(BaseModel):
     deal_id: int
+

@@ -6,14 +6,14 @@ from pydantic import BaseModel
 
 class ProjectionRowSchema(BaseModel):
     id: Optional[int] = None
-    projection_position: int
-    monthly_value: float
-    mortgage_value: float
-    monthly_cashflow: float
+    payment_number: int
+    monthly_payment: float
+    interest_payment: float
     principal_recapture: float
+    remaining_balance: float
+    monthly_value: float
     passive_appreciation: float
-
-    #TODO more to be added from data dictionary as necessary
+    monthly_cashflow: float
 
     class Config:
         orm_mode = True

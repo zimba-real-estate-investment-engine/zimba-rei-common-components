@@ -25,7 +25,7 @@ class Mortgage(MortgageSchema):
         amortization_schedule = AmortizationSchedule(principal=principal, annual_interest_rate=annual_interest_rate,
                                                      amortization_period=amortization_period,
                                                      amortization_schedule_json=amortization_schema_json,
-                                                     caching_code=caching_code_string)
+                                                     caching_code=amortization_caching_code)
 
         self.amortization_schedule = amortization_schedule
     # amortization_schedule_json: Optional[str] = ''
