@@ -3,7 +3,7 @@ from typing import List
 
 from sqlalchemy.orm import Session
 
-from app.database.models import SubscriptionModel, ListingModel, DealModel, UnderwritingModel
+from app.database.models import SubscriptionModel, ListingModel, DealModel, UnderwritingModel, InvestorProfileModel
 from app.repositories.BaseRepository import BaseRepository
 from app.schemas.DealSchema import DealSchema
 from app.schemas.ListingSchema import ListingSchema
@@ -22,11 +22,18 @@ class DealService:
         try:
             deal_model = BaseRepository.pydantic_to_sqlalchemy(deal_data, DealModel)
 
-            # if we don't do this, saving underwriting will try to recreate the already saved real estate property
-            if deal_model.underwriting:
-                existing_id = deal_model.underwriting.id
-                existing_underwriting = self.db.query(UnderwritingModel).filter_by(id=existing_id).first()
-                deal_model.underwriting = existing_underwriting
+            # if we don't check, saving deal, saving underwriting will duplicate the already saved investorprofile
+            if deal_model.underwriting is not None:
+                if deal_model.underwriting.id is not None:
+                    existing_id = deal_model.underwriting.id
+                    existing_underwriting = self.db.query(UnderwritingModel).filter_by(id=existing_id).first()
+                    deal_model.underwriting = existing_underwriting
+                # check to avoid duplicating pre-existing investorprofile
+                if deal_model.underwriting.investor_profile and deal_model.underwriting.investor_profile.id is not None:
+                    existing_investor_profile_id = deal_model.underwriting.investor_profile.id
+                    existing_investor_profile = (self.db.query(InvestorProfileModel)
+                                                        .filter_by(id=existing_investor_profile_id).first())
+                    deal_model.underwriting.investor_profile = existing_investor_profile
 
             new_deal_model = self.repository.add(deal_model)
 

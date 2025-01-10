@@ -18,6 +18,7 @@ from app.domain.Listing import Listing
 from app.domain.Mortgage import Mortgage
 from app.domain.RealEstateProperty import RealEstateProperty
 from app.domain.llm.WebsitePreprocessor import WebsitePreprocessor
+from app.domain.underwriting.Underwriting import Underwriting
 from app.services.LLMResponseCacheService import LLMResponseCacheService
 from app.services.OpenAIService import OpenAIService
 
@@ -57,8 +58,9 @@ class UnderwritingProcess:
     @staticmethod
     def create_deal_url_and_investor_profile(investor_profile: InvestorProfile, url: str) -> Deal:
 
-        deal = Deal(term=5)
+        deal = Deal()
         real_estate_property = RealEstateProperty()
+        underwriting = Underwriting()
 
         if url:
             listing = UnderwritingProcess.extract_listing_from_url(url)
@@ -70,8 +72,8 @@ class UnderwritingProcess:
                 real_estate_property.capital_investments = []
 
             if listing.price:
-                deal.real_estate_property_value = listing.price
-                real_estate_property.value = listing.price
+                deal.real_estate_property_value = listing.price_amount
+                real_estate_property.value = listing.price_amount
 
             if investor_profile.get_mortgages():
                 mortgage: Mortgage = investor_profile.get_mortgages()[0]
@@ -79,6 +81,11 @@ class UnderwritingProcess:
                 deal.monthly_cost = mortgage.monthly_payment
                 deal.interest_rate = mortgage.annual_interest_rate
                 deal.time_horizon = mortgage.term
+
+            underwriting.real_estate_property = real_estate_property
+            underwriting.investor_profile = investor_profile
+
+            deal.underwriting = underwriting
 
             return deal
         else:

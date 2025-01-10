@@ -543,8 +543,8 @@ class DealModel(Base):
             real_estate_property_value: float,
             underwriting: Annotated[Optional[UnderwritingModel], 'should be populated before saving to db'] = None,
             real_estate_property: Annotated[Optional[RealEstatePropertyModel], 'populate before saving to db'] = None,
-            thumbnail: str = '',
-            risk_assessment: str = '',
+            thumbnail: str = "placeholder_thumbnail_url",
+            risk_assessment: str = "default_risk_assessment",
             id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
@@ -563,7 +563,8 @@ class DealModel(Base):
         self.risk_assessment = risk_assessment
 
     def __repr__(self):
-        return f"<Deal(id={self.id}, property_value=${self.property_value:,.2f}, roi={self.roi}%)>"
+        return (f"<Deal(id={self.id}, real_estate_property_value=${self.real_estate_property_value:,.2f}, "
+                f"roi={self.roi}%)>")
 
 
 class ProjectionEntryModel(Base):

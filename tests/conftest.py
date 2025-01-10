@@ -414,8 +414,8 @@ def get_test_underwriting_model_min() -> UnderwritingModel:
 def get_test_deal_model() -> DealModel:
     deal_model = DealModel(
         down_payment=34343.33, term=5, interest_rate=5.73, monthly_cost=2333.00, after_repair_value=32424.33,
-        time_horizon=23, roi=35.00, capital_invested=234343.00, real_estate_property_value=2343.22, risk_assessment='',
-        thumbnail=''
+        time_horizon=23, roi=35.00, capital_invested=234343.00, real_estate_property_value=2343.22,
+        risk_assessment="default", thumbnail="https://example.com/thumbnail.gif"
     )
     return deal_model
 
@@ -453,8 +453,8 @@ def get_test_deal_schema() -> DealSchema:
     deal_schema = DealSchema(
         down_payment=down_payment, term=term, interest_rate=annual_interest_rate, monthly_cost=monthly_cost,
         after_repair_value=after_repair_value, time_horizon=time_horizon, roi=roi, capital_invested=capital_invested,
-        real_estate_property_value=real_estate_property_value, risk_assessment='',
-        thumbnail='', underwriting=None
+        real_estate_property_value=real_estate_property_value,
+        risk_assessment="default", thumbnail="https://example.com/thumbnail.gif", underwriting=None
     )
     return deal_schema
 
