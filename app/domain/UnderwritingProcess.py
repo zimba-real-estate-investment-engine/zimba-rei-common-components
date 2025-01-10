@@ -8,6 +8,8 @@ from typing import List
 from dotenv import load_dotenv
 from pydantic import ValidationError
 
+from app.domain.CapitalInvestment import CapitalInvestment
+from app.domain.Cashflow import Cashflow
 from app.domain.Deal import Deal
 from app.domain.Expense import Expense
 from app.domain.InvestorProfile import InvestorProfile
@@ -16,6 +18,7 @@ from app.domain.Listing import Listing
 from app.domain.Mortgage import Mortgage
 from app.domain.RealEstateProperty import RealEstateProperty
 from app.domain.llm.WebsitePreprocessor import WebsitePreprocessor
+from app.domain.underwriting.Underwriting import Underwriting
 from app.services.LLMResponseCacheService import LLMResponseCacheService
 from app.services.OpenAIService import OpenAIService
 
@@ -38,7 +41,7 @@ class UnderwritingProcess:
                 mortgage: Mortgage = investor_profile.get_mortgages()[0]
                 deal.down_payment = mortgage.down_payment
                 deal.monthly_cost = mortgage.monthly_payment
-                deal.interest_rate = mortgage.interest_rate
+                deal.interest_rate = mortgage.annual_interest_rate
                 deal.time_horizon = mortgage.term
                 deal.real_estate_property_value = real_estate_property.listing.price
 
@@ -55,20 +58,34 @@ class UnderwritingProcess:
     @staticmethod
     def create_deal_url_and_investor_profile(investor_profile: InvestorProfile, url: str) -> Deal:
 
+        deal = Deal()
+        real_estate_property = RealEstateProperty()
+        underwriting = Underwriting()
+
         if url:
             listing = UnderwritingProcess.extract_listing_from_url(url)
 
-            deal = Deal(term=5)
+            if listing:
+                real_estate_property.address = listing.address
+                real_estate_property.expenses = []
+                real_estate_property.cashflow_sources = []
+                real_estate_property.capital_investments = []
 
             if listing.price:
-                deal.real_estate_property_value = listing.price
+                deal.real_estate_property_value = listing.price_amount
+                real_estate_property.value = listing.price_amount
 
             if investor_profile.get_mortgages():
                 mortgage: Mortgage = investor_profile.get_mortgages()[0]
                 deal.down_payment = mortgage.down_payment
                 deal.monthly_cost = mortgage.monthly_payment
-                deal.interest_rate = mortgage.interest_rate
+                deal.interest_rate = mortgage.annual_interest_rate
                 deal.time_horizon = mortgage.term
+
+            underwriting.real_estate_property = real_estate_property
+            underwriting.investor_profile = investor_profile
+
+            deal.underwriting = underwriting
 
             return deal
         else:
@@ -87,11 +104,15 @@ class UnderwritingProcess:
         return deal
 
     @staticmethod
-    def extract_real_estate_property(listing: Listing, expenses: List[Expense]) -> RealEstateProperty:
+    def extract_real_estate_property(listing: Listing, expenses: List[Expense],
+                                     cashflow_sources: List[Cashflow] = None,
+                                     capital_investments: List[CapitalInvestment] = None) -> RealEstateProperty:
         listing = listing
         expenses = expenses
 
-        real_estate_property = RealEstateProperty(listing=listing, expenses=expenses, address=listing.address)
+        real_estate_property = RealEstateProperty(listing=listing, expenses=expenses, address=listing.address,
+                                                  cashflow_sources=cashflow_sources,
+                                                  capital_investments=capital_investments)
         return real_estate_property
 
     @staticmethod

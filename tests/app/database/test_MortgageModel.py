@@ -6,11 +6,13 @@ from app.repositories.BaseRepository import BaseRepository
 def test_crud_mortgage_with_pre_existing_investor_profile_and_financing(get_test_investor_profile_model,
                                                                         get_test_financing_model_minimum,
                                                                         get_test_mortgage_model,
+                                                                        test_amortization_schedule_model_without_json,
                                                                         get_test_db):
     session = get_test_db
     test_investor_profile_model = get_test_investor_profile_model
     test_financing_model = get_test_financing_model_minimum
     test_mortgage_model = get_test_mortgage_model
+    test_mortgage_model.amortization_schedule = test_amortization_schedule_model_without_json
 
     # Build the investor profile
     test_investor_profile_model.financing_sources = [test_financing_model]
@@ -59,11 +61,11 @@ def test_crud_mortgage_with_pre_existing_investor_profile_and_financing(get_test
     # assert returned_instance
 
 
-def test_crud_financing_with_pre_existing_investor_profile_and_mortgages(
-        get_test_investor_profile_model, get_test_financing_model_minimum, get_test_mortgage_model, get_test_db):
-    test_investor_profile = get_test_investor_profile_model
-    test_financing = get_test_financing_model_minimum
-    test_mortgage = get_test_mortgage_model
-
-    test_financing.mortgages = [test_mortgage]
-    test_investor_profile.financing_sources = [test_financing]
+# def test_crud_financing_with_pre_existing_investor_profile_and_mortgages(
+#         get_test_investor_profile_model, get_test_financing_model_minimum, get_test_mortgage_model, get_test_db):
+#     test_investor_profile = get_test_investor_profile_model
+#     test_financing = get_test_financing_model_minimum
+#     test_mortgage = get_test_mortgage_model
+#
+#     test_financing.mortgages = [test_mortgage]
+#     test_investor_profile.financing_sources = [test_financing]

@@ -14,3 +14,13 @@ class RealEstateProperty(RealEstatePropertySchema):
     #     self.expenses = expenses
     #     self.listings = listings
     #     self.address = address
+
+    def get_total_monthly_cashflow(self):
+        total_cashflow = 0
+        cashflow_sources = self.cashflow_sources
+        if cashflow_sources:
+            total_cashflow = sum(obj.monthly_cashflow for obj in cashflow_sources)
+
+        return total_cashflow
+
+

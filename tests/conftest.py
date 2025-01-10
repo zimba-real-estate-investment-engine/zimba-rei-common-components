@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import json
 import os
 import random
 import time
@@ -13,11 +15,14 @@ from urllib.parse import quote_plus
 from fastapi.testclient import TestClient
 
 from app.domain.Expense import Expense
+from app.domain.Mortgage import Mortgage
+from app.domain.underwriting.AmortizationCachingCode import AmortizationCachingCode
+from app.domain.underwriting.AmortizationSchedule import AmortizationSchedule
 from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
     FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel, ProjectionEntryModel, \
     AmortizationScheduleModel, CashflowModel, CapitalInvestmentModel, AmortizationCachingCodeModel, \
-    AmortizationScheduleRowModel, LLMResponseModel
+    AmortizationScheduleRowModel, LLMResponseModel, ProjectionModel
 from app.database.models import RealEstatePropertyModel
 from datetime import datetime, timezone, timedelta
 
@@ -32,6 +37,7 @@ from app.schemas.DealSchema import DealSchema
 from app.schemas.FinancingSchema import FinancingSchema
 from app.schemas.InvestorProfileSchema import InvestorProfileSchema
 from app.schemas.ProjectionEntrySchema import ProjectionEntrySchema
+from app.schemas.ProjectionSchema import ProjectionSchema
 from app.schemas.UnderwritingSchema import UnderwritingSchema
 from app.schemas.MortgageSchema import MortgageSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
@@ -163,7 +169,7 @@ def get_test_mortgage_schema() -> MortgageSchema:
 
     mortgage_schema = MortgageSchema(
         appraisal_value=300000.00, principal=240000.03, down_payment=27665, issued_date=issued_date,
-        pre_qualified=True, pre_approved=True, loan_to_value=80.0, interest_rate=3.75,
+        pre_qualified=True, pre_approved=True, loan_to_value=80.0, annual_interest_rate=3.75,
         term=3, amortization_period=30, monthly_payment=3565.25,
         owner_occupied=True, insurance=3500.75,
     )
@@ -180,6 +186,19 @@ def get_test_mortgage_model() -> MortgageModel:
                                    owner_occupied=True, insurance=200.00, issued_date=issued_date)
 
     return mortgage_model
+
+
+@pytest.fixture
+def get_test_mortgage() -> Mortgage:
+    issued_date = datetime.now()
+    principal = round(random.uniform(500000, 13000000), 2)
+    annual_interest_rate = round(random.uniform(1.75, 45.0), 2)
+    amortization_period = random.randint(1, 40)
+
+    mortgage = Mortgage(principal=principal, annual_interest_rate=annual_interest_rate,
+                        amortization_period=amortization_period)
+
+    yield mortgage
 
 
 @pytest.fixture
@@ -395,8 +414,8 @@ def get_test_underwriting_model_min() -> UnderwritingModel:
 def get_test_deal_model() -> DealModel:
     deal_model = DealModel(
         down_payment=34343.33, term=5, interest_rate=5.73, monthly_cost=2333.00, after_repair_value=32424.33,
-        time_horizon=23, roi=35.00, capital_invested=234343.00, real_estate_property_value=2343.22, risk_assessment='',
-        thumbnail=''
+        time_horizon=23, roi=35.00, capital_invested=234343.00, real_estate_property_value=2343.22,
+        risk_assessment="default", thumbnail="https://example.com/thumbnail.gif"
     )
     return deal_model
 
@@ -421,10 +440,21 @@ def get_test_projection_entry_schema() -> ProjectionEntrySchema:
 
 @pytest.fixture
 def get_test_deal_schema() -> DealSchema:
+    down_payment = round(random.uniform(130000, 150000000), 2)
+    real_estate_property_value = round(random.uniform(130000, 150000000), 2)
+    after_repair_value = round(random.uniform(13000, 15000000), 2)
+    monthly_cost = round(random.uniform(1, 20000), 2)
+    capital_invested = round(random.uniform(1, 100000000), 2)
+    roi = round(random.uniform(1, 200), 2)
+    annual_interest_rate = round(random.uniform(2, 50), 2)
+    term = random.randint(1, 10)
+    time_horizon = random.randint(1, 120)
+
     deal_schema = DealSchema(
-        down_payment=34343.33, term=5, interest_rate=5.73, monthly_cost=2333.00, after_repair_value=32424.33,
-        time_horizon=23, roi=35.00, capital_invested=234343.00, real_estate_property_value=2343.22, risk_assessment='',
-        thumbnail=''
+        down_payment=down_payment, term=term, interest_rate=annual_interest_rate, monthly_cost=monthly_cost,
+        after_repair_value=after_repair_value, time_horizon=time_horizon, roi=roi, capital_invested=capital_invested,
+        real_estate_property_value=real_estate_property_value,
+        risk_assessment="default", thumbnail="https://example.com/thumbnail.gif", underwriting=None
     )
     return deal_schema
 
@@ -515,6 +545,102 @@ def test_amortization_schedule_model_without_json() -> AmortizationScheduleModel
     )
 
     return amortization_schedule_model
+
+
+@pytest.fixture
+def test_amortization_schedule_without_json() -> AmortizationSchedule:
+    principal = round(random.uniform(130000, 150000000), 2)
+    annual_interest_rate = round(random.uniform(2, 50), 2)
+    amortization_period = random.randint(1, 50)
+    caching_code = f'{principal}:{annual_interest_rate}:{amortization_period}'
+    caching_code = AmortizationCachingCode(principal=principal, annual_interest_rate=annual_interest_rate,
+                                           amortization_period=amortization_period)
+
+    amortization_schedule = AmortizationSchedule(
+        amortization_schedule_json='', created_date=datetime.now(), caching_code=caching_code,
+        principal=principal, amortization_period=amortization_period, annual_interest_rate=annual_interest_rate
+    )
+
+    return amortization_schedule
+
+
+@pytest.fixture
+def test_projection_model() -> ProjectionModel:
+    json_list = data = \
+        [
+            {
+                "projection_position": 0,
+                "monthly_value": 234556.00,
+                "mortgage_value": 232333.00,
+                "monthly_cashflow": 2534.95,
+                "principal_recapture": 504.34,
+                "passive_appreciation": 2230.22
+            },
+            {
+                "projection_position": 1,
+                "monthly_value": 234556.00,
+                "mortgage_value": 232333.00,
+                "monthly_cashflow": 2534.95,
+                "principal_recapture": 504.34,
+                "passive_appreciation": 2230.22
+            },
+            {
+                "projection_position": 2,
+                "monthly_value": 234556.00,
+                "mortgage_value": 232333.00,
+                "monthly_cashflow": 2534.95,
+                "principal_recapture": 504.34,
+                "passive_appreciation": 2230.22
+            }
+        ]
+    json_string = json.dumps(json_list)
+
+    property_value = round(random.uniform(130000, 150000000), 2)
+    active_appreciation = round(random.uniform(5, property_value), 2)
+    projection_model = ProjectionModel(created_date=datetime.now(), projection_json=json_string,
+                                       property_value=property_value, passive_appreciation_percentage=3.0,
+                                       active_appreciation=active_appreciation)
+
+    return projection_model
+
+
+@pytest.fixture
+def test_projection_schema() -> ProjectionSchema:
+    json_list = data = \
+        [
+            {
+                "projection_position": 0,
+                "monthly_value": 234556.00,
+                "mortgage_value": 232333.00,
+                "monthly_cashflow": 2534.95,
+                "principal_recapture": 504.34,
+                "passive_appreciation": 2230.22
+            },
+            {
+                "projection_position": 1,
+                "monthly_value": 234556.00,
+                "mortgage_value": 232333.00,
+                "monthly_cashflow": 2534.95,
+                "principal_recapture": 504.34,
+                "passive_appreciation": 2230.22
+            },
+            {
+                "projection_position": 2,
+                "monthly_value": 234556.00,
+                "mortgage_value": 232333.00,
+                "monthly_cashflow": 2534.95,
+                "principal_recapture": 504.34,
+                "passive_appreciation": 2230.22
+            }
+        ]
+    json_string = json.dumps(json_list)
+    property_value = round(random.uniform(130000, 150000000), 2)
+    active_appreciation = round(random.uniform(5, property_value), 2)
+    projection_schema = ProjectionSchema(created_date=datetime.now(), projection_json=json_string,
+                                         property_value=property_value, passive_appreciation_percentage=3.0,
+                                         active_appreciation=active_appreciation)
+
+    return projection_schema
 
 
 @pytest.fixture

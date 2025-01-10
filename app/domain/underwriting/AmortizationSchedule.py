@@ -4,6 +4,7 @@ from typing import Optional, List, Any
 
 import pandas as pd
 import numpy_financial as npf
+from pandas import DataFrame
 
 from app.domain.underwriting.AmortizationCachingCode import AmortizationCachingCode
 from app.domain.underwriting.AmortizationScheduleRow import AmortizationScheduleRow
@@ -20,7 +21,7 @@ class AmortizationSchedule(AmortizationScheduleSchema):
                                                                                           self.annual_interest_rate,
                                                                                           self.amortization_period)
         amortization_schedule_rows = AmortizationSchedule.amortization_rows_for_payment_range(
-            self.amortization_schedule_json,start=payment_number)
+            self.amortization_schedule_json, start=payment_number)
 
         if amortization_schedule_rows[0]:
             return amortization_schedule_rows[0]
@@ -32,9 +33,26 @@ class AmortizationSchedule(AmortizationScheduleSchema):
                                                                                           self.annual_interest_rate,
                                                                                           self.amortization_period)
         amortization_schedule_rows = AmortizationSchedule.amortization_rows_for_payment_range(
-            self.amortization_schedule_json,start=range_start, end=range_end)
+            self.amortization_schedule_json, start=range_start, end=range_end)
 
         return amortization_schedule_rows
+
+    def get_basic_dataframe(self) -> DataFrame:
+        self.amortization_schedule_json = AmortizationSchedule.generate_amortization_json(self.principal,
+                                                                                          self.annual_interest_rate,
+                                                                                          self.amortization_period)
+        parsed_json = json.loads(self.amortization_schedule_json)
+        dataframe: DataFrame = pd.DataFrame(parsed_json)
+
+        return dataframe
+
+    @staticmethod
+    def get_monthly_payment(principal: float, annual_interest_rate: float, amortization_period: int) -> float:
+        n_periods = amortization_period * 12
+        monthly_rate = annual_interest_rate / 100 / 12
+        npf_payment = npf.pmt(monthly_rate, n_periods, -principal)
+        monthly_payment = round(float(npf_payment), 2)
+        return monthly_payment
 
     @staticmethod
     def generate_amortization_json(principal: float, annual_interest_rate: float,
@@ -44,13 +62,13 @@ class AmortizationSchedule(AmortizationScheduleSchema):
         annual_interest_rate = annual_interest_rate
         amortization_period = amortization_period
 
-        # Get payment periods and compunding payments
+        # Get payment periods and compounding payments
         n_periods = amortization_period * 12
-        monthly_rate = annual_interest_rate /100/ 12
+        monthly_rate = annual_interest_rate / 100 / 12
         npf_payment = npf.pmt(monthly_rate, n_periods, -principal)
         monthly_payment = round(float(npf_payment), 2)
 
-        # Create a caching code that will be used track amortiziations that have already been calculated
+        # Create a caching code that will be used track amortizations that have already been calculated
         amortization_caching_code: AmortizationCachingCode = (
             AmortizationCachingCode(principal=principal, annual_interest_rate=annual_interest_rate,
                                     amortization_period=amortization_period))
@@ -77,7 +95,7 @@ class AmortizationSchedule(AmortizationScheduleSchema):
         return json_string
 
     @staticmethod
-    def amortization_rows_for_payment_range(amortization_json_string: str, start: int, end: Optional[int] = None)\
+    def amortization_rows_for_payment_range(amortization_json_string: str, start: int, end: Optional[int] = None) \
             -> List[AmortizationScheduleRow]:
         df = pd.DataFrame(json.loads(amortization_json_string))
 
@@ -90,7 +108,7 @@ class AmortizationSchedule(AmortizationScheduleSchema):
                 filtered_json = [json_string[start]]
 
             filtered_amortization_schedule_rows: List[AmortizationScheduleRow] = \
-                                     [AmortizationScheduleRow(**entry) for entry in filtered_json]
+                [AmortizationScheduleRow(**entry) for entry in filtered_json]
 
             return filtered_amortization_schedule_rows
 

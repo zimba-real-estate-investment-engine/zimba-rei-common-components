@@ -1,8 +1,6 @@
-from contextlib import contextmanager
-from typing import TypeVar, Generic, Type, List, Optional, Dict, Any
+from typing import TypeVar, Generic, Type, List, Optional
 from sqlalchemy.orm import Session
-# from sqlalchemy import select, delete, inspect
-from sqlalchemy import select, delete, inspect
+from sqlalchemy import select, delete
 from sqlalchemy.ext.declarative import declarative_base
 from pydantic import BaseModel
 
@@ -61,7 +59,7 @@ class BaseRepository(Generic[T]):
         return result.rowcount > 0
 
     @staticmethod
-    def sqlalchemy_to_pydantic(sqlalchemy_obj: SQLAlchemyModelType, pydantic_schema: Type[PydanticSchemaType])\
+    def sqlalchemy_to_pydantic(sqlalchemy_obj: SQLAlchemyModelType, pydantic_schema: Type[PydanticSchemaType]) \
             -> PydanticSchemaType:
         # PydanticSchema = sqlalchemy_to_pydantic(PydanticSchemaType)
         pydantic_instance = pydantic_schema.from_orm(sqlalchemy_obj)
@@ -120,7 +118,8 @@ class BaseRepository(Generic[T]):
             elif isinstance(value, dict) and hasattr(sqlalchemy_model, field):
                 # Convert single nested model
                 relationships[field] = BaseRepository.pydantic_to_sqlalchemy(value,
-                                                              getattr(sqlalchemy_model, field).property.mapper.class_)
+                                                                             getattr(sqlalchemy_model,
+                                                                                     field).property.mapper.class_)
 
         # Unpack relationships and simple fields
         return sqlalchemy_model(**{**obj_data, **relationships})

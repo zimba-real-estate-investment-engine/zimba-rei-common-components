@@ -79,29 +79,18 @@ def test_get_underwritings(test_fastapi_client, request):
     assert response.status_code == 200
 
 
-def test_get_deal_from_url(test_fastapi_client, get_test_investor_profile_schema,
-                           get_test_real_state_property_schema_unpopulated, get_test_db,
-                           get_test_listing_schema, get_test_expense_schema, get_test_mortgage_schema,
-                           get_test_cashflow_schema, get_test_cashflow_model):
+def test_create_deal_from_url(test_fastapi_client, get_test_investor_profile_schema, get_test_db,
+                              get_test_listing_schema):
     # url = 'https://www.realtor.com/realestateandhomes-detail/67-New-York-Ave-NW_Washington_DC_20001_M52254-63513'
     url = 'https://www.realtor.ca/real-estate/27608941/20-kanata-rockeries-ottawa-9007-kanata-kanata-lakesheritage-hills'
     db = get_test_db
-    real_estate_property_schema = get_test_real_state_property_schema_unpopulated
-    # capital_invested = []
-    # mortgages = [get_test_mortgage_schema]
-    # investor
+
     investor_profile_schema = get_test_investor_profile_schema
 
-    # Create the instances that will be used to make sure they
-    #
+    # Create the investor profile that will be needed to be in the database
     investor_profile_service = InvestorProfileService(db)
     newly_created_investor_profile = investor_profile_service.save_investor_profile(investor_profile_schema)
 
-    real_estate_property_service = RealEstatePropertyService(db)
-    newly_created_real_estate_property = real_estate_property_service.save_real_estate_property(
-        real_estate_property_schema)
-
-    assert newly_created_real_estate_property.id
     assert newly_created_investor_profile.id
 
     request_schema = UnderwritingCreateDealFromURLSchema(investor_profile_id=newly_created_investor_profile.id,
