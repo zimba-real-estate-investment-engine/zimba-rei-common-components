@@ -18,3 +18,8 @@ class ProjectionRowSchema(BaseModel):
     class Config:
         orm_mode = True
         from_attributes = True
+
+
+class ProjectionRowFindByDealSchema(BaseModel):
+    deal_id: int
+    investor_profile_id: Optional[int] = None

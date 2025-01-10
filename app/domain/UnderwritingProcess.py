@@ -57,13 +57,21 @@ class UnderwritingProcess:
     @staticmethod
     def create_deal_url_and_investor_profile(investor_profile: InvestorProfile, url: str) -> Deal:
 
+        deal = Deal(term=5)
+        real_estate_property = RealEstateProperty()
+
         if url:
             listing = UnderwritingProcess.extract_listing_from_url(url)
 
-            deal = Deal(term=5)
+            if listing:
+                real_estate_property.address = listing.address
+                real_estate_property.expenses = []
+                real_estate_property.cashflow_sources = []
+                real_estate_property.capital_investments = []
 
             if listing.price:
                 deal.real_estate_property_value = listing.price
+                real_estate_property.value = listing.price
 
             if investor_profile.get_mortgages():
                 mortgage: Mortgage = investor_profile.get_mortgages()[0]
@@ -95,7 +103,9 @@ class UnderwritingProcess:
         listing = listing
         expenses = expenses
 
-        real_estate_property = RealEstateProperty(listing=listing, expenses=expenses, address=listing.address)
+        real_estate_property = RealEstateProperty(listing=listing, expenses=expenses, address=listing.address,
+                                                  cashflow_sources=cashflow_sources,
+                                                  capital_investments=capital_investments)
         return real_estate_property
 
     @staticmethod

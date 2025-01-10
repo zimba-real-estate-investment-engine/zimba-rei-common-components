@@ -79,7 +79,7 @@ def test_get_underwritings(test_fastapi_client, request):
     assert response.status_code == 200
 
 
-def test_get_deal_from_url(test_fastapi_client, get_test_investor_profile_schema,
+def test_create_deal_from_url(test_fastapi_client, get_test_investor_profile_schema,
                            get_test_real_state_property_schema_unpopulated, get_test_db,
                            get_test_listing_schema, get_test_expense_schema, get_test_mortgage_schema,
                            get_test_cashflow_schema, get_test_cashflow_model):

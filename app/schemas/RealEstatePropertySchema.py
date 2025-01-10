@@ -11,6 +11,7 @@ from app.schemas.ListingSchema import ListingSchema
 
 class RealEstatePropertySchema(BaseModel):
     id: Optional[int] = None
+    value: Optional[float] = None
     # listings: Optional[List[ListingSchema]] = None  # many listing sites might have the same property
     expenses: Optional[List[ExpenseSchema]] = None
     address: Optional[AddressSchema] = None

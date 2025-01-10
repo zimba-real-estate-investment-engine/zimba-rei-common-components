@@ -8,15 +8,6 @@ from app.schemas.UnderwritingSchema import UnderwritingSchema
 
 class DealSchema(BaseModel):
     id: Optional[int] = None
-    # down_payment: float
-    # term: int
-    # interest_rate: float
-    # monthly_cost: float
-    # after_repair_value: float
-    # time_horizon: int
-    # roi: float
-    # capital_invested: float
-    # real_estate_property_value: float
     down_payment: Optional[float] = 0
     term: int
     interest_rate: Optional[float] = 0

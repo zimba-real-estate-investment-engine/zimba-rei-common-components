@@ -278,6 +278,7 @@ class RealEstatePropertyModel(Base):
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     address_id = Column(Integer, ForeignKey('address.id'))
     listing_id = Column(Integer, ForeignKey('listing.id'))
+    value = Column(Float)
 
     address = relationship("AddressModel", uselist=False)
     listing = relationship("ListingModel", uselist=False)
@@ -292,6 +293,7 @@ class RealEstatePropertyModel(Base):
             expenses: Annotated[Optional[List[ExpenseModel]], 'could be yet to be filled'] = None,
             cashflow_sources: Annotated[Optional[List[CashflowModel]], 'could be yet to be filled'] = None,
             capital_investments: Annotated[Optional[List[CapitalInvestmentModel]], 'could be yet to be filled'] = None,
+            value: Annotated[Optional[float], 'yet to be filled'] = None,
             id: int | None = None,  # Allow none so the migrations creates it for new objects.
     ):
         self.id = id
@@ -300,6 +302,7 @@ class RealEstatePropertyModel(Base):
         self.expenses = expenses if expenses else []
         self.cashflow_sources = cashflow_sources if cashflow_sources else []
         self.capital_investments = capital_investments if capital_investments else []
+        self.value = value
 
     def __repr__(self):
         return f"<RealEstateProperty(id={self.id})>"
@@ -511,6 +514,7 @@ class DealModel(Base):
 
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     underwriting_id = Column(Integer, ForeignKey('underwriting.id'))
+    real_estate_property_id = Column(Integer, ForeignKey('real_estate_property.id'))
     down_payment = Column(Float)
     term = Column(Integer)
     interest_rate = Column(Float)
@@ -524,6 +528,7 @@ class DealModel(Base):
     risk_assessment = Column(String(255))
 
     underwriting = relationship("UnderwritingModel")
+    real_estate_property = relationship("RealEstatePropertyModel")
 
     def __init__(
             self,
@@ -537,6 +542,7 @@ class DealModel(Base):
             capital_invested: float,
             real_estate_property_value: float,
             underwriting: Annotated[Optional[UnderwritingModel], 'should be populated before saving to db'] = None,
+            real_estate_property: Annotated[Optional[RealEstatePropertyModel], 'populate before saving to db'] = None,
             thumbnail: str = '',
             risk_assessment: str = '',
             id: int | None = None,  # Allow none so the migrations creates it for new objects.
@@ -552,6 +558,7 @@ class DealModel(Base):
         self.capital_invested = capital_invested
         self.real_estate_property_value = real_estate_property_value
         self.underwriting = underwriting
+        self.real_estate_property = real_estate_property
         self.thumbnail = thumbnail
         self.risk_assessment = risk_assessment
 

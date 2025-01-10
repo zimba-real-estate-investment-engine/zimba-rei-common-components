@@ -5,14 +5,13 @@ from sqlalchemy.orm import Session
 
 from app.database.models import SubscriptionModel, ListingModel, ProjectionModel, UnderwritingModel, DealModel
 from app.repositories.BaseRepository import BaseRepository
-from app.schemas.ProjectionRowSchema import ProjectionRowSchema
 from app.schemas.ProjectionSchema import ProjectionSchema
 from app.schemas.ListingSchema import ListingSchema
 
 logger = logging.getLogger(__name__)
 
 
-class ProjectionService:
+class ProjectionRowService:
     def __init__(self, db: Session):
         self.logger = logger
         self.db = db
@@ -64,12 +63,3 @@ class ProjectionService:
             [BaseRepository.sqlalchemy_to_pydantic(x, ProjectionSchema) for x in projection_model_list]
         return projection_schema_list
 
-    def get_projection_rows_by_deal_id(self, deal_id: int) -> List[ProjectionRowSchema]:
-        projection_model_list = (self.db.query(ProjectionModel)
-                                 .join(DealModel)
-                                 .filter(DealModel.id == deal_id)
-                                 .all())
-
-        projection_schema_list = \
-            [BaseRepository.sqlalchemy_to_pydantic(x, ProjectionRowSchema) for x in projection_model_list]
-        return projection_schema_list
