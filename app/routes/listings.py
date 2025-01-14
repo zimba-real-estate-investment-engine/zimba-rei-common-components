@@ -5,7 +5,7 @@ from typing import List
 #
 # # from app.domain.user import UserCreate, UserRead
 # # from app.crud.user import create_user, get_user
-# # from app.core.database import get_db
+# # from app.core.migrations import get_db
 # # from sqlalchemy.orm import Session
 #
 # router = APIRouter()

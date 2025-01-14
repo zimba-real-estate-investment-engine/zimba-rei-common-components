@@ -21,8 +21,8 @@ def test_get_test_db(get_test_db):
     load_dotenv()
     test_db_name = os.getenv('DB_TEST_NAME')
 
-    # Make sure the db connection is targeting the test database.
-    assert test_db_name in db.bind.url
+    # Make sure the db connection is targeting the test migrations.
+    assert test_db_name in db.bind.listing_url
 
     # Make sure we can execute some test sQL
     result = db.execute(select(1))

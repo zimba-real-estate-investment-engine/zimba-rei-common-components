@@ -3,7 +3,7 @@ from app.repositories.BaseRepository import BaseRepository
 from app.database.models import SubscriptionModel
 
 
-def test_crud_subscription_model(get_test_address_model, get_test_db):
+def test_crud_address_model(get_test_address_model, get_test_db):
     session = get_test_db
     new_address_model = get_test_address_model
 

@@ -1,13 +1,11 @@
-from contextlib import contextmanager
-from typing import TypeVar, Generic, Type, List, Optional, Dict, Any
+from typing import TypeVar, Generic, Type, List, Optional
 from sqlalchemy.orm import Session
-# from sqlalchemy import select, delete, inspect
-from sqlalchemy import select, delete, inspect
+from sqlalchemy import select, delete
 from sqlalchemy.ext.declarative import declarative_base
 from pydantic import BaseModel
 
 Base = declarative_base()
-# Generic type for SQLAlchemy database
+# Generic type for SQLAlchemy migrations
 T = TypeVar('T')
 
 PydanticSchemaType = TypeVar('PydanticSchemaType', bound=BaseModel)
@@ -16,7 +14,7 @@ SQLAlchemyModelType = TypeVar('SQLAlchemyModelType', bound=Base)
 
 class BaseRepository(Generic[T]):
     """
-    A generic repository interface for SQLAlchemy database.
+    A generic repository interface for SQLAlchemy migrations.
     Transaction management is handled outside the repository.
     """
 
@@ -25,12 +23,12 @@ class BaseRepository(Generic[T]):
         self.model_class = model_class
 
     def add(self, entity: T) -> T:
-        """Add a new entity to the database."""
+        """Add a new entity to the migrations."""
         self.session.add(entity)
         return entity
 
     def add_many(self, entities: List[T]) -> List[T]:
-        """Add multiple entities to the database."""
+        """Add multiple entities to the migrations."""
         self.session.add_all(entities)
         return entities
 
@@ -61,12 +59,7 @@ class BaseRepository(Generic[T]):
         return result.rowcount > 0
 
     @staticmethod
-    # def sqlalchemy_to_pydantic(sqlalchemy_obj: SQLAlchemyModelType, pydantic_schema: Type[PydanticSchemaType])\
-    #         -> PydanticSchemaType:
-    #     PydanticSchemaClass = sqlalchemy_to_pydantic(PydanticSchemaType)
-    #     pydantic_instance = PydanticSchemaClass.from_orm(sqlalchemy_obj)
-    #     return pydantic_instance
-    def sqlalchemy_to_pydantic(sqlalchemy_obj: SQLAlchemyModelType, pydantic_schema: Type[PydanticSchemaType])\
+    def sqlalchemy_to_pydantic(sqlalchemy_obj: SQLAlchemyModelType, pydantic_schema: Type[PydanticSchemaType]) \
             -> PydanticSchemaType:
         # PydanticSchema = sqlalchemy_to_pydantic(PydanticSchemaType)
         pydantic_instance = pydantic_schema.from_orm(sqlalchemy_obj)
@@ -125,14 +118,15 @@ class BaseRepository(Generic[T]):
             elif isinstance(value, dict) and hasattr(sqlalchemy_model, field):
                 # Convert single nested model
                 relationships[field] = BaseRepository.pydantic_to_sqlalchemy(value,
-                                                              getattr(sqlalchemy_model, field).property.mapper.class_)
+                                                                             getattr(sqlalchemy_model,
+                                                                                     field).property.mapper.class_)
 
         # Unpack relationships and simple fields
         return sqlalchemy_model(**{**obj_data, **relationships})
 
 # @contextmanager
 # def unit_of_work(session_factory):
-#     """Context manager for handling database transactions."""
+#     """Context manager for handling migrations transactions."""
 #     session = session_factory()
 #     try:
 #         yield session

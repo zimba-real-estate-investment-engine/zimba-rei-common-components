@@ -6,7 +6,7 @@ config = {
     'port': 3306,
     'user': 'rei_app_rds_user',
     'password': 'the password',
-    'database': 'zimba_rei_micro'
+    'migrations': 'zimba_rei_micro'
 }
 
 try:
@@ -14,7 +14,7 @@ try:
     conn = mysql.connector.connect(**config)
     
     if conn.is_connected():
-        print("Connected to MySQL database")
+        print("Connected to MySQL migrations")
         
         # Perform some operation (e.g., select data)
         cursor = conn.cursor()
@@ -28,4 +28,4 @@ try:
         cursor.close()
         conn.close()
 except mysql.connector.Error as err:
-    print(f"Error connecting to MySQL database: {err}")
+    print(f"Error connecting to MySQL migrations: {err}")

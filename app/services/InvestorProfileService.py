@@ -39,3 +39,8 @@ class InvestorProfileService:
         listing_schema_list = \
             [BaseRepository.sqlalchemy_to_pydantic(x, InvestorProfileSchema) for x in investor_profile_model_list]
         return listing_schema_list
+
+    def get_by_id(self, id: int) -> InvestorProfileSchema:
+        investor_profile_model = self.repository.get_by_id(id)
+        investor_profile_schema = BaseRepository.sqlalchemy_to_pydantic(investor_profile_model, InvestorProfileSchema)
+        return investor_profile_schema

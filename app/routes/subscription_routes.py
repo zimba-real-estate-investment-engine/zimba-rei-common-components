@@ -1,6 +1,6 @@
 # from fastapi import APIRouter, Depends
 # from app.schemas.SubscriptionSchema import SubscriptionSchema
-# from app.core.database import get_db
+# from app.core.migrations import get_db
 # from sqlalchemy.orm import Session
 # #
 # # from app.services.SubscriptionService import SubscriptionService

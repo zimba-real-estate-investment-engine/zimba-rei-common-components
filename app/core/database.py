@@ -16,7 +16,7 @@ DB_HOST = os.getenv('DB_HOST')
 DB_PORT = os.getenv('DB_PORT')
 DB_NAME = os.getenv('DB_NAME')
 
-# Create the SQLAlchemy database URL
+# Create the SQLAlchemy migrations URL
 # We use quote_plus to properly encode the password
 DATABASE_URL = f"mysql+pymysql://{DB_USER}:{quote_plus(DB_PASSWORD)}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
@@ -30,10 +30,10 @@ engine = create_engine(
 )
 
 
-# SessionLocal class will be used to create database sessions
+# SessionLocal class will be used to create migrations sessions
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Base class for declarative database
+# Base class for declarative migrations
 Base = declarative_base()
 
 

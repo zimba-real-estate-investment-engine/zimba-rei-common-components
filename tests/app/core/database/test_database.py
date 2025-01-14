@@ -7,7 +7,7 @@ from app.core.database import get_db, SessionLocal, engine, Base
 
 
 def test_database_connection():
-    # Test that we can create a session and query the database
+    # Test that we can create a session and query the migrations
     with SessionLocal() as db:
         assert isinstance(db, Session)  # Check session instance
         # Example: Check if tables exist by querying metadata

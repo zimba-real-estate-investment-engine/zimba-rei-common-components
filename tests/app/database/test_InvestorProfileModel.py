@@ -44,9 +44,7 @@ def test_crud_investor_profile_cascade_to_financing(get_test_investor_profile_mo
 
     financing_source_1 = get_test_financing_model_minimum
     financing_source_2 = copy.deepcopy(financing_source_1)
-    financing_source_2.id = financing_source_1.id + 1
     financing_source_3 = copy.deepcopy(financing_source_1)
-    financing_source_3.id = financing_source_2.id + 1
 
     test_investor_profile_model.financing_sources = [financing_source_1, financing_source_2, financing_source_3]
 
@@ -79,10 +77,12 @@ def test_crud_investor_profile_cascade_to_financing(get_test_investor_profile_mo
 
 
 def test_crud_investor_profile_cascade_to_mortgage(get_test_investor_profile_model, get_test_db,
-                                                   get_test_mortgage_model, get_test_financing_model_minimum):
+                                                   get_test_mortgage_model, get_test_financing_model_minimum,
+                                                   test_amortization_schedule_model_without_json):
     session = get_test_db
     test_investor_profile_model = get_test_investor_profile_model
     test_mortgage_model = get_test_mortgage_model
+    test_mortgage_model.amortization_schedule = test_amortization_schedule_model_without_json
 
     test_financing_source = get_test_financing_model_minimum
     test_financing_source.mortgages = [test_mortgage_model]
@@ -95,6 +95,7 @@ def test_crud_investor_profile_cascade_to_mortgage(get_test_investor_profile_mod
     results = repository.add(test_investor_profile_model)
     assert results
     session.flush()
+    session.commit()
 
     # READ
     newly_created = repository.get_by_id(results.id)
