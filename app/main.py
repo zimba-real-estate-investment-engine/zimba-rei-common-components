@@ -319,6 +319,33 @@ async def create_deal_from_url(create_deal_request: UnderwritingCreateDealFromUR
         )
 
 
+@app.post("/underwriting/projection-rows-for-deal", response_model=List[ProjectionRowSchema])
+async def create_deal_from_url(create_deal_request: ProjectionFindByDealSchema, db: Session = Depends(get_db)):
+
+    investor_profile_service = InvestorProfileService(db)
+    investor_profile_id = create_deal_request.investor_profile_id
+
+    investor_profile_schema = investor_profile_service.get_by_id(id=investor_profile_id)
+    investor_profile = InvestorProfile(**investor_profile_schema.dict())
+
+    listing_url = create_deal_request.listing_url
+
+    if listing_url:
+        deal = UnderwritingProcess.create_deal_url_and_investor_profile(investor_profile=investor_profile,
+                                                                        url=listing_url)
+
+        deal_service = DealService(db)
+        newly_created_deal_schema = deal_service.save_deal(deal)
+
+        return newly_created_deal_schema
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="listing_url ID must be specified"
+        )
+
+
+
 @app.get("/projections/", response_model=List[ProjectionSchema])
 async def get_projections(db: Session = Depends(get_db)):
     projection_service = ProjectionService(db)
