@@ -5,7 +5,7 @@ from typing import List
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.domain.InvestorProfile import InvestorProfile
 from app.domain.RealEstateProperty import RealEstateProperty

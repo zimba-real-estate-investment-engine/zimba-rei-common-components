@@ -22,7 +22,7 @@ from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
     FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel, ProjectionEntryModel, \
     AmortizationScheduleModel, CashflowModel, CapitalInvestmentModel, AmortizationCachingCodeModel, \
-    AmortizationScheduleRowModel, LLMResponseModel, ProjectionModel
+    AmortizationScheduleRowModel, LLMResponseModel, ProjectionModel, DropdownOptionsModel
 from app.database.models import RealEstatePropertyModel
 from datetime import datetime, timezone, timedelta
 
@@ -717,3 +717,17 @@ def test_llm_response_schema_no_listing_json() -> LLMResponseSchema:
     )
 
     yield test_llm_response
+
+
+@pytest.fixture
+def test_dropdown_options_model() -> DropdownOptionsModel:
+    current_time_string = __get_time_string()
+
+    test_dropdown_options_model = DropdownOptionsModel(
+        dropdown_name=f"dropdown_name_{current_time_string}",
+        value=f"value_{current_time_string}",
+        label=f"label_{current_time_string}",
+        is_active=False
+    )
+
+    yield test_dropdown_options_model
