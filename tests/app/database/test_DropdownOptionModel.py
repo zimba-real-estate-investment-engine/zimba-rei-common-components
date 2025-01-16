@@ -1,12 +1,12 @@
-from app.database.models import DropdownOptionsModel
+from app.database.models import DropdownOptionModel
 from app.repositories.BaseRepository import BaseRepository
 
 
-def test_crud_dropdown_options_model(test_dropdown_options_model, get_test_db):
+def test_crud_dropdown_option_model(test_dropdown_option_model, get_test_db):
     session = get_test_db
-    new_dropdown_options_model = test_dropdown_options_model
+    new_dropdown_options_model = test_dropdown_option_model
 
-    repo = BaseRepository[DropdownOptionsModel](session, DropdownOptionsModel)
+    repo = BaseRepository[DropdownOptionModel](session, DropdownOptionModel)
 
     # CREATE
     results = repo.add(new_dropdown_options_model)

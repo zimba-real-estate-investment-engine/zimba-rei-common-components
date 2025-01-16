@@ -705,8 +705,8 @@ class ProjectionModel(Base):
         return f"<Projection(id={self.id} deal={self.deal.id})>"
 
 
-class DropdownOptionsModel(Base):
-    __tablename__ = 'dropdown_options'
+class DropdownOptionModel(Base):
+    __tablename__ = 'dropdown_option'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     dropdown_name = Column(String(100), nullable=False)

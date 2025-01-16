@@ -22,7 +22,7 @@ from app.main import app, get_db
 from app.database.models import AddressModel, RealEstatePropertyModel, ListingModel, ExpenseModel, InvestorProfileModel, \
     FinancingModel, MortgageModel, SubscriptionModel, UnderwritingModel, DealModel, ProjectionEntryModel, \
     AmortizationScheduleModel, CashflowModel, CapitalInvestmentModel, AmortizationCachingCodeModel, \
-    AmortizationScheduleRowModel, LLMResponseModel, ProjectionModel, DropdownOptionsModel
+    AmortizationScheduleRowModel, LLMResponseModel, ProjectionModel, DropdownOptionModel
 from app.database.models import RealEstatePropertyModel
 from datetime import datetime, timezone, timedelta
 
@@ -31,6 +31,7 @@ from dateutil.relativedelta import relativedelta
 from app.schemas.AmortizationCachingCodeSchema import AmortizationCachingCodeSchema
 from app.schemas.CapitalInvestmentSchema import CapitalInvestmentSchema
 from app.schemas.CashflowSchema import CashflowSchema
+from app.schemas.DropdownOptionSchema import DropdownOptionSchema
 from app.schemas.LLMResponseSchema import LLMResponseSchema
 from app.schemas.ListingSchema import ListingSchema
 from app.schemas.DealSchema import DealSchema
@@ -720,10 +721,10 @@ def test_llm_response_schema_no_listing_json() -> LLMResponseSchema:
 
 
 @pytest.fixture
-def test_dropdown_options_model() -> DropdownOptionsModel:
+def test_dropdown_option_model() -> DropdownOptionModel:
     current_time_string = __get_time_string()
 
-    test_dropdown_options_model = DropdownOptionsModel(
+    test_dropdown_options_model = DropdownOptionModel(
         dropdown_name=f"dropdown_name_{current_time_string}",
         value=f"value_{current_time_string}",
         label=f"label_{current_time_string}",
@@ -731,3 +732,18 @@ def test_dropdown_options_model() -> DropdownOptionsModel:
     )
 
     yield test_dropdown_options_model
+
+
+@pytest.fixture
+def test_dropdown_option_schema() -> DropdownOptionSchema:
+    current_time_string = __get_time_string()
+
+    test_dropdown_option_schema = DropdownOptionSchema(
+        dropdown_name=f"dropdown_name_{current_time_string}",
+        value=f"value_{current_time_string}",
+        label=f"label_{current_time_string}",
+        is_active=False,
+        order_index=1
+    )
+
+    yield test_dropdown_option_schema

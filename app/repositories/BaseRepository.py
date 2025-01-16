@@ -1,5 +1,5 @@
 from typing import TypeVar, Generic, Type, List, Optional
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Query
 from sqlalchemy import select, delete
 from sqlalchemy.ext.declarative import declarative_base
 from pydantic import BaseModel
@@ -57,6 +57,32 @@ class BaseRepository(Generic[T]):
             delete(self.model_class).where(self.model_class.id.in_(ids))
         )
         return result.rowcount > 0
+
+    def dynamic_query_builder(self, columns=None, filters=None, order_by=None) :
+        """
+        Usage example
+            results = dynamic_query_builder(User,
+                                          columns = [User.id, User.username],
+                                          filters = [User.active == True],
+                                          order_byUser.username.asc())
+                                          ).all()
+        :param columns:
+        :param filters:
+        :param order_by:
+        :return:
+        """
+        query = self.session.query(self.model_class)
+
+        if columns:
+            query = query.with_entities(*columns)
+
+        if filters:
+            query = query.filter(*filters)
+
+        if order_by:
+            query = query.order_by(*order_by)
+
+        return query
 
     @staticmethod
     def sqlalchemy_to_pydantic(sqlalchemy_obj: SQLAlchemyModelType, pydantic_schema: Type[PydanticSchemaType]) \
