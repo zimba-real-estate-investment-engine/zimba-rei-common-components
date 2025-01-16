@@ -5,7 +5,7 @@ from typing import List
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Depends
-from starlette.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.domain.InvestorProfile import InvestorProfile
 from app.domain.RealEstateProperty import RealEstateProperty
@@ -14,6 +14,7 @@ from app.schemas.AddressSchema import AddressSchema
 from app.schemas.CapitalInvestmentSchema import CapitalInvestmentSchema
 from app.schemas.CashflowSchema import CashflowSchema
 from app.schemas.DealSchema import DealSchema, DealSearchSchema
+from app.schemas.DropdownOptionSchema import DropdownOptionSchema, DropdownOptionSearchSchema
 from app.schemas.ExpenseSchema import ExpenseSchema
 from app.schemas.FinancingSchema import FinancingSchema
 from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileSearchSchema
@@ -33,6 +34,7 @@ from app.services.AddressService import AddressService
 from app.services.CapitalInvestmentService import CapitalInvestmentService
 from app.services.CashflowService import CashflowService
 from app.services.DealService import DealService
+from app.services.DropdownOptionService import DropdownOptionService
 from app.services.ExpenseService import ExpenseService
 from app.services.FinancingService import FinancingService
 from app.services.InvestorProfileService import InvestorProfileService
@@ -246,6 +248,32 @@ async def create_projection_entry(projection_entry: ProjectionEntrySchema, db: S
     return newly_saved_projection_entry
 
 
+@app.get("/dropdown_options/", response_model=List[DropdownOptionSchema])
+async def get_dropdown_options(db: Session = Depends(get_db)):
+    dropdown_options_service = DropdownOptionService(db)
+    dropdown_options_schema_list = dropdown_options_service.get_all()
+    dropdown_options_json_list = list(map(lambda x: x.model_dump(), dropdown_options_schema_list))
+    return dropdown_options_json_list
+
+
+@app.post("/dropdown_options/get_by_dropdown_name/", response_model=List[DropdownOptionSchema])
+async def get_dropdown_options_by_dropdown_name(options_by_name_request: DropdownOptionSearchSchema,
+                                                db: Session = Depends(get_db)):
+    dropdown_name = options_by_name_request.dropdown_name
+
+    if dropdown_name:
+        dropdown_options_service = DropdownOptionService(db)
+        dropdown_options_schema_list = dropdown_options_service.get_by_dropdown_name(dropdown_name=dropdown_name)
+
+        dropdown_options_json_list = list(map(lambda x: x.model_dump(), dropdown_options_schema_list))
+        return dropdown_options_json_list
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="dropdown name must be specified"
+        )
+
+
 @app.get("/expenses/", response_model=List[ExpenseSchema])
 async def get_expenses(db: Session = Depends(get_db)):
     expense_service = ExpenseService(db)
@@ -268,6 +296,7 @@ async def get_capital_investments(db: Session = Depends(get_db)):
     capital_investment_schema_list = capital_investment_service.get_all()
     capital_investment_json_list = list(map(lambda x: x.model_dump(), capital_investment_schema_list))
     return capital_investment_json_list
+
 
 @app.get("/financing/", response_model=List[FinancingSchema])
 async def get_financing(db: Session = Depends(get_db)):
@@ -295,7 +324,6 @@ async def get_underwritings(db: Session = Depends(get_db)):
 
 @app.post("/underwriting/create-deal-from-url", response_model=DealSchema)
 async def create_deal_from_url(create_deal_request: UnderwritingCreateDealFromURLSchema, db: Session = Depends(get_db)):
-
     investor_profile_service = InvestorProfileService(db)
     investor_profile_id = create_deal_request.investor_profile_id
 
@@ -321,7 +349,6 @@ async def create_deal_from_url(create_deal_request: UnderwritingCreateDealFromUR
 
 @app.post("/underwriting/projection-rows-for-deal", response_model=List[ProjectionRowSchema])
 async def create_deal_from_url(create_deal_request: ProjectionFindByDealSchema, db: Session = Depends(get_db)):
-
     investor_profile_service = InvestorProfileService(db)
     investor_profile_id = create_deal_request.investor_profile_id
 
@@ -343,7 +370,6 @@ async def create_deal_from_url(create_deal_request: ProjectionFindByDealSchema, 
             status_code=400,
             detail="listing_url ID must be specified"
         )
-
 
 
 @app.get("/projections/", response_model=List[ProjectionSchema])
@@ -368,6 +394,7 @@ async def find_projections_by_deal_id(request: ProjectionFindByDealSchema, db: S
     except Exception as e:
         raise
 
+
 @app.post("/projection_rows_by_deal_id/", response_model=List[ProjectionRowSchema])
 async def find_projection_rows_by_deal_id(request: ProjectionFindByDealSchema, db: Session = Depends(get_db)):
     deal_id = request.deal_id
@@ -381,6 +408,7 @@ async def find_projection_rows_by_deal_id(request: ProjectionFindByDealSchema, d
         # return matching_projections
     except Exception as e:
         raise
+
 
 # Include the routes if external
 # app.include_router(users.router, prefix="/users", tags=["Users"])

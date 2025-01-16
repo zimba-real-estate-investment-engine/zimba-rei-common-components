@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import List, Annotated, Optional, Union
 
 from sqlalchemy import Boolean, Column, String, TIMESTAMP, text, Integer, ForeignKey, Float, Table, TypeDecorator, TEXT, \
-    JSON
+    JSON, func, UniqueConstraint, Index
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, declarative_mixin
 
@@ -703,3 +703,44 @@ class ProjectionModel(Base):
 
     def __repr__(self):
         return f"<Projection(id={self.id} deal={self.deal.id})>"
+
+
+class DropdownOptionModel(Base):
+    __tablename__ = 'dropdown_option'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    dropdown_name = Column(String(100), nullable=False)
+    value = Column(String(255), nullable=False)
+    label = Column(String(255), nullable=True)
+    order_index = Column(Integer, default=0)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(TIMESTAMP, default=func.current_timestamp())
+    updated_at = Column(TIMESTAMP, default=func.current_timestamp(), onupdate=func.current_timestamp())
+
+   # Indexes
+    __table_args__ = (
+        UniqueConstraint('dropdown_name', 'value', name='unique_key_dropdown_value'),
+        Index('idx_dropdown_value', 'dropdown_name', 'value'),
+        Index('idx_label', 'label'),
+        Index('idx_order', 'dropdown_name', 'order_index'),
+    )
+
+
+    def __init__(
+            self,
+            dropdown_name: str,
+            value: str,
+            label: str,
+            is_active: bool,
+            order_index: Annotated[Optional[int], 'populate before saving'] = None,
+            id: int | None = None,  # Allow none so the migrations creates it for new objects.
+    ):
+        self.id = id
+        self.dropdown_name = dropdown_name
+        self.value = value
+        self.label = label
+        self.order_index = order_index
+        self.is_active = is_active
+
+    def __repr__(self):
+        return f"<DropdownOption(id={self.id}, dropdown_name='{self.dropdown_name}', label='{self.label}, value='{self.value}')>"

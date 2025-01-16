@@ -3,6 +3,7 @@ import time
 from app.database.models import SubscriptionModel
 from app.domain.UnderwritingProcess import UnderwritingProcess
 from app.repositories.BaseRepository import BaseRepository
+from app.schemas.DropdownOptionSchema import DropdownOptionSearchSchema
 from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileSearchSchema
 from app.schemas.SubscriptionSchema import SubscriptionSchema
 from app.schemas.UnderwritingSchema import UnderwritingCreateDealSchema, UnderwritingCreateDealFromURLSchema
@@ -28,9 +29,17 @@ def test_create_subscription(get_test_subscription_schema, test_fastapi_client, 
     test_db.commit()
 
 
-def test_get_subscriptions(test_fastapi_client, request):
+def test_get_subscriptions(test_fastapi_client):
     client = test_fastapi_client
     response = client.get("/subscriptions/")
+    assert response.status_code == 200
+
+
+def test_get_dropdown_options_by_dropdown_name(test_fastapi_client):
+    request_payload = DropdownOptionSearchSchema(dropdown_name="real_estate_property_capital_investments")
+    json_payload = request_payload.json()
+    client = test_fastapi_client
+    response = client.post("/dropdown_options/get_by_dropdown_name/", data=json_payload)
     assert response.status_code == 200
 
 
