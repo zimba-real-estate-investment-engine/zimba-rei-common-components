@@ -17,3 +17,7 @@ class DropdownOptionSchema(BaseModel):
     class Config:
         orm_mode = True
         from_attributes = True
+
+
+class DropdownOptionSearchSchema(BaseModel):
+    dropdown_name: str

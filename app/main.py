@@ -14,7 +14,7 @@ from app.schemas.AddressSchema import AddressSchema
 from app.schemas.CapitalInvestmentSchema import CapitalInvestmentSchema
 from app.schemas.CashflowSchema import CashflowSchema
 from app.schemas.DealSchema import DealSchema, DealSearchSchema
-from app.schemas.DropdownOptionSchema import DropdownOptionSchema
+from app.schemas.DropdownOptionSchema import DropdownOptionSchema, DropdownOptionSearchSchema
 from app.schemas.ExpenseSchema import ExpenseSchema
 from app.schemas.FinancingSchema import FinancingSchema
 from app.schemas.InvestorProfileSchema import InvestorProfileSchema, InvestorProfileSearchSchema
@@ -254,6 +254,24 @@ async def get_dropdown_options(db: Session = Depends(get_db)):
     dropdown_options_schema_list = dropdown_options_service.get_all()
     dropdown_options_json_list = list(map(lambda x: x.model_dump(), dropdown_options_schema_list))
     return dropdown_options_json_list
+
+
+@app.post("/dropdown_options/get_by_dropdown_name/", response_model=List[DropdownOptionSchema])
+async def get_dropdown_options_by_dropdown_name(options_by_name_request: DropdownOptionSearchSchema,
+                                                db: Session = Depends(get_db)):
+    dropdown_name = options_by_name_request.dropdown_name
+
+    if dropdown_name:
+        dropdown_options_service = DropdownOptionService(db)
+        dropdown_options_schema_list = dropdown_options_service.get_by_dropdown_name(dropdown_name=dropdown_name)
+
+        dropdown_options_json_list = list(map(lambda x: x.model_dump(), dropdown_options_schema_list))
+        return dropdown_options_json_list
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail="dropdown name must be specified"
+        )
 
 
 @app.get("/expenses/", response_model=List[ExpenseSchema])
